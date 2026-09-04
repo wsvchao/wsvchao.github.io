@@ -144,10 +144,12 @@ main{padding:18px 0 calc(104px * var(--fs))}
 .prog{height:4px;background:var(--rule-soft);border-radius:99px;overflow:hidden;margin:0 0 14px}
 .prog i{display:block;height:100%;background:var(--brass);border-radius:99px;transition:width .25s ease}
 .qmeta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.stepback{font-family:var(--f-mono);font-size:calc(12px * var(--fs));color:var(--brass);
+  padding:2px 0;letter-spacing:.03em}
 .qmeta .n{font-family:var(--f-mono);font-size:calc(12px * var(--fs));color:var(--muted);letter-spacing:.04em;
   font-variant-numeric:tabular-nums}
 .card{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;
-  padding:20px 18px;box-shadow:var(--shadow);min-height:190px;display:flex;flex-direction:column;gap:14px}
+  padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px}
 .card .ctx{font-family:var(--f-mono);font-size:calc(10.5px * var(--fs));letter-spacing:.1em;text-transform:uppercase;
   color:var(--brass)}
 .card .qtext{font-size:calc(19px * var(--fs));line-height:1.5;letter-spacing:.01em;text-wrap:balance}
@@ -173,7 +175,7 @@ main{padding:18px 0 calc(104px * var(--fs))}
 .qtext.tap:active,.vbody.tap:active{background:var(--brass-soft)}
 .taphint{font-family:var(--f-mono);font-size:calc(10.5px * var(--fs));color:var(--brass);
   letter-spacing:.05em;margin-top:-6px}
-.answer-en{font-family:var(--f-mono);font-size:calc(12px * var(--fs));color:var(--faint);margin-top:4px}
+.rbk{font-size:.72em;color:var(--faint);letter-spacing:0}
 .spacer{flex:1 1 auto}
 .footbar{position:fixed;left:0;right:0;bottom:0;z-index:20;
   background:color-mix(in srgb,var(--ground) 92%,transparent);backdrop-filter:blur(12px);
@@ -287,7 +289,8 @@ var S = {
            blank:"條目文字全部遮住，點一下顯示"},
    reveal:"顯示答案", got:"記得", forgot:"忘記", nextq:"下一題",
    qn:"第 %1 ／ %2 題", restart:"重新開始", resetp:"清除進度",
-   showAll:"顯示全文", reshuffle:"換一組空格", nextv:"下一節",
+   showAll:"顯示全文", reshuffle:"再練這一節", nextv:"下一節",
+   retry:"再練這一題", prev:"上一題",
    pickVerse:"點一節經文開始背誦",
    noVerse:"這處經文在和合本中查不到——原書的標示可能有誤，詳見條目後的註記。",
    scaleNote:"%1 個主題・%2 處經文出處・%3 節經文全文（和合本／King James Version），全部內建，可離線使用。",
@@ -326,7 +329,8 @@ var S = {
            blank:"条目文字全部遮住，点一下显示"},
    reveal:"显示答案", got:"记得", forgot:"忘记", nextq:"下一题",
    qn:"第 %1 ／ %2 题", restart:"重新开始", resetp:"清除进度",
-   showAll:"显示全文", reshuffle:"换一组空格", nextv:"下一节",
+   showAll:"显示全文", reshuffle:"再练这一节", nextv:"下一节",
+   retry:"再练这一题", prev:"上一题",
    pickVerse:"点一节经文开始背诵",
    noVerse:"这处经文在和合本中查不到——原书的标示可能有误，详见条目后的注记。",
    scaleNote:"%1 个主题・%2 处经文出处・%3 节经文全文（和合本／King James Version），全部内建，可离线使用。",
@@ -365,7 +369,8 @@ var S = {
            blank:"Entry fully hidden — tap to reveal"},
    reveal:"Show answer", got:"Got it", forgot:"Missed", nextq:"Next",
    qn:"%1 of %2", restart:"Start again", resetp:"Clear progress",
-   showAll:"Show full verse", reshuffle:"New blanks", nextv:"Next verse",
+   showAll:"Show full verse", reshuffle:"Practise this verse again", nextv:"Next verse",
+   retry:"Practise this one again", prev:"Previous",
    pickVerse:"Pick a verse to practise",
    noVerse:"This reference is not found in the Chinese Union Version — the original booklet may have it wrong; see the note after the entry.",
    scaleNote:"%1 topics · %2 references · %3 verses of full text (CUV / KJV) — all built in, works offline.",
@@ -685,7 +690,7 @@ function startSeq(filter,level){
   var lv = level || (st.seq&&st.seq.level) || "hint";
   var f  = filter || "all";
   st.seq={ level:lv, filter:f, list:seqList(tp,lv,f), i:0, revealed:false,
-           ok:0, ng:0, shown:{}, rshown:{} };
+           ok:0, ng:0, shown:{}, rshown:{}, salt:0, hist:[] };
   st.screen="seq"; render();
 }
 function viewSeq(s){
@@ -725,23 +730,33 @@ function viewSeq(s){
   var it=list[q.i], ctx=ctxOf(tp,it);
   var txt;
   if(q.revealed || q.level==="hint") txt=esc(it[s.key]);
-  else if(q.level==="fill")           txt=maskUnits(it[s.key],s.lang,.40,"seq"+q.i,q.shown,
+  else if(q.level==="fill")           txt=maskUnits(it[s.key],s.lang,.40,"seq"+q.i+"."+q.salt,q.shown,
                                                      isEn(s.lang)?1:2);
   else                                txt=blankAll(it[s.key],s.lang);
-  var segs=refSegs(it[s.rk]), eSegs=refSegs(it.re);
+  var segs=refSegs(it[s.rk]);
+  /* the chapter:verse numbers are identical in both languages — only the book
+     name carries new information, so it rides along in brackets */
+  var oSegs=refSegs(s.key==="en" ? it.rz : it.re);
+  var oTail=(s.key==="en") ? /[\s\d:,\-\u2013章]+$/ : /[\s\d:,\-\u2013]+$/;
+  var sep=(s.key==="en") ? "; " : "；";
   var refShown = q.revealed || segs.every(function(_,i){ return q.rshown[i]; });
   var refTxt = segs.map(function(sg,i){
     var on = q.revealed || q.rshown[i];
-    return on ? '<span class="rseg">'+esc(sg)+"</span>"
-              : '<span class="rseg hid" data-rseg="'+i+'">'+esc(maskRef(sg,st.refmask))+"</span>";
-  }).join('<span class="rsep">；</span>');
+    if(!on) return '<span class="rseg hid" data-rseg="'+i+'">'+
+                     esc(maskRef(sg,st.refmask))+"</span>";
+    var bk = oSegs[i] ? oSegs[i].replace(oTail,"") : "";
+    return '<span class="rseg">'+esc(sg)+
+      (bk?'<span class="rbk">（'+esc(bk)+"）</span>":"")+"</span>";
+  }).join('<span class="rsep">'+sep+"</span>");
   var refChips='<div class="rchips"><span class="lbl">'+esc(s.refLabel)+"</span>"+
     '<button data-refmask="digits" aria-pressed="'+(st.refmask==="digits")+'">'+esc(s.refDigits)+"</button>"+
     '<button data-refmask="all" aria-pressed="'+(st.refmask==="all")+'">'+esc(s.refAll)+"</button></div>";
   return bar(backBtn(s)+'<span class="bar-title">'+esc(tp[s.key==="en"?"en":s.key])+"</span>")+
    '<main><div class="wrap">'+lvSeg+filtRow+
    '<div class="prog"><i style="width:'+Math.round(100*q.i/Math.max(1,list.length))+'%"></i></div>'+
-   '<div class="qmeta"><span class="n">'+esc(t(s.qn,q.i+1,list.length))+"</span>"+
+   '<div class="qmeta"><span class="n">'+
+     (q.hist.length?'<button class="stepback" data-prev="1">‹ '+esc(s.prev)+"</button>　":"")+
+     esc(t(s.qn,q.i+1,list.length))+"</span>"+
    '<span class="n">'+esc(s.lvMastered)+" "+nSolidLv+"/"+all.length+"</span></div>"+
    '<div class="card">'+
      (ctx?'<div class="ctx">'+esc(ctx[s.key==="en"?"en":s.key])+"</div>":"")+
@@ -754,13 +769,13 @@ function viewSeq(s){
      '<div class="taprow">'+
        (refShown?"":'<span class="h">'+esc(segs.length>1?s.tapEach:s.tapReveal)+"</span>")+
        refChips+"</div>"+
-     (refShown&&s.key!=="en"?'<div class="answer-en">'+esc(it.re)+"</div>":"")+
-     '<div class="spacer"></div>'+
-     '<div class="stat"><div>'+esc(q.filter==="weak"?s.weakHowLv:s.lvDesc[q.level])+"</div></div>"+
    "</div>"+
-   (it.vs&&it.vs.length&&refShown?'<div class="actions" style="margin-top:14px">'+
-      '<button class="btn btn-brass btn-wide" data-openv="'+tp.items.indexOf(it)+'">'+
-      esc(s.vsHead)+" · "+esc(t(s.verseOf,it.vs.length))+"</button></div>":"")+
+   (refShown?'<div class="actions" style="margin-top:14px">'+
+      '<button class="btn btn-wide" data-retry="1">'+esc(s.retry)+"</button>"+
+      (it.vs&&it.vs.length
+        ? '<button class="btn btn-brass btn-wide" data-openv="'+tp.items.indexOf(it)+'">'+
+          esc(s.vsHead)+" · "+esc(t(s.verseOf,it.vs.length))+"</button>" : "")+
+    "</div>":"")+
    "</div></main>"+
    '<div class="footbar"><div class="wrap">'+
      (refShown
@@ -843,11 +858,11 @@ function viewVerse(s){
     '<div class="card"><div class="vbody'+(s.key==="en"?" en":"")+
       (!d.revealed&&d.level!=="fill"?" tap":"")+'" id="vbody"'+
       (!d.revealed&&d.level!=="fill"?' data-vreveal="1"':"")+">"+body+"</div>"+
-      '<div class="spacer"></div>'+
-      '<div class="stat"><div>'+esc(s.vlvDesc[d.level])+"</div></div>"+
+      (d.level==="fill"&&!d.revealed
+        ? '<div class="stat"><div>'+esc(s.vlvDesc.fill)+"</div></div>" : "")+
     "</div>"+
     '<div class="actions" style="margin-top:14px">'+
-      (d.level==="fill"?'<button class="btn btn-wide" data-reshuffle="1">'+esc(s.reshuffle)+"</button>":"")+
+      '<button class="btn btn-wide" data-reshuffle="1">'+esc(s.reshuffle)+"</button>"+
       (st.vd.vi+1<it.vs.length?'<button class="btn btn-wide" data-nextv="1">'+esc(s.nextv)+"</button>":"")+
     "</div></div></main>"+
     '<div class="footbar"><div class="wrap">'+
@@ -860,7 +875,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk");
+  var el=e.target.closest("[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk");
   if(!el) return;
   var d=el.dataset;
   if(d.fs){
@@ -904,11 +919,23 @@ document.addEventListener("click",function(e){
     st.keepScroll=window.scrollY; return render();
   }
   if(d.reveal!==undefined){ st.seq.revealed=true; return render(); }
+  if(d.retry!==undefined){                      /* stay on this item, hide it again */
+    var q=st.seq;
+    q.revealed=false; q.shown={}; q.rshown={}; q.salt++;
+    st.keepScroll=0; return render();
+  }
+  if(d.prev!==undefined){                       /* step back and undo that answer */
+    var q=st.seq, last=q.hist.pop();
+    if(last){ if(last.ok) q.ok--; else q.ng--; q.i=last.i; }
+    q.revealed=false; q.shown={}; q.rshown={}; q.salt++;
+    return render();
+  }
   if(d.mark!==undefined){
-    var q=st.seq, cur=q.list[q.i];
-    if(+d.mark) q.ok++; else q.ng++;
-    markItem(st.tid, cur._ix, q.level, +d.mark===1);
-    q.i++; q.revealed=false; q.shown={}; q.rshown={}; return render();
+    var q=st.seq, cur=q.list[q.i], ok=(+d.mark===1);
+    if(ok) q.ok++; else q.ng++;
+    markItem(st.tid, cur._ix, q.level, ok);
+    q.hist.push({i:q.i, ok:ok});
+    q.i++; q.revealed=false; q.shown={}; q.rshown={}; q.salt=0; return render();
   }
   if(d.restart!==undefined){ return startSeq(); }
   if(d.item!==undefined){ st.from=st.screen; st.itemIdx=+d.item; st.screen="verses"; return render(); }
