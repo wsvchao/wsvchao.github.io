@@ -637,8 +637,7 @@ function topicRows(s){
       '<span class="trow-main"><span class="trow-zh">'+esc(tp[s.key])+'</span>'+
       '<span class="trow-en">'+esc(s.key==="en"?tp.zh:tp.en)+'</span></span>'+
       '<span class="trow-meta"><span class="count">'+
-      (solid?esc(s.mastered)+" "+solid+"/"+n:n+" "+esc(s.entries))+"</span>"+
-      '<span class="pagebadge">'+esc(s.pg)+' '+tp.page+'</span></span>'+
+      (solid?esc(s.mastered)+" "+solid+"/"+n:n+" "+esc(s.entries))+"</span></span>"+
       '<span class="chev">›</span></button>';
   }).join("");
 }
@@ -693,7 +692,7 @@ function viewTopic(s){
     '<main><div class="wrap"><div class="thead">'+
     '<h1>'+esc(tp[s.key==="en"?"en":s.key])+"</h1>"+
     (s.key==="en"?"":'<div class="en">'+esc(tp.en)+"</div>")+
-    '<div class="src">'+esc(t(s.srcpage,tp.page))+' · '+refsOf(tp).length+" "+esc(s.entries)+"</div></div>"+
+    '<div class="src">'+refsOf(tp).length+" "+esc(s.entries)+"</div></div>"+
     '<div class="actions">'+
       '<button class="btn btn-p btn-wide" data-seq="1">'+esc(s.seqDrill)+"</button>"+
       '<button class="btn btn-brass btn-wide" data-vpick="1"'+(tp._hasv?"":" disabled")+">"+
