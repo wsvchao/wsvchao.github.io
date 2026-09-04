@@ -621,9 +621,9 @@ function fsPanel(s){
 function backBtn(s){ return '<button class="back" data-back="1">‹&nbsp;'+esc(s.back)+"</button>"; }
 
 /* ---- topic list ---- */
-function viewList(s){
+function topicRows(s){
   var q=st.q.trim().toLowerCase();
-  var rows=TOPICS.filter(function(tp){
+  return TOPICS.filter(function(tp){
     if(!q) return true;
     return (tp.zh+tp.hans+tp.en).toLowerCase().indexOf(q)>=0;
   }).map(function(tp){
@@ -637,12 +637,25 @@ function viewList(s){
       '<span class="pagebadge">'+esc(s.pg)+' '+tp.page+'</span></span>'+
       '<span class="chev">›</span></button>';
   }).join("");
+}
+function listBox(s){
+  var rows=topicRows(s);
+  return rows ? '<div class="tlist">'+rows+"</div>"
+              : '<p class="hint">'+esc(s.nohit)+"</p>";
+}
+/* Re-rendering the whole screen on every keystroke destroys the input element,
+   which breaks IME composition (注音 / 拼音). Refresh only the list. */
+function refreshList(){
+  var box=document.getElementById("listbox");
+  if(box) box.innerHTML=listBox(L());
+}
+function viewList(s){
   return bar('<span class="wordmark">Textionary <i>背誦本</i></span>')+
     '<main><div class="wrap">'+
     '<input class="search" id="q" placeholder="'+esc(s.search)+'" value="'+esc(st.q)+'">'+
     '<p class="hint">'+esc(s.lead)+"<br>"+
       esc(t(s.scaleNote, TOPICS.length, N_REFS, Object.keys(VT).length))+"</p>"+
-    (rows?'<div class="tlist">'+rows+"</div>":'<p class="hint">'+esc(s.nohit)+"</p>")+
+    '<div id="listbox">'+listBox(s)+"</div>"+
     '<button class="clearbtn'+(st.armAll?" armed":"")+'" data-clear="all">'+
       esc(st.armAll?s.confirmClear:s.clearAll)+"</button>"+
     '<p class="foot">'+esc(s.footer)+"</p></div></main>";
@@ -967,9 +980,19 @@ document.addEventListener("click",function(e){
     st.keepScroll=window.scrollY; return render();
   }
 });
+var composing=false;
+document.addEventListener("compositionstart",function(e){
+  if(e.target.id==="q") composing=true;
+});
+document.addEventListener("compositionend",function(e){
+  if(e.target.id!=="q") return;
+  composing=false; st.q=e.target.value; refreshList();
+});
 document.addEventListener("input",function(e){
-  if(e.target.id==="q"){ st.q=e.target.value; var pos=e.target.selectionStart;
-    render(); var q=document.getElementById("q"); if(q){ q.focus(); q.setSelectionRange(pos,pos); } }
+  if(e.target.id!=="q") return;
+  st.q=e.target.value;
+  if(composing || e.isComposing) return;   /* 組字中，等選完字再篩選 */
+  refreshList();
 });
 render();
 })();
