@@ -198,6 +198,9 @@ main{padding:18px 0 calc(104px * var(--fs))}
 .blk{display:inline-block;background:var(--brass-soft);border-bottom:1.5px solid var(--brass-line);
   border-radius:3px;color:transparent;margin:0 1px;cursor:pointer;user-select:none}
 .blk.on{background:transparent;border-bottom-color:var(--brass);color:var(--brass-ink)}
+.sblk{cursor:pointer;user-select:none;border-radius:4px;padding:0 1px}
+.sblk:active{background:var(--brass-soft)}
+.sblk.on{color:var(--brass-ink)}
 .stat{display:flex;gap:14px;margin-top:14px}
 .stat div{font-family:var(--f-mono);font-size:calc(11.5px * var(--fs));color:var(--muted);letter-spacing:.04em}
 .stat b{color:var(--ink)}
@@ -308,7 +311,7 @@ var S = {
    fsTitle:"字級", fsReset:"回到標準字級",
    fsNames:["小","標準","大","特大","最大"],
    fsSampleK:"約3:16", fsSample:"上帝愛世人，甚至將祂的獨生子賜給他們。",
-   filtAll:"全部", filtWeak:"只練不熟的",
+   filtAll:"全部", filtWeak:"只練不熟的", sortOrig:"主題",
    tapReveal:"點一下顯示答案", tapEach:"點各段出處，逐一顯示",
    refLabel:"出處", refDigits:"只遮數字", refAll:"連書卷",
    mastered:"已熟", lvMastered:"本難度已熟",
@@ -319,7 +322,7 @@ var S = {
    confirmClear:"再點一次確定清除", cleared:"已清除",
    weakHow:"「不熟」＝還沒答對過，或上次答忘記。",
    weakHowLv:"只出這個難度下還沒答對過、或上次答忘記的題目。",
-   vlvDesc:{fill:"點空格可以單獨顯示一個詞",hint:"每個詞句只留第一個字",blank:"整節全遮，先自己背一遍再對答案"},
+   vlvDesc:{fill:"點空格可以單獨顯示一個詞",hint:"點任一句，可單獨顯示那一句",blank:"點任一句，可單獨顯示那一句"},
    footer:"經文：聖經和合本（1919，公有領域）／King James Version（公有領域）。主題架構出自 Bible Textionary®，Noble B. Vining，© 1982, 1984 — 本 App 為個人與教會學習用途。" },
  hans:{ lang:"hans", key:"hans", rk:"rh", vk:"kh",
    title:"随身经典", sub:"圣经主题索引", mark1:"随身", mark2:"经典",
@@ -348,7 +351,7 @@ var S = {
    fsTitle:"字级", fsReset:"回到标准字级",
    fsNames:["小","标准","大","特大","最大"],
    fsSampleK:"约3:16", fsSample:"上帝爱世人，甚至将祂的独生子赐给他们。",
-   filtAll:"全部", filtWeak:"只练不熟的",
+   filtAll:"全部", filtWeak:"只练不熟的", sortOrig:"主题",
    tapReveal:"点一下显示答案", tapEach:"点各段出处，逐一显示",
    refLabel:"出处", refDigits:"只遮数字", refAll:"连书卷",
    mastered:"已熟", lvMastered:"本难度已熟",
@@ -359,7 +362,7 @@ var S = {
    confirmClear:"再点一次确定清除", cleared:"已清除",
    weakHow:"「不熟」＝还没答对过，或上次答忘记。",
    weakHowLv:"只出这个难度下还没答对过、或上次答忘记的题目。",
-   vlvDesc:{fill:"点空格可以单独显示一个词",hint:"每个词句只留第一个字",blank:"整节全遮，先自己背一遍再对答案"},
+   vlvDesc:{fill:"点空格可以单独显示一个词",hint:"点任一句，可单独显示那一句",blank:"点任一句，可单独显示那一句"},
    footer:"经文：圣经和合本（1919，公有领域）／King James Version（公有领域）。主题架构出自 Bible Textionary®，Noble B. Vining，© 1982, 1984 — 本 App 为个人与教会学习用途。" },
  en:{ lang:"en", key:"en", rk:"re", vk:"ke",
    title:"隨身經典", sub:"Topical Scripture Index", mark1:"隨身", mark2:"經典",
@@ -388,7 +391,7 @@ var S = {
    fsTitle:"Text size", fsReset:"Back to default size",
    fsNames:["Small","Default","Large","Larger","Largest"],
    fsSampleK:"John 3:16", fsSample:"For God so loved the world, that he gave his only begotten Son.",
-   filtAll:"All", filtWeak:"Not yet solid",
+   filtAll:"All", filtWeak:"Not yet solid", sortOrig:"Topical",
    tapReveal:"Tap to show the answer", tapEach:"Tap each reference to reveal it",
    refLabel:"Ref", refDigits:"Numbers", refAll:"+ Book",
    mastered:"solid", lvMastered:"solid at this level",
@@ -399,7 +402,7 @@ var S = {
    confirmClear:"Tap again to confirm", cleared:"Cleared",
    weakHow:"“Not yet solid” = never answered correctly, or missed last time.",
    weakHowLv:"Only items you have not yet answered correctly at this level, or missed last time.",
-   vlvDesc:{fill:"Tap a blank to reveal just that word",hint:"Only the first letter of each word",blank:"Whole verse hidden — recite first, then check"},
+   vlvDesc:{fill:"Tap a blank to reveal just that word",hint:"Tap any clause to reveal just that clause",blank:"Tap any clause to reveal just that clause"},
    footer:"Scripture: Chinese Union Version (1919, public domain) / King James Version (public domain). Topical structure from Bible Textionary®, Noble B. Vining, © 1982, 1984 — this app is for personal and church study." }
 };
 function t(s){ var a=arguments; return String(s).replace(/%(\d)/g,function(m,i){return a[+i]}); }
@@ -536,6 +539,44 @@ function blankAll(text,lang){
   if(isEn(lang)) return esc(text).replace(/[A-Za-z0-9][A-Za-z0-9''-]*/g,function(w){return "▁".repeat(w.length)});
   return text.split("").map(function(c){ return PUNC.test(c)?esc(c):"▁" }).join("");
 }
+/* 依標點把經文切成短句，讓使用者可以單獨點開其中一句 */
+function clauseParts(text,lang){
+  var re = isEn(lang) ? /[,.;:?!]+["'\u2019\u201d\)\]]*\s*/g
+                      : /[\s，。、；：？！「」『』（）〔〕《》…—·,.;:?!"'()\[\]]+/g;
+  var out=[], last=0, m;
+  re.lastIndex=0;
+  while((m=re.exec(text))!==null){
+    if(m[0]===""){ re.lastIndex++; continue; }
+    if(m.index>last) out.push({p:false,s:text.slice(last,m.index)});
+    out.push({p:true,s:m[0]});
+    last=re.lastIndex;
+  }
+  if(last<text.length) out.push({p:false,s:text.slice(last)});
+  return out;
+}
+function hintOne(t,lang){
+  if(isEn(lang)) return esc(t).replace(/[A-Za-z][A-Za-z'\u2019-]*/g,function(w){
+    return w[0]+"▁".repeat(Math.max(0,w.length-1)); });
+  return esc(t.charAt(0))+"▁".repeat(Math.max(0,t.length-1));
+}
+function blankOne(t,lang){
+  if(isEn(lang)) return esc(t).replace(/[A-Za-z0-9][A-Za-z0-9'\u2019-]*/g,function(w){
+    return "▁".repeat(w.length); });
+  return "▁".repeat(t.length);
+}
+function segMask(text,lang,mode,shown){
+  var parts=clauseParts(text,lang), html="", idx=0;
+  parts.forEach(function(pt){
+    if(pt.p){ html+=esc(pt.s); return; }
+    var i=idx++, on=shown&&shown[i];
+    html+='<span class="sblk'+(on?" on":"")+'" data-s="'+i+'">'+
+      (on?esc(pt.s):(mode==="hint"?hintOne(pt.s,lang):blankOne(pt.s,lang)))+"</span>";
+  });
+  return html;
+}
+function clauseCount(text,lang){
+  var n=0; clauseParts(text,lang).forEach(function(p){ if(!p.p) n++; }); return n;
+}
 function maskRef(ref,mode){
   if(!ref) return "";
   if(mode==="digits") return ref.replace(/\d/g,"▁");     /* 書卷名看得見 */
@@ -555,7 +596,7 @@ try{ document.documentElement.style.colorScheme="dark"; }catch(e){}
 
 var st = { lang: P.lang||"zh", screen:"list", tid:null, q:"",
            seq:null, itemIdx:null, vd:null,
-           sort: (P.sort==="za") ? "za" : "az",
+           sort: (P.sort==="za"||P.sort==="az") ? P.sort : "orig",
            /* default to the harder setting: hide the book name too */
            refmask: (P.refmask==="digits") ? "digits" : "all",
            fs: (typeof P.fs==="number" && P.fs>=0 && P.fs<5) ? P.fs : 1,
@@ -632,6 +673,11 @@ function backBtn(s){ return '<button class="back" data-back="1">‹&nbsp;'+esc(s
 /* ---- topic list ---- */
 function sortedTopics(){
   var a=TOPICS.slice();
+  /* 「主題」＝原書順序：TOPICS 本來就照原書排，id 就是原書的序號 */
+  if(st.sort==="orig"){
+    a.sort(function(x,y){ return x.id-y.id; });
+    return a;
+  }
   a.sort(function(x,y){ return x.en.localeCompare(y.en,"en"); });
   if(st.sort==="za") a.reverse();
   return a;
@@ -668,6 +714,7 @@ function viewList(s){
     '<main><div class="wrap">'+
     '<input class="search" id="q" placeholder="'+esc(s.search)+'" value="'+esc(st.q)+'">'+
     '<div class="filt" style="margin:12px 0 12px">'+
+      '<button data-sort="orig" aria-pressed="'+(st.sort==="orig")+'">'+esc(s.sortOrig)+"</button>"+
       '<button data-sort="az" aria-pressed="'+(st.sort==="az")+'">A → Z</button>'+
       '<button data-sort="za" aria-pressed="'+(st.sort==="za")+'">Z → A</button>'+
     "</div>"+
@@ -881,10 +928,12 @@ function viewVerse(s){
   var tp=TOPICS[st.tid], it=tp.items[st.itemIdx], v=it.vs[st.vd.vi], d=st.vd;
   var rec=P.v[vkeyOf(v,d.level)]||{ok:0,ng:0};
   var body;
-  if(d.revealed)            body=esc(v[s.key]);
+  var nCl = (d.level==="fill") ? 0 : clauseCount(v[s.key],s.lang);
+  var nOn = 0; Object.keys(d.shown||{}).forEach(function(){ nOn++; });
+  var allOn = d.revealed || (d.level!=="fill" && nCl>0 && nOn>=nCl);
+  if(allOn)                 body=esc(v[s.key]);
   else if(d.level==="fill") body=maskUnits(v[s.key],s.lang,.38,d.salt,d.shown);
-  else if(d.level==="hint") body=firstHint(v[s.key],s.lang);
-  else                      body=blankAll(v[s.key],s.lang);
+  else                      body=segMask(v[s.key],s.lang,d.level,d.shown);
   var lvSeg='<div class="seg" role="group" style="margin-bottom:16px;width:100%">'+
     [["fill",s.lv.fill],["hint",s.lv.hint],["blank",s.lv.blank]].map(function(p){
       return '<button data-vlv="'+p[0]+'" aria-pressed="'+(d.level===p[0])+'" style="flex:1">'+
@@ -893,18 +942,15 @@ function viewVerse(s){
     '<main><div class="wrap">'+lvSeg+
     '<div class="qmeta"><span class="n">'+esc(v[s.vk])+"</span>"+
       '<span class="n">'+esc(t(s.scoreline,rec.ok,rec.ng))+"</span></div>"+
-    '<div class="card"><div class="vbody'+(s.key==="en"?" en":"")+
-      (!d.revealed&&d.level!=="fill"?" tap":"")+'" id="vbody"'+
-      (!d.revealed&&d.level!=="fill"?' data-vreveal="1"':"")+">"+body+"</div>"+
-      (d.level==="fill"&&!d.revealed
-        ? '<div class="stat"><div>'+esc(s.vlvDesc.fill)+"</div></div>" : "")+
+    '<div class="card"><div class="vbody'+(s.key==="en"?" en":"")+'" id="vbody">'+body+"</div>"+
+      (allOn ? "" : '<div class="stat"><div>'+esc(s.vlvDesc[d.level])+"</div></div>")+
     "</div>"+
     '<div class="actions" style="margin-top:14px">'+
       '<button class="btn btn-wide" data-reshuffle="1">'+esc(s.reshuffle)+"</button>"+
       (st.vd.vi+1<it.vs.length?'<button class="btn btn-wide" data-nextv="1">'+esc(s.nextv)+"</button>":"")+
     "</div></div></main>"+
     '<div class="footbar"><div class="wrap">'+
-      (d.revealed
+      (allOn
         ? '<button class="btn btn-clay btn-wide" data-vmark="0">'+esc(s.forgot)+"</button>"+
           '<button class="btn btn-sage btn-wide" data-vmark="1">'+esc(s.got)+"</button>"
         : '<button class="btn btn-p btn-wide" data-vreveal="1">'+esc(s.showAll)+"</button>")+
@@ -913,7 +959,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk");
+  var el=e.target.closest("[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.fs){
@@ -997,6 +1043,11 @@ document.addEventListener("click",function(e){
     else { st.screen="verses"; }
     return render();
   }
+  if(el.classList.contains("sblk")){
+    if(st.screen!=="verse" || !st.vd) return;
+    st.vd.shown[el.dataset.s]=1;
+    st.keepScroll=window.scrollY; return render();
+  }
   if(el.classList.contains("blk")){
     var bi=el.dataset.b;
     if(st.screen==="verse" && st.vd)     st.vd.shown[bi]=1;
@@ -1022,6 +1073,7 @@ document.addEventListener("input",function(e){
 render();
 })();
 </script>
+
 
 <script>
 if ("serviceWorker" in navigator) {
