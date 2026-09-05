@@ -1,6 +1,6 @@
 /* Textionary 背誦本 — offline cache.
    改過 index.html 之後，把下面的版本號 +1，手機才會抓到新版。 */
-const VERSION = "textionary-v21";
+const VERSION = "textionary-v22";
 const FILES = [
   "./", "./index.html", "./manifest.webmanifest",
   "./icon-180.png", "./icon-192.png", "./icon-512.png"
