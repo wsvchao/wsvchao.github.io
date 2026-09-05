@@ -187,6 +187,19 @@ main{padding:18px 0 calc(104px * var(--fs))}
   border-top:1px solid var(--rule-soft);padding:10px 0 max(10px,env(safe-area-inset-bottom))}
 .footbar .wrap{display:flex;gap:8px}
 
+/* ---------- 前後文（整章） ---------- */
+.chline{display:flex;gap:10px;align-items:baseline;padding:7px 8px;border-radius:8px}
+.chline.cur{background:var(--brass-soft)}
+.chn{font-family:var(--f-mono);font-size:calc(11px * var(--fs));color:var(--faint);
+  flex:0 0 auto;min-width:calc(22px * var(--fs));text-align:right;font-variant-numeric:tabular-nums;
+  padding-top:.25em}
+.chline.cur .chn{color:var(--brass-ink);font-weight:600}
+.chtext{font-family:var(--f-scr);font-size:calc(17px * var(--fs));line-height:1.85;flex:1 1 auto;min-width:0}
+.chtext.en{font-family:var(--f-ui);font-size:calc(15.5px * var(--fs));line-height:1.75}
+.chnav{display:flex;gap:8px;margin:20px 0 0}
+.chload{text-align:center;color:var(--muted);font-family:var(--f-mono);
+  font-size:calc(12px * var(--fs));padding:40px 0;letter-spacing:.06em}
+
 /* ---------- 朗讀 ---------- */
 .ttsbar{position:fixed;left:0;right:0;bottom:0;z-index:30;
   background:color-mix(in srgb,var(--ground) 94%,transparent);backdrop-filter:blur(14px);
@@ -305,7 +318,8 @@ function hydrate(k){
   if(_vc[k]) return _vc[k];
   var p=k.split("."), b=BOOKS[+p[0]], row=VT[k]||["","",""];
   var o={ kz:b[0]+p[1]+":"+p[2], kh:b[1]+p[1]+":"+p[2], ke:b[2]+" "+p[1]+":"+p[2],
-          zh:row[0], hans:row[1], en:row[2] };
+          zh:row[0], hans:row[1], en:row[2],
+          bi:+p[0], c:+p[1], v:+p[2] };
   _vc[k]=o; return o;
 }
 var N_REFS = 0;
@@ -340,6 +354,9 @@ var S = {
    fsNames:["小","標準","大","特大","最大"],
    fsSampleK:"約3:16", fsSample:"上帝愛世人，甚至將祂的獨生子賜給他們。",
    filtAll:"全部", filtWeak:"只練不熟的", sortOrig:"主題",
+   ctx:"前後文", ctxLoad:"載入中…", chPrev:"上一章", chNext:"下一章",
+   ctxErr:"讀不到這一章。前後文的經文放在你自己的網站上，預覽版沒有這些檔案。",
+   ctxOnce:"第一次看某一卷需要連網，之後就存在手機裡，離線也讀得到。",
    readTopic:"朗讀這個主題", ttsStop:"停止", ttsPrev:"上一句", ttsNext:"下一句",
    ttsPause:"暫停", ttsPlay:"繼續", ttsFull:"讀經文全文", ttsRate:"語速",
    ttsPos:"第 %1 ／ %2 句", ttsNo:"這部裝置的瀏覽器不支援朗讀",
@@ -385,6 +402,9 @@ var S = {
    fsNames:["小","标准","大","特大","最大"],
    fsSampleK:"约3:16", fsSample:"上帝爱世人，甚至将祂的独生子赐给他们。",
    filtAll:"全部", filtWeak:"只练不熟的", sortOrig:"主题",
+   ctx:"前后文", ctxLoad:"载入中…", chPrev:"上一章", chNext:"下一章",
+   ctxErr:"读不到这一章。前后文的经文放在你自己的网站上，预览版没有这些档案。",
+   ctxOnce:"第一次看某一卷需要连网，之后就存在手机里，离线也读得到。",
    readTopic:"朗读这个主题", ttsStop:"停止", ttsPrev:"上一句", ttsNext:"下一句",
    ttsPause:"暂停", ttsPlay:"继续", ttsFull:"读经文全文", ttsRate:"语速",
    ttsPos:"第 %1 ／ %2 句", ttsNo:"这部装置的浏览器不支援朗读",
@@ -430,6 +450,9 @@ var S = {
    fsNames:["Small","Default","Large","Larger","Largest"],
    fsSampleK:"John 3:16", fsSample:"For God so loved the world, that he gave his only begotten Son.",
    filtAll:"All", filtWeak:"Not yet solid", sortOrig:"Topical",
+   ctx:"In context", ctxLoad:"Loading…", chPrev:"Previous chapter", chNext:"Next chapter",
+   ctxErr:"This chapter could not be loaded. The full text lives on your own site; the preview does not carry those files.",
+   ctxOnce:"A book is fetched the first time you open it, then kept on the device for offline use.",
    readTopic:"Read this topic aloud", ttsStop:"Stop", ttsPrev:"Previous", ttsNext:"Next",
    ttsPause:"Pause", ttsPlay:"Resume", ttsFull:"Read the full verses", ttsRate:"Speed",
    ttsPos:"%1 of %2", ttsNo:"This browser does not support speech",
@@ -686,9 +709,14 @@ function render(){
   else if(st.screen==="vpick")  h=viewVpick(s);
   else if(st.screen==="verses") h=viewVerses(s);
   else if(st.screen==="verse")  h=viewVerse(s);
+  else if(st.screen==="chapter")h=viewChapter(s);
   h = h.replace('<main><div class="wrap">', '<main><div class="wrap">'+fsPanel(s));
   app.innerHTML=h;
   window.scrollTo(0, st.keepScroll||0); st.keepScroll=0;
+  if(st.screen==="chapter" && st.ch && st.ch.v){
+    var cur=document.getElementById("chcur");
+    if(cur){ try{ cur.scrollIntoView({block:"center"}); }catch(e){} }
+  }
 }
 function langSeg(){
   var l=st.lang;
@@ -772,6 +800,62 @@ function viewList(s){
     '<button class="clearbtn'+(st.armAll?" armed":"")+'" data-clear="all">'+
       esc(st.armAll?s.confirmClear:s.clearAll)+"</button>"+
     '<p class="foot">'+esc(s.footer)+"</p></div></main>";
+}
+
+/* ---------------- 前後文：整章經文 ---------------- */
+/* 全本聖經拆成 66 個檔放在網站上，點「前後文」才抓那一卷，抓過就留在手機裡。 */
+var BIB = {};
+function bookUrl(bi){ return "bible/" + (bi < 10 ? "0" : "") + bi + ".json"; }
+function loadBook(bi, cb){
+  if(BIB[bi]) return cb(null, BIB[bi]);
+  if(typeof fetch !== "function") return cb(1);
+  fetch(bookUrl(bi))
+    .then(function(r){ if(!r.ok) throw new Error("http"); return r.json(); })
+    .then(function(j){ BIB[bi] = j; cb(null, j); })
+    .catch(function(){ cb(1); });
+}
+function openChapter(bi, c, v){
+  st.ch = { bi: bi, c: c, v: v || 0, loading: !BIB[bi], err: 0 };
+  st.screen = "chapter";
+  render();
+  if(BIB[bi]) return;
+  loadBook(bi, function(err){
+    if(!st.ch || st.screen !== "chapter") return;
+    st.ch.loading = 0; st.ch.err = err ? 1 : 0;
+    render();
+  });
+}
+function chapterCount(bi){
+  var b = BIB[bi]; if(!b) return 0;
+  var max = 0; for(var k in b){ if(+k > max) max = +k; }
+  return max;
+}
+function viewChapter(s){
+  var ch = st.ch, b = BOOKS[ch.bi];
+  var name = (s.key === "en") ? b[5] : (s.key === "hans" ? b[4] : b[3]);
+  var title = (s.key === "en") ? (name + " " + ch.c) : (name + " " + ch.c + s.spChapter);
+  var body;
+  if(ch.loading){
+    body = '<div class="chload">' + esc(s.ctxLoad) + "</div>";
+  } else if(ch.err || !BIB[ch.bi] || !BIB[ch.bi][ch.c]){
+    body = '<div class="note">' + esc(s.ctxErr) + "</div>";
+  } else {
+    var vs = BIB[ch.bi][ch.c], nums = Object.keys(vs).map(Number).sort(function(a, b2){ return a - b2; });
+    var col = (s.key === "en") ? 2 : (s.key === "hans" ? 1 : 0);
+    body = nums.map(function(n){
+      return '<div class="chline' + (n === ch.v ? " cur" : "") + '" id="' + (n === ch.v ? "chcur" : "") + '">' +
+        '<span class="chn">' + n + "</span>" +
+        '<span class="chtext' + (s.key === "en" ? " en" : "") + '">' + esc(vs[String(n)][col]) + "</span></div>";
+    }).join("");
+    var last = chapterCount(ch.bi);
+    body += '<div class="chnav">' +
+      (ch.c > 1 ? '<button class="btn btn-wide" data-chgo="' + (ch.c - 1) + '">&lsaquo;&nbsp;' + esc(s.chPrev) + "</button>" : "") +
+      (ch.c < last ? '<button class="btn btn-wide" data-chgo="' + (ch.c + 1) + '">' + esc(s.chNext) + "&nbsp;&rsaquo;</button>" : "") +
+      "</div>";
+  }
+  return bar(backBtn(s) + '<span class="bar-title">' + esc(title) + "</span>") +
+    '<main><div class="wrap"><div class="thead"><h1>' + esc(title) + "</h1>" +
+    '<div class="src">' + esc(s.ctxOnce) + "</div></div>" + body + "</div></main>";
 }
 
 /* ---------------- 朗讀 ---------------- */
@@ -1212,6 +1296,7 @@ function viewVerse(s){
     "</div>"+
     '<div class="actions" style="margin-top:14px">'+
       '<button class="btn btn-wide" data-reshuffle="1">'+esc(s.reshuffle)+"</button>"+
+      '<button class="btn btn-wide" data-ctx="1">'+esc(s.ctx)+"</button>"+
       (st.vd.vi+1<it.vs.length?'<button class="btn btn-wide" data-nextv="1">'+esc(s.nextv)+"</button>":"")+
     "</div></div></main>"+
     '<div class="footbar"><div class="wrap">'+
@@ -1224,7 +1309,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-tts],[data-ttsrate],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
+  var el=e.target.closest("[data-ctx],[data-chgo],[data-tts],[data-ttsrate],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.ttsrate !== undefined){
@@ -1283,7 +1368,8 @@ document.addEventListener("click",function(e){
   }
   if(d.back!==undefined){
     if(TTS.playing) ttsStop();
-    if(st.screen==="verse") st.screen="verses";
+    if(st.screen==="chapter") st.screen="verse";
+    else if(st.screen==="verse") st.screen="verses";
     else if(st.screen==="verses") st.screen=st.from||"topic";
     else if(st.screen==="seq"||st.screen==="vpick") st.screen="topic";
     else st.screen="list";
@@ -1340,6 +1426,14 @@ document.addEventListener("click",function(e){
   if(d.verse!==undefined){
     st.vd={vi:+d.verse, level:"fill", revealed:false, shown:{}, salt:0};
     st.screen="verse"; return render();
+  }
+  if(d.ctx!==undefined){
+    var tp=TOPICS[st.tid], it=tp.items[st.itemIdx], v=it.vs[st.vd.vi];
+    if(v) openChapter(v.bi, v.c, v.v);
+    return;
+  }
+  if(d.chgo!==undefined){
+    st.ch.c=+d.chgo; st.ch.v=0; st.keepScroll=0; return render();
   }
   if(d.vlv){ st.vd.level=d.vlv; st.vd.revealed=false; st.vd.shown={}; return render(); }
   if(d.vreveal!==undefined){ st.vd.revealed=true; return render(); }
