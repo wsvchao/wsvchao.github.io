@@ -76,8 +76,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .seg{display:flex;background:var(--surface-2);border:1px solid var(--rule-soft);
   border-radius:9px;padding:2px;gap:2px;flex:0 0 auto}
 .seg button{font-family:var(--f-mono);font-size:11.5px;font-weight:500;letter-spacing:.04em;
-  padding:5px 8px;border-radius:7px;color:var(--muted);white-space:nowrap}
-.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+  padding:5px 8px;border-radius:7px;color:var(--muted);white-space:nowrap;
+  border:1px solid transparent}
+/* 選中的用銅色填滿，跟旁邊的膠囊按鈕一致，一眼就看得出來選了哪一個 */
+.seg button[aria-pressed="true"]{background:var(--brass-soft);color:var(--brass-ink);
+  border-color:var(--brass-line);font-weight:600;box-shadow:none}
 main{padding:18px 0 calc(104px * var(--fs))}
 
 /* ---------- topic list ---------- */
@@ -214,33 +217,6 @@ main{padding:18px 0 calc(104px * var(--fs))}
 .chload{text-align:center;color:var(--muted);font-family:var(--f-mono);
   font-size:calc(12px * var(--fs));padding:40px 0;letter-spacing:.06em}
 
-/* ---------- 朗讀 ---------- */
-.ttsbar{position:fixed;left:0;right:0;bottom:0;z-index:30;
-  background:color-mix(in srgb,var(--ground) 94%,transparent);backdrop-filter:blur(14px);
-  border-top:1px solid var(--brass-line);padding:9px 0 max(9px,env(safe-area-inset-bottom))}
-.ttsbar .wrap{display:flex;flex-direction:column;gap:8px}
-.ttsrow{display:flex;align-items:center;gap:8px}
-.ttsbtn{display:flex;align-items:center;justify-content:center;
-  width:44px;height:40px;border-radius:10px;border:1px solid var(--rule);
-  background:var(--surface);color:var(--ink);font-size:15px;flex:0 0 auto}
-.ttsbtn.main{background:var(--brass-soft);border-color:var(--brass-line);color:var(--brass-ink);
-  width:56px;font-weight:600}
-.ttsbtn:active{background:var(--surface-2)}
-.ttspos{font-family:var(--f-mono);font-size:calc(11.5px * var(--fs));color:var(--muted);
-  letter-spacing:.04em;flex:1 1 auto;text-align:center;font-variant-numeric:tabular-nums}
-.ttsopt{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.ttsopt button{font-family:var(--f-mono);font-size:calc(11px * var(--fs));letter-spacing:.04em;
-  padding:4px 9px;border-radius:99px;color:var(--muted);border:1px solid var(--rule-soft);
-  background:var(--surface)}
-.ttsopt button[aria-pressed="true"]{background:var(--brass-soft);color:var(--brass-ink);
-  border-color:var(--brass-line);font-weight:600}
-.ttsopt .lbl{font-family:var(--f-mono);font-size:calc(10.5px * var(--fs));color:var(--faint);
-  letter-spacing:.1em;text-transform:uppercase}
-.ttsnote{font-family:var(--f-mono);font-size:calc(10px * var(--fs));color:var(--faint);
-  letter-spacing:.03em;line-height:1.5}
-.entry.spk,.sub.spk{background:var(--brass-soft);border-radius:8px}
-.sub.spk{padding-left:8px;padding-right:8px}
-body.ttson main{padding-bottom:150px}
 
 /* ---------- verse ---------- */
 .vrow{display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;padding:11px 0;
@@ -372,14 +348,9 @@ var S = {
    rmHow:"用兩指從螢幕最上方往下滑，iPhone 就會從頭唸到尾，並自動捲動。",
    rmSetup:"要先開啟：設定 → 輔助使用 → 朗讀內容 → 朗讀螢幕。同一頁的「語音」可以下載品質較好的聲音。",
    rmFull:"含經文全文", rmPlain:"只有條目",
-   ttsVoice:"聲音",
    ctx:"前後文", ctxLoad:"載入中…", chPrev:"上一章", chNext:"下一章",
    ctxErr:"讀不到這一章。前後文的經文放在你自己的網站上，預覽版沒有這些檔案。",
    ctxOnce:"第一次看某一卷需要連網，之後就存在手機裡，離線也讀得到。",
-   readTopic:"朗讀這個主題", ttsStop:"停止", ttsPrev:"上一句", ttsNext:"下一句",
-   ttsPause:"暫停", ttsPlay:"繼續", ttsFull:"讀經文全文", ttsRate:"語速",
-   ttsPos:"第 %1 ／ %2 句", ttsNo:"這部裝置的瀏覽器不支援朗讀",
-   ttsHint:"螢幕關掉或切換到別的 App，朗讀會停止。",
    spChapter:"章", spVerse:"節", spTo:"到", spAnd:"、",
    tapReveal:"點一下顯示答案", tapEach:"點各段出處，逐一顯示",
    refLabel:"出處", refDigits:"只遮數字", refAll:"連書卷",
@@ -425,14 +396,9 @@ var S = {
    rmHow:"用两指从萤幕最上方往下滑，iPhone 就会从头念到尾，并自动捲动。",
    rmSetup:"要先开启：设定 → 辅助使用 → 朗读内容 → 朗读萤幕。同一页的「语音」可以下载品质较好的声音。",
    rmFull:"含经文全文", rmPlain:"只有条目",
-   ttsVoice:"声音",
    ctx:"前后文", ctxLoad:"载入中…", chPrev:"上一章", chNext:"下一章",
    ctxErr:"读不到这一章。前后文的经文放在你自己的网站上，预览版没有这些档案。",
    ctxOnce:"第一次看某一卷需要连网，之后就存在手机里，离线也读得到。",
-   readTopic:"朗读这个主题", ttsStop:"停止", ttsPrev:"上一句", ttsNext:"下一句",
-   ttsPause:"暂停", ttsPlay:"继续", ttsFull:"读经文全文", ttsRate:"语速",
-   ttsPos:"第 %1 ／ %2 句", ttsNo:"这部装置的浏览器不支援朗读",
-   ttsHint:"萤幕关掉或切换到别的 App，朗读会停止。",
    spChapter:"章", spVerse:"节", spTo:"到", spAnd:"、",
    tapReveal:"点一下显示答案", tapEach:"点各段出处，逐一显示",
    refLabel:"出处", refDigits:"只遮数字", refAll:"连书卷",
@@ -478,14 +444,9 @@ var S = {
    rmHow:"Swipe down with two fingers from the very top of the screen and iPhone reads the page, scrolling as it goes.",
    rmSetup:"Turn it on first: Settings → Accessibility → Spoken Content → Speak Screen. Better voices can be downloaded from the Voices page there.",
    rmFull:"With full verses", rmPlain:"Entries only",
-   ttsVoice:"Voice",
    ctx:"In context", ctxLoad:"Loading…", chPrev:"Previous chapter", chNext:"Next chapter",
    ctxErr:"This chapter could not be loaded. The full text lives on your own site; the preview does not carry those files.",
    ctxOnce:"A book is fetched the first time you open it, then kept on the device for offline use.",
-   readTopic:"Read this topic aloud", ttsStop:"Stop", ttsPrev:"Previous", ttsNext:"Next",
-   ttsPause:"Pause", ttsPlay:"Resume", ttsFull:"Read the full verses", ttsRate:"Speed",
-   ttsPos:"%1 of %2", ttsNo:"This browser does not support speech",
-   ttsHint:"Speech stops when the screen locks or you switch apps.",
    spChapter:" chapter ", spVerse:" verse ", spTo:" to ", spAnd:", ",
    tapReveal:"Tap to show the answer", tapEach:"Tap each reference to reveal it",
    refLabel:"Ref", refDigits:"Numbers", refAll:"+ Book",
@@ -925,41 +886,7 @@ function viewChapter(s){
     '<div class="src">' + esc(s.ctxOnce) + "</div></div>" + body + "</div></main>";
 }
 
-/* ---------------- 朗讀 ---------------- */
-/* 用瀏覽器內建的語音合成，不需要音檔。iOS 上螢幕鎖了就會停，這是 Safari 的限制。 */
-var TTS = {
-  ok: (typeof window !== "undefined" && "speechSynthesis" in window),
-  list: [], i: 0, playing: false, paused: false,
-  rate: 1, full: false, tid: null, voice: null, keep: 0
-};
-try{
-  var _tr = parseFloat(P.ttsRate);
-  if(_tr >= 0.6 && _tr <= 1.6) TTS.rate = _tr;
-  TTS.full = !!P.ttsFull;
-}catch(e){}
-
-function ttsLangTag(){ return st.lang==="en" ? "en-US" : (st.lang==="hans" ? "zh-CN" : "zh-TW"); }
-function pickVoice(){
-  if(!TTS.ok) return null;
-  var want = ttsLangTag(), vs = [];
-  try{ vs = window.speechSynthesis.getVoices() || []; }catch(e){ return null; }
-  if(!vs.length) return null;
-  var exact = vs.filter(function(v){ return v.lang && v.lang.replace("_","-") === want; });
-  if(P.ttsVoice){
-    var chosen = vs.filter(function(v){ return v.name === P.ttsVoice; });
-    if(chosen.length && chosen[0].lang && chosen[0].lang.replace("_","-").indexOf(want.split("-")[0]) === 0)
-      return chosen[0];
-  }
-  if(exact.length) return exact[0];
-  var base = want.split("-")[0];
-  var near = vs.filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf(base) === 0; });
-  return near.length ? near[0] : null;
-}
-if(TTS.ok){
-  try{ window.speechSynthesis.onvoiceschanged = function(){ TTS.voice = pickVoice(); }; }catch(e){}
-}
-
-/* 「創1:1-5」要唸成「創世記一章一到五節」，不能唸「創一比一」 */
+/* 「創1:1-5」在朗讀模式裡要寫成「創世記1章1到5節」，系統朗讀器才唸得出來 */
 function speakRef(ref, s){
   if(!ref) return "";
   var segs = refSegs(ref), out = [];
@@ -984,156 +911,6 @@ function speakRef(ref, s){
     out.push(t2);
   });
   return out.join(s.key === "en" ? "; " : "；");
-}
-
-/* 把一個主題攤平成一串可以唸的句子 */
-function ttsBuild(tp, s){
-  var out = [];
-  orderedItems(tp, s).forEach(function(pr){
-    var it = pr[0], ii = pr[1];
-    if(it.k === "h"){
-      out.push({ ii: ii, kind: "h", text: it[s.key === "en" ? "en" : s.key] });
-      return;
-    }
-    var body = it[s.key] || "";
-    if(it.rz) body += (s.key === "en" ? ". " : "，") + speakRef(it[s.rk], s);
-    out.push({ ii: ii, kind: "e", text: body });
-    if(TTS.full && it.vs && it.vs.length){
-      it.vs.forEach(function(v){ if(v[s.key]) out.push({ ii: ii, kind: "v", text: v[s.key] }); });
-    }
-  });
-  return out;
-}
-
-/* iOS 對太長的句子會中途斷掉，切成短段比較穩 */
-function ttsChunks(text){
-  var max = 160, parts = [], rest = String(text || "");
-  while(rest.length > max){
-    var cut = -1, marks = "。！？；.!?;，,、", i;
-    for(i = max; i > max * 0.5; i--){
-      if(marks.indexOf(rest.charAt(i)) >= 0){ cut = i + 1; break; }
-    }
-    if(cut < 0) cut = max;
-    parts.push(rest.slice(0, cut)); rest = rest.slice(cut);
-  }
-  if(rest) parts.push(rest);
-  return parts;
-}
-
-function ttsCancel(){
-  if(!TTS.ok) return;
-  try{ window.speechSynthesis.cancel(); }catch(e){}
-  if(TTS.keep){ clearInterval(TTS.keep); TTS.keep = 0; }
-}
-function ttsStop(){
-  ttsCancel();
-  TTS.playing = false; TTS.paused = false; TTS.list = []; TTS.tid = null;
-  try{ document.body.classList.remove("ttson"); }catch(e){}
-}
-function ttsSpeakCurrent(){
-  if(!TTS.ok || !TTS.playing) return;
-  if(TTS.i >= TTS.list.length){ ttsStop(); render(); return; }
-  var item = TTS.list[TTS.i], parts = ttsChunks(item.text), k = 0;
-  ttsCancel();
-  /* 桌面 Chrome 唸超過十幾秒會自己停下來，靠這個心跳撐住 */
-  TTS.keep = setInterval(function(){
-    try{
-      if(window.speechSynthesis.speaking && !window.speechSynthesis.paused){
-        window.speechSynthesis.pause(); window.speechSynthesis.resume();
-      }
-    }catch(e){}
-  }, 9000);
-  function next(){
-    if(!TTS.playing) return;
-    if(k >= parts.length){
-      if(TTS.keep){ clearInterval(TTS.keep); TTS.keep = 0; }
-      TTS.i++;
-      if(TTS.i >= TTS.list.length){ ttsStop(); render(); return; }
-      ttsPaint(); ttsSpeakCurrent(); return;
-    }
-    var u = new SpeechSynthesisUtterance(parts[k++]);
-    u.lang = ttsLangTag();
-    if(!TTS.voice) TTS.voice = pickVoice();
-    if(TTS.voice) u.voice = TTS.voice;
-    u.rate = TTS.rate; u.pitch = 1;
-    u.onend = next;
-    u.onerror = function(){ next(); };
-    try{ window.speechSynthesis.speak(u); }catch(e){ next(); }
-  }
-  next();
-}
-/* 只換高亮與進度，不整頁重繪——重繪會把朗讀打斷 */
-function ttsPaint(){
-  var all = document.querySelectorAll(".entry.spk,.sub.spk"), i;
-  for(i = 0; i < all.length; i++) all[i].classList.remove("spk");
-  var cur = TTS.list[TTS.i];
-  if(cur){
-    var el = document.querySelector('[data-tii="' + cur.ii + '"]');
-    if(el){
-      el.classList.add("spk");
-      try{ el.scrollIntoView({ block: "center", behavior: "smooth" }); }catch(e){}
-    }
-  }
-  var pos = document.getElementById("ttspos");
-  if(pos && TTS.list.length) pos.textContent = t(L().ttsPos, TTS.i + 1, TTS.list.length);
-}
-function ttsStart(){
-  if(!TTS.ok) return;
-  TTS.list = ttsBuild(TOPICS[st.tid], L());
-  TTS.i = 0; TTS.tid = st.tid; TTS.playing = true; TTS.paused = false;
-  TTS.voice = pickVoice();
-  try{ document.body.classList.add("ttson"); }catch(e){}
-  render();
-  ttsPaint();
-  ttsSpeakCurrent();
-}
-function ttsRestart(){
-  if(!TTS.playing) return;
-  TTS.list = ttsBuild(TOPICS[st.tid], L());
-  if(TTS.i >= TTS.list.length) TTS.i = 0;
-  TTS.voice = pickVoice(); TTS.paused = false;
-  ttsPaint(); ttsSpeakCurrent();
-}
-/* iOS 只把「精簡版」語音開放給網頁，設定裡下載的加強版拿不到。
-   能做的是把拿得到的都列出來，讓使用者自己挑順耳的。 */
-function ttsVoiceRow(s){
-  if(!TTS.ok) return "";
-  var vs = [];
-  try{ vs = window.speechSynthesis.getVoices() || []; }catch(e){ return ""; }
-  var base = ttsLangTag().split("-")[0];
-  var mine = vs.filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf(base) === 0; });
-  if(mine.length < 2) return "";
-  var cur = TTS.voice ? TTS.voice.name : "";
-  return '<div class="ttsopt"><span class="lbl">' + esc(s.ttsVoice) + "</span>" +
-    mine.slice(0, 5).map(function(v){
-      return '<button data-ttsvoice="' + esc(v.name) + '" aria-pressed="' + (v.name === cur) + '">' +
-        esc(v.name.replace(/\s*\(.*\)$/, "").slice(0, 14)) + "</button>";
-    }).join("") + "</div>";
-}
-function ttsBarHtml(s){
-  if(!TTS.playing) return "";
-  return '<div class="ttsbar"><div class="wrap">' +
-    '<div class="ttsrow">' +
-      '<button class="ttsbtn" data-tts="prev" aria-label="' + esc(s.ttsPrev) + '">&#9664;&#9664;</button>' +
-      '<button class="ttsbtn main" data-tts="toggle" aria-label="' +
-        esc(TTS.paused ? s.ttsPlay : s.ttsPause) + '">' +
-        (TTS.paused ? "&#9654;" : "&#10073;&#10073;") + "</button>" +
-      '<button class="ttsbtn" data-tts="next" aria-label="' + esc(s.ttsNext) + '">&#9654;&#9654;</button>' +
-      '<span class="ttspos" id="ttspos">' +
-        esc(t(s.ttsPos, TTS.i + 1, Math.max(1, TTS.list.length))) + "</span>" +
-      '<button class="ttsbtn" data-tts="stop" aria-label="' + esc(s.ttsStop) + '">&#9632;</button>' +
-    "</div>" +
-    '<div class="ttsopt">' +
-      '<span class="lbl">' + esc(s.ttsRate) + "</span>" +
-      [0.8, 1, 1.2].map(function(r){
-        return '<button data-ttsrate="' + r + '" aria-pressed="' + (TTS.rate === r) + '">' + r + "&times;</button>";
-      }).join("") +
-      '<button data-tts="full" aria-pressed="' + (TTS.full ? "true" : "false") + '">' +
-        esc(s.ttsFull) + "</button>" +
-    "</div>" +
-    ttsVoiceRow(s) +
-    '<div class="ttsnote">' + esc(s.ttsHint) + "</div>" +
-  "</div></div>";
 }
 
 /* ---- topic detail ---- */
@@ -1162,17 +939,17 @@ function viewTopic(s){
   var body=orderedItems(tp,s).map(function(pr){
     var it=pr[0], ii=pr[1];
     if(it.k==="h"){
-      return '<div class="sub" data-tii="'+ii+'"><em>'+esc(it[s.key==="en"?"en":s.key])+"</em>"+
+      return '<div class="sub"><em>'+esc(it[s.key==="en"?"en":s.key])+"</em>"+
              (s.key==="en"?"":esc(it.en))+"</div>";
     }
-    if(!it.rz) return '<div class="entry" data-tii="'+ii+'" style="border:0"><div class="eline">'+
+    if(!it.rz) return '<div class="entry" style="border:0"><div class="eline">'+
         '<span class="enum"></span><span class="etext">'+esc(it[s.key])+"</span></div></div>";
     n++;
     var rsegs=refSegs(it[s.rk]);
     /* one short reference sits on the same line with dot leaders, as in the book;
        several would squeeze the topic text into a sliver, so they stack below */
     var stack = rsegs.length>1 || it[s.rk].length>16;
-    return '<button class="entry'+(it.i?" i1":"")+'" data-item="'+ii+'" data-tii="'+ii+'">'+
+    return '<button class="entry'+(it.i?" i1":"")+'" data-item="'+ii+'">'+
       '<span class="eline"><span class="enum">'+n+'</span>'+
       '<span class="etext">'+esc(it[s.key])+"</span>"+
       (stack ? "" : '<span class="leader"></span><span class="eref">'+
@@ -1191,16 +968,12 @@ function viewTopic(s){
       '<button class="btn btn-brass btn-wide" data-vpick="1"'+(tp._hasv?"":" disabled")+">"+
         esc(s.verseDrill)+(tp._hasv?"":" "+esc(s.noSample))+"</button>"+
     "</div>"+
-    '<div class="actions" style="margin-bottom:18px">'+
-      (TTS.ok
-        ? '<button class="btn btn-wide" data-tts="start">&#9654;&nbsp;&nbsp;'+esc(s.readTopic)+"</button>"
-        : "")+
-      '<button class="btn btn-wide" data-readmode="1">&#128266;&nbsp;&nbsp;'+esc(s.readMode)+"</button>"+
-    "</div>"+
+    '<button class="btn btn-wide" data-readmode="1" style="margin-bottom:18px">'+
+      "&#128266;&nbsp;&nbsp;"+esc(s.readMode)+"</button>"+
     body+
     '<button class="clearbtn'+(st.armTopic?" armed":"")+'" data-clear="topic">'+
       esc(st.armTopic?s.confirmClear:s.clearTopic)+"</button>"+
-    "</div></main>"+ttsBarHtml(s);
+    "</div></main>";
 }
 
 /* ---- sequence drill ---- */
@@ -1400,51 +1173,9 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-readmode],[data-rmfull],[data-ttsvoice],[data-ctx],[data-chgo],[data-tts],[data-ttsrate],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
+  var el=e.target.closest("[data-readmode],[data-rmfull],[data-ctx],[data-chgo],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
-  if(d.ttsrate !== undefined){
-    TTS.rate = parseFloat(d.ttsrate); P.ttsRate = TTS.rate; save();
-    if(TTS.playing){ TTS.paused=false; ttsSpeakCurrent(); }
-    st.keepScroll=window.scrollY; return render();
-  }
-  if(d.tts){
-    if(d.tts === "start"){ if(!TTS.ok) return; return ttsStart(); }
-    if(d.tts === "stop"){ ttsStop(); st.keepScroll=window.scrollY; return render(); }
-    if(d.tts === "toggle"){
-      if(TTS.paused){
-        TTS.paused=false;
-        try{ window.speechSynthesis.resume(); }catch(e){}
-        /* iOS 的 resume 有時不動，保險起見重唸這一句 */
-        setTimeout(function(){
-          try{ if(TTS.playing && !TTS.paused && !window.speechSynthesis.speaking) ttsSpeakCurrent(); }catch(e){}
-        }, 350);
-      } else {
-        TTS.paused=true;
-        try{ window.speechSynthesis.pause(); }catch(e){}
-      }
-      st.keepScroll=window.scrollY; return render();
-    }
-    if(d.tts === "next" || d.tts === "prev"){
-      if(!TTS.playing) return;
-      TTS.i += (d.tts === "next" ? 1 : -1);
-      if(TTS.i < 0) TTS.i = 0;
-      if(TTS.i >= TTS.list.length){ ttsStop(); return render(); }
-      TTS.paused=false; ttsPaint(); ttsSpeakCurrent(); return;
-    }
-    if(d.tts === "full"){
-      TTS.full = !TTS.full; P.ttsFull = TTS.full; save();
-      if(TTS.playing){
-        var cur = TTS.list[TTS.i], ii = cur ? cur.ii : 0;
-        TTS.list = ttsBuild(TOPICS[st.tid], L());
-        var j = 0; for(var q=0;q<TTS.list.length;q++){ if(TTS.list[q].ii === ii){ j=q; break; } }
-        TTS.i = j; TTS.paused=false;
-        st.keepScroll=window.scrollY; render(); ttsPaint(); ttsSpeakCurrent(); return;
-      }
-      st.keepScroll=window.scrollY; return render();
-    }
-    return;
-  }
   if(d.fs){
     if(d.fs==="toggle") st.fsOpen=!st.fsOpen;
     else if(d.fs==="up"   && st.fs<FS.length-1) st.fs++;
@@ -1452,13 +1183,8 @@ document.addEventListener("click",function(e){
     else if(d.fs==="reset") st.fs=1;
     P.fs=st.fs; save(); applyFs(); st.keepScroll=window.scrollY; return render();
   }
-  if(d.lang){
-    st.lang=d.lang; P.lang=d.lang; save();
-    if(TTS.playing){ ttsCancel(); render(); return ttsRestart(); }
-    return render();
-  }
+  if(d.lang){ st.lang=d.lang; P.lang=d.lang; save(); return render(); }
   if(d.back!==undefined){
-    if(TTS.playing) ttsStop();
     if(st.screen==="readmode") st.screen="topic";
     else if(st.screen==="chapter") st.screen="verse";
     else if(st.screen==="verse") st.screen="verses";
@@ -1468,10 +1194,10 @@ document.addEventListener("click",function(e){
     st.armAll=false; st.armTopic=false;
     return render();
   }
-  if(d.vpick!==undefined){ if(TTS.playing) ttsStop(); st.screen="vpick"; return render(); }
-  if(d.topic!==undefined){ if(TTS.playing) ttsStop(); st.tid=+d.topic; st.screen="topic";
+  if(d.vpick!==undefined){ st.screen="vpick"; return render(); }
+  if(d.topic!==undefined){ st.tid=+d.topic; st.screen="topic";
     st.armAll=false; st.armTopic=false; st.vfilt="all"; return render(); }
-  if(d.seq!==undefined){ if(TTS.playing) ttsStop(); return startSeq(); }
+  if(d.seq!==undefined){ return startSeq(); }
   if(d.lv){ return startSeq(st.seq.filter, d.lv); }
   if(d.filt){ return startSeq(d.filt, st.seq?st.seq.level:"hint"); }
   if(d.vfilt){ st.vfilt=d.vfilt; return render(); }
@@ -1513,23 +1239,14 @@ document.addEventListener("click",function(e){
     q.i++; q.revealed=false; q.shown={}; q.rshown={}; q.salt=0; return render();
   }
   if(d.restart!==undefined){ return startSeq(); }
-  if(d.item!==undefined){ if(TTS.playing) ttsStop(); st.from=st.screen; st.itemIdx=+d.item; st.screen="verses"; return render(); }
+  if(d.item!==undefined){ st.from=st.screen; st.itemIdx=+d.item; st.screen="verses"; return render(); }
   if(d.openv!==undefined){ st.from="seq"; st.itemIdx=+d.openv; st.screen="verses"; return render(); }
   if(d.verse!==undefined){
     st.vd={vi:+d.verse, level:"fill", revealed:false, shown:{}, salt:0};
     st.screen="verse"; return render();
   }
-  if(d.readmode!==undefined){
-    if(TTS.playing) ttsStop();
-    st.screen="readmode"; st.keepScroll=0; return render();
-  }
+  if(d.readmode!==undefined){ st.screen="readmode"; st.keepScroll=0; return render(); }
   if(d.rmfull!==undefined){ st.rmFull = (d.rmfull==="1"); st.keepScroll=0; return render(); }
-  if(d.ttsvoice!==undefined){
-    P.ttsVoice = d.ttsvoice; save();
-    TTS.voice = pickVoice();
-    if(TTS.playing){ TTS.paused=false; st.keepScroll=window.scrollY; render(); ttsSpeakCurrent(); return; }
-    st.keepScroll=window.scrollY; return render();
-  }
   if(d.ctx!==undefined){
     var tp=TOPICS[st.tid], it=tp.items[st.itemIdx], v=it.vs[st.vd.vi];
     if(v) openChapter(v.bi, v.c, v.v);
@@ -1579,7 +1296,6 @@ document.addEventListener("input",function(e){
   if(composing || e.isComposing) return;   /* 組字中，等選完字再篩選 */
   refreshList();
 });
-window.addEventListener("pagehide", function(){ try{ ttsCancel(); }catch(e){} });
 render();
 })();
 </script>
