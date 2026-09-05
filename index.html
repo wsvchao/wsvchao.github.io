@@ -187,6 +187,20 @@ main{padding:18px 0 calc(104px * var(--fs))}
   border-top:1px solid var(--rule-soft);padding:10px 0 max(10px,env(safe-area-inset-bottom))}
 .footbar .wrap{display:flex;gap:8px}
 
+/* ---------- 朗讀模式：給系統朗讀器讀的乾淨版面 ---------- */
+.rmhow{background:var(--sunk,var(--surface-2));border:1px solid var(--rule-soft);
+  border-radius:12px;padding:14px 16px;margin:0 0 22px}
+.rmhow p{margin:0 0 6px;font-size:calc(13.5px * var(--fs));line-height:1.7;color:var(--ink)}
+.rmhow p.sub{margin:0;font-size:calc(12px * var(--fs));color:var(--muted)}
+.rmbody{font-family:var(--f-scr);font-size:calc(19px * var(--fs));line-height:2.05;
+  letter-spacing:.01em;color:var(--ink)}
+.rmbody.en{font-family:var(--f-ui);font-size:calc(17px * var(--fs));line-height:1.85}
+.rmbody h2{font-family:var(--f-ui);font-size:calc(15px * var(--fs));font-weight:600;
+  color:var(--brass-ink);margin:26px 0 8px;letter-spacing:.02em}
+.rmbody p{margin:0 0 10px}
+.rmbody p.vs{color:var(--muted);font-size:calc(17px * var(--fs));margin:0 0 14px;padding-left:12px;
+  border-left:2px solid var(--rule)}
+
 /* ---------- 前後文（整章） ---------- */
 .chline{display:flex;gap:10px;align-items:baseline;padding:7px 8px;border-radius:8px}
 .chline.cur{background:var(--brass-soft)}
@@ -354,6 +368,11 @@ var S = {
    fsNames:["小","標準","大","特大","最大"],
    fsSampleK:"約3:16", fsSample:"上帝愛世人，甚至將祂的獨生子賜給他們。",
    filtAll:"全部", filtWeak:"只練不熟的", sortOrig:"主題",
+   readMode:"朗讀模式（給 iPhone 朗讀螢幕用）", rmTitle:"朗讀模式",
+   rmHow:"用兩指從螢幕最上方往下滑，iPhone 就會從頭唸到尾，並自動捲動。",
+   rmSetup:"要先開啟：設定 → 輔助使用 → 朗讀內容 → 朗讀螢幕。同一頁的「語音」可以下載品質較好的聲音。",
+   rmFull:"含經文全文", rmPlain:"只有條目",
+   ttsVoice:"聲音",
    ctx:"前後文", ctxLoad:"載入中…", chPrev:"上一章", chNext:"下一章",
    ctxErr:"讀不到這一章。前後文的經文放在你自己的網站上，預覽版沒有這些檔案。",
    ctxOnce:"第一次看某一卷需要連網，之後就存在手機裡，離線也讀得到。",
@@ -402,6 +421,11 @@ var S = {
    fsNames:["小","标准","大","特大","最大"],
    fsSampleK:"约3:16", fsSample:"上帝爱世人，甚至将祂的独生子赐给他们。",
    filtAll:"全部", filtWeak:"只练不熟的", sortOrig:"主题",
+   readMode:"朗读模式（给 iPhone 朗读萤幕用）", rmTitle:"朗读模式",
+   rmHow:"用两指从萤幕最上方往下滑，iPhone 就会从头念到尾，并自动捲动。",
+   rmSetup:"要先开启：设定 → 辅助使用 → 朗读内容 → 朗读萤幕。同一页的「语音」可以下载品质较好的声音。",
+   rmFull:"含经文全文", rmPlain:"只有条目",
+   ttsVoice:"声音",
    ctx:"前后文", ctxLoad:"载入中…", chPrev:"上一章", chNext:"下一章",
    ctxErr:"读不到这一章。前后文的经文放在你自己的网站上，预览版没有这些档案。",
    ctxOnce:"第一次看某一卷需要连网，之后就存在手机里，离线也读得到。",
@@ -450,6 +474,11 @@ var S = {
    fsNames:["Small","Default","Large","Larger","Largest"],
    fsSampleK:"John 3:16", fsSample:"For God so loved the world, that he gave his only begotten Son.",
    filtAll:"All", filtWeak:"Not yet solid", sortOrig:"Topical",
+   readMode:"Reading mode (for iPhone Speak Screen)", rmTitle:"Reading mode",
+   rmHow:"Swipe down with two fingers from the very top of the screen and iPhone reads the page, scrolling as it goes.",
+   rmSetup:"Turn it on first: Settings → Accessibility → Spoken Content → Speak Screen. Better voices can be downloaded from the Voices page there.",
+   rmFull:"With full verses", rmPlain:"Entries only",
+   ttsVoice:"Voice",
    ctx:"In context", ctxLoad:"Loading…", chPrev:"Previous chapter", chNext:"Next chapter",
    ctxErr:"This chapter could not be loaded. The full text lives on your own site; the preview does not carry those files.",
    ctxOnce:"A book is fetched the first time you open it, then kept on the device for offline use.",
@@ -710,6 +739,7 @@ function render(){
   else if(st.screen==="verses") h=viewVerses(s);
   else if(st.screen==="verse")  h=viewVerse(s);
   else if(st.screen==="chapter")h=viewChapter(s);
+  else if(st.screen==="readmode")h=viewReadMode(s);
   h = h.replace('<main><div class="wrap">', '<main><div class="wrap">'+fsPanel(s));
   app.innerHTML=h;
   window.scrollTo(0, st.keepScroll||0); st.keepScroll=0;
@@ -802,6 +832,43 @@ function viewList(s){
     '<p class="foot">'+esc(s.footer)+"</p></div></main>";
 }
 
+/* ---------------- 朗讀模式 ---------------- */
+/* iOS 的「朗讀螢幕」是系統功能，網頁沒有辦法用程式叫出來，也沒辦法控制它。
+   能做的是把整個主題排成一頁乾淨、標點完整的文章，讓系統朗讀器一路唸下去。
+   出處也先換成「創世記2章2節」這種唸得出來的寫法。 */
+function rmEnd(txt, s){
+  var t2 = String(txt || "").trim();
+  if(!t2) return "";
+  var last = t2.charAt(t2.length - 1);
+  if("。！？；.!?;".indexOf(last) >= 0) return t2;
+  return t2 + (s.key === "en" ? "." : "。");
+}
+function viewReadMode(s){
+  var tp = TOPICS[st.tid], full = !!st.rmFull, out = [];
+  orderedItems(tp, s).forEach(function(pr){
+    var it = pr[0];
+    if(it.k === "h"){ out.push("<h2>" + esc(it[s.key === "en" ? "en" : s.key]) + "</h2>"); return; }
+    var line = it[s.key] || "";
+    if(it.rz) line += (s.key === "en" ? " — " : "——") + speakRef(it[s.rk], s);
+    out.push("<p>" + esc(rmEnd(line, s)) + "</p>");
+    if(full && it.vs && it.vs.length){
+      it.vs.forEach(function(v){
+        if(v[s.key]) out.push('<p class="vs">' + esc(rmEnd(v[s.key], s)) + "</p>");
+      });
+    }
+  });
+  return bar(backBtn(s) + '<span class="bar-title">' + esc(s.rmTitle) + "</span>") +
+    '<main><div class="wrap">' +
+    '<div class="thead"><h1>' + esc(tp[s.key === "en" ? "en" : s.key]) + "</h1></div>" +
+    '<div class="rmhow"><p>' + esc(s.rmHow) + '</p><p class="sub">' + esc(s.rmSetup) + "</p></div>" +
+    '<div class="filt" style="margin:0 0 22px">' +
+      '<button data-rmfull="0" aria-pressed="' + (!full) + '">' + esc(s.rmPlain) + "</button>" +
+      '<button data-rmfull="1" aria-pressed="' + full + '">' + esc(s.rmFull) + "</button>" +
+    "</div>" +
+    '<div class="rmbody' + (s.key === "en" ? " en" : "") + '">' + out.join("") + "</div>" +
+    "</div></main>";
+}
+
 /* ---------------- 前後文：整章經文 ---------------- */
 /* 全本聖經拆成 66 個檔放在網站上，點「前後文」才抓那一卷，抓過就留在手機裡。 */
 var BIB = {};
@@ -878,6 +945,11 @@ function pickVoice(){
   try{ vs = window.speechSynthesis.getVoices() || []; }catch(e){ return null; }
   if(!vs.length) return null;
   var exact = vs.filter(function(v){ return v.lang && v.lang.replace("_","-") === want; });
+  if(P.ttsVoice){
+    var chosen = vs.filter(function(v){ return v.name === P.ttsVoice; });
+    if(chosen.length && chosen[0].lang && chosen[0].lang.replace("_","-").indexOf(want.split("-")[0]) === 0)
+      return chosen[0];
+  }
   if(exact.length) return exact[0];
   var base = want.split("-")[0];
   var near = vs.filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf(base) === 0; });
@@ -1022,6 +1094,22 @@ function ttsRestart(){
   TTS.voice = pickVoice(); TTS.paused = false;
   ttsPaint(); ttsSpeakCurrent();
 }
+/* iOS 只把「精簡版」語音開放給網頁，設定裡下載的加強版拿不到。
+   能做的是把拿得到的都列出來，讓使用者自己挑順耳的。 */
+function ttsVoiceRow(s){
+  if(!TTS.ok) return "";
+  var vs = [];
+  try{ vs = window.speechSynthesis.getVoices() || []; }catch(e){ return ""; }
+  var base = ttsLangTag().split("-")[0];
+  var mine = vs.filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf(base) === 0; });
+  if(mine.length < 2) return "";
+  var cur = TTS.voice ? TTS.voice.name : "";
+  return '<div class="ttsopt"><span class="lbl">' + esc(s.ttsVoice) + "</span>" +
+    mine.slice(0, 5).map(function(v){
+      return '<button data-ttsvoice="' + esc(v.name) + '" aria-pressed="' + (v.name === cur) + '">' +
+        esc(v.name.replace(/\s*\(.*\)$/, "").slice(0, 14)) + "</button>";
+    }).join("") + "</div>";
+}
 function ttsBarHtml(s){
   if(!TTS.playing) return "";
   return '<div class="ttsbar"><div class="wrap">' +
@@ -1043,6 +1131,7 @@ function ttsBarHtml(s){
       '<button data-tts="full" aria-pressed="' + (TTS.full ? "true" : "false") + '">' +
         esc(s.ttsFull) + "</button>" +
     "</div>" +
+    ttsVoiceRow(s) +
     '<div class="ttsnote">' + esc(s.ttsHint) + "</div>" +
   "</div></div>";
 }
@@ -1102,10 +1191,12 @@ function viewTopic(s){
       '<button class="btn btn-brass btn-wide" data-vpick="1"'+(tp._hasv?"":" disabled")+">"+
         esc(s.verseDrill)+(tp._hasv?"":" "+esc(s.noSample))+"</button>"+
     "</div>"+
-    (TTS.ok
-      ? '<button class="btn btn-wide" data-tts="start" style="margin-bottom:18px">&#9654;&nbsp;&nbsp;'+
-        esc(s.readTopic)+"</button>"
-      : '<p class="hint">'+esc(s.ttsNo)+"</p>")+
+    '<div class="actions" style="margin-bottom:18px">'+
+      (TTS.ok
+        ? '<button class="btn btn-wide" data-tts="start">&#9654;&nbsp;&nbsp;'+esc(s.readTopic)+"</button>"
+        : "")+
+      '<button class="btn btn-wide" data-readmode="1">&#128266;&nbsp;&nbsp;'+esc(s.readMode)+"</button>"+
+    "</div>"+
     body+
     '<button class="clearbtn'+(st.armTopic?" armed":"")+'" data-clear="topic">'+
       esc(st.armTopic?s.confirmClear:s.clearTopic)+"</button>"+
@@ -1309,7 +1400,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-ctx],[data-chgo],[data-tts],[data-ttsrate],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
+  var el=e.target.closest("[data-readmode],[data-rmfull],[data-ttsvoice],[data-ctx],[data-chgo],[data-tts],[data-ttsrate],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.ttsrate !== undefined){
@@ -1368,7 +1459,8 @@ document.addEventListener("click",function(e){
   }
   if(d.back!==undefined){
     if(TTS.playing) ttsStop();
-    if(st.screen==="chapter") st.screen="verse";
+    if(st.screen==="readmode") st.screen="topic";
+    else if(st.screen==="chapter") st.screen="verse";
     else if(st.screen==="verse") st.screen="verses";
     else if(st.screen==="verses") st.screen=st.from||"topic";
     else if(st.screen==="seq"||st.screen==="vpick") st.screen="topic";
@@ -1426,6 +1518,17 @@ document.addEventListener("click",function(e){
   if(d.verse!==undefined){
     st.vd={vi:+d.verse, level:"fill", revealed:false, shown:{}, salt:0};
     st.screen="verse"; return render();
+  }
+  if(d.readmode!==undefined){
+    if(TTS.playing) ttsStop();
+    st.screen="readmode"; st.keepScroll=0; return render();
+  }
+  if(d.rmfull!==undefined){ st.rmFull = (d.rmfull==="1"); st.keepScroll=0; return render(); }
+  if(d.ttsvoice!==undefined){
+    P.ttsVoice = d.ttsvoice; save();
+    TTS.voice = pickVoice();
+    if(TTS.playing){ TTS.paused=false; st.keepScroll=window.scrollY; render(); ttsSpeakCurrent(); return; }
+    st.keepScroll=window.scrollY; return render();
   }
   if(d.ctx!==undefined){
     var tp=TOPICS[st.tid], it=tp.items[st.itemIdx], v=it.vs[st.vd.vi];
