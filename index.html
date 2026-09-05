@@ -194,7 +194,13 @@ main{padding:18px 0 calc(104px * var(--fs))}
 .rmhow{background:var(--sunk,var(--surface-2));border:1px solid var(--rule-soft);
   border-radius:12px;padding:14px 16px;margin:0 0 22px}
 .rmhow p{margin:0 0 6px;font-size:calc(13.5px * var(--fs));line-height:1.7;color:var(--ink)}
-.rmhow p.sub{margin:0;font-size:calc(12px * var(--fs));color:var(--muted)}
+.rmhow p.sub{margin:0 0 10px;font-size:calc(12px * var(--fs));color:var(--muted)}
+.rmhide{font-family:var(--f-mono);font-size:calc(11px * var(--fs));letter-spacing:.05em;
+  color:var(--brass-ink);border:1px solid var(--brass-line);background:var(--brass-soft);
+  border-radius:99px;padding:4px 12px}
+.rmshow{font-family:var(--f-mono);font-size:calc(11px * var(--fs));letter-spacing:.05em;
+  color:var(--muted);border:1px solid var(--rule-soft);background:var(--surface);
+  border-radius:99px;padding:4px 12px;margin:0 0 20px}
 .rmbody{font-family:var(--f-scr);font-size:calc(19px * var(--fs));line-height:2.05;
   letter-spacing:.01em;color:var(--ink)}
 .rmbody.en{font-family:var(--f-ui);font-size:calc(17px * var(--fs));line-height:1.85}
@@ -347,7 +353,7 @@ var S = {
    readMode:"朗讀模式（給 iPhone 朗讀螢幕用）", rmTitle:"朗讀模式",
    rmHow:"用兩指從螢幕最上方往下滑，iPhone 就會從頭唸到尾，並自動捲動。",
    rmSetup:"要先開啟：設定 → 輔助使用 → 朗讀內容 → 朗讀螢幕。同一頁的「語音」可以下載品質較好的聲音。",
-   rmFull:"含經文全文", rmPlain:"只有條目",
+   rmFull:"含經文全文", rmPlain:"只有條目", rmHide:"收起說明", rmShow:"操作說明",
    ctx:"前後文", ctxLoad:"載入中…", chPrev:"上一章", chNext:"下一章",
    ctxErr:"讀不到這一章。前後文的經文放在你自己的網站上，預覽版沒有這些檔案。",
    ctxOnce:"第一次看某一卷需要連網，之後就存在手機裡，離線也讀得到。",
@@ -395,7 +401,7 @@ var S = {
    readMode:"朗读模式（给 iPhone 朗读萤幕用）", rmTitle:"朗读模式",
    rmHow:"用两指从萤幕最上方往下滑，iPhone 就会从头念到尾，并自动捲动。",
    rmSetup:"要先开启：设定 → 辅助使用 → 朗读内容 → 朗读萤幕。同一页的「语音」可以下载品质较好的声音。",
-   rmFull:"含经文全文", rmPlain:"只有条目",
+   rmFull:"含经文全文", rmPlain:"只有条目", rmHide:"收起说明", rmShow:"操作说明",
    ctx:"前后文", ctxLoad:"载入中…", chPrev:"上一章", chNext:"下一章",
    ctxErr:"读不到这一章。前后文的经文放在你自己的网站上，预览版没有这些档案。",
    ctxOnce:"第一次看某一卷需要连网，之后就存在手机里，离线也读得到。",
@@ -443,7 +449,7 @@ var S = {
    readMode:"Reading mode (for iPhone Speak Screen)", rmTitle:"Reading mode",
    rmHow:"Swipe down with two fingers from the very top of the screen and iPhone reads the page, scrolling as it goes.",
    rmSetup:"Turn it on first: Settings → Accessibility → Spoken Content → Speak Screen. Better voices can be downloaded from the Voices page there.",
-   rmFull:"With full verses", rmPlain:"Entries only",
+   rmFull:"With full verses", rmPlain:"Entries only", rmHide:"Hide the note", rmShow:"How to use",
    ctx:"In context", ctxLoad:"Loading…", chPrev:"Previous chapter", chNext:"Next chapter",
    ctxErr:"This chapter could not be loaded. The full text lives on your own site; the preview does not carry those files.",
    ctxOnce:"A book is fetched the first time you open it, then kept on the device for offline use.",
@@ -721,7 +727,11 @@ function fsBtn(){
   return '<button class="abtn" data-fs="toggle" aria-expanded="'+(st.fsOpen?"true":"false")+
     '" aria-label="'+esc(L().fsTitle)+'"><span class="s">A</span><span class="l">A</span></button>';
 }
-function bar(inner){ return '<div class="bar"><div class="wrap">'+inner+fsBtn()+langSeg()+"</div></div>"; }
+/* mute=1：整條工具列不進輔助使用的樹，iPhone 的朗讀螢幕就會跳過它 */
+function bar(inner, mute){
+  return '<div class="bar"'+(mute?' aria-hidden="true"':"")+'><div class="wrap">'+
+    inner+fsBtn()+langSeg()+"</div></div>";
+}
 function fsPanel(s){
   if(!st.fsOpen) return "";
   return '<div class="fspanel"><h2>'+esc(s.fsTitle)+"</h2>"+
@@ -818,14 +828,20 @@ function viewReadMode(s){
       });
     }
   });
-  return bar(backBtn(s) + '<span class="bar-title">' + esc(s.rmTitle) + "</span>") +
+  var showHow = !P.rmHideHow;
+  return bar(backBtn(s) + '<span class="bar-title">' + esc(s.rmTitle) + "</span>", 1) +
     '<main><div class="wrap">' +
-    '<div class="thead"><h1>' + esc(tp[s.key === "en" ? "en" : s.key]) + "</h1></div>" +
-    '<div class="rmhow"><p>' + esc(s.rmHow) + '</p><p class="sub">' + esc(s.rmSetup) + "</p></div>" +
-    '<div class="filt" style="margin:0 0 22px">' +
-      '<button data-rmfull="0" aria-pressed="' + (!full) + '">' + esc(s.rmPlain) + "</button>" +
-      '<button data-rmfull="1" aria-pressed="' + full + '">' + esc(s.rmFull) + "</button>" +
+    '<div aria-hidden="true">' +
+      (showHow
+        ? '<div class="rmhow"><p>' + esc(s.rmHow) + '</p><p class="sub">' + esc(s.rmSetup) + "</p>" +
+          '<button class="rmhide" data-rmhow="0">' + esc(s.rmHide) + "</button></div>"
+        : '<button class="rmshow" data-rmhow="1">' + esc(s.rmShow) + "</button>") +
+      '<div class="filt" style="margin:0 0 22px">' +
+        '<button data-rmfull="0" aria-pressed="' + (!full) + '">' + esc(s.rmPlain) + "</button>" +
+        '<button data-rmfull="1" aria-pressed="' + full + '">' + esc(s.rmFull) + "</button>" +
+      "</div>" +
     "</div>" +
+    '<div class="thead" style="margin-top:0"><h1>' + esc(tp[s.key === "en" ? "en" : s.key]) + "</h1></div>" +
     '<div class="rmbody' + (s.key === "en" ? " en" : "") + '">' + out.join("") + "</div>" +
     "</div></main>";
 }
@@ -1173,7 +1189,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-readmode],[data-rmfull],[data-ctx],[data-chgo],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
+  var el=e.target.closest("[data-readmode],[data-rmfull],[data-rmhow],[data-ctx],[data-chgo],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.fs){
@@ -1247,6 +1263,9 @@ document.addEventListener("click",function(e){
   }
   if(d.readmode!==undefined){ st.screen="readmode"; st.keepScroll=0; return render(); }
   if(d.rmfull!==undefined){ st.rmFull = (d.rmfull==="1"); st.keepScroll=0; return render(); }
+  if(d.rmhow!==undefined){
+    P.rmHideHow = (d.rmhow==="0"); save(); st.keepScroll=0; return render();
+  }
   if(d.ctx!==undefined){
     var tp=TOPICS[st.tid], it=tp.items[st.itemIdx], v=it.vs[st.vd.vi];
     if(v) openChapter(v.bi, v.c, v.v);
