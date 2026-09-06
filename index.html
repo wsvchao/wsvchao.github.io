@@ -9,12 +9,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="隨身經典">
+<meta name="apple-mobile-web-app-title" content="銘刻心版">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 </head>
 <body>
-<title>隨身經典</title>
+<title>銘刻心版</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -71,6 +71,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .wordmark{font-family:var(--f-disp);font-size:19px;font-weight:600;letter-spacing:.01em;flex:1 1 auto;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .wordmark i{font-style:normal;font-weight:500;color:var(--brass)}
+.wordmark .ed{font-weight:400;font-size:13.5px;color:var(--muted);margin-left:5px;letter-spacing:0}
 .back{display:flex;align-items:center;gap:3px;color:var(--brass);font-size:15px;white-space:nowrap;flex:0 0 auto;
   margin-left:-6px;padding:6px}
 .seg{display:flex;background:var(--surface-2);border:1px solid var(--rule-soft);
@@ -218,6 +219,9 @@ main{padding:18px 0 calc(104px * var(--fs))}
 .egchip:active{opacity:.7}
 .egpara{padding:12px 14px;margin:0 -14px 6px;border-radius:10px;color:var(--faint)}
 .egpara p{margin:0}
+.egref{font-family:var(--f-mono);font-size:calc(10px * var(--fs));letter-spacing:.05em;
+  color:var(--faint);margin-bottom:5px}
+.egpara.core .egref{color:var(--brass)}
 .egzh{font-size:calc(16px * var(--fs));line-height:1.8}
 .egen{font-size:calc(15px * var(--fs));line-height:1.65}
 .egen.alt{font-size:calc(13px * var(--fs));line-height:1.55;margin-top:9px;color:var(--faint)}
@@ -320,7 +324,7 @@ main{padding:18px 0 calc(104px * var(--fs))}
 "use strict";
 var DATA = JSON.parse(document.getElementById("bt-data").textContent);
 var TOPICS = DATA.topics, VT = DATA.v, BOOKS = DATA.books;
-var EG = DATA.eg || {}, EGV = 1;
+var EG = DATA.eg || {}, EGV = 2;
 
 /* Verses are stored once each and referenced by "bookIndex.chapter.verse".
    Rebuild the objects the views expect; repeated verses share one object. */
@@ -338,7 +342,7 @@ var N_REFS = 0;
 /* ---------------- i18n ---------------- */
 var S = {
  zh:{ lang:"zh", key:"zh", rk:"rz", vk:"kz",
-   title:"隨身經典", sub:"聖經主題索引", mark1:"隨身", mark2:"經典",
+   title:"銘刻心版", sub:"聖經主題索引", mark1:"銘刻", mark2:"心版", ed:"",
    search:"搜尋主題（中文或英文）…",
    lead:"點主題進入條目；點條目看經文全文。",
    entries:"條", pg:"頁",
@@ -390,7 +394,7 @@ var S = {
    vlvDesc:{fill:"點空格可以單獨顯示一個詞",hint:"點任一句，可單獨顯示那一句",blank:"點任一句，可單獨顯示那一句"},
    footer:"經文：聖經和合本（1919，公有領域）／King James Version（公有領域）。本 App 為個人與教會學習用途。" },
  hans:{ lang:"hans", key:"hans", rk:"rh", vk:"kh",
-   title:"随身经典", sub:"圣经主题索引", mark1:"随身", mark2:"经典",
+   title:"銘刻心版", sub:"圣经主题索引", mark1:"铭刻", mark2:"心版", ed:"",
    search:"搜索主题（中文或英文）…",
    lead:"点主题进入条目；点条目看经文全文。",
    entries:"条", pg:"页",
@@ -442,7 +446,7 @@ var S = {
    vlvDesc:{fill:"点空格可以单独显示一个词",hint:"点任一句，可单独显示那一句",blank:"点任一句，可单独显示那一句"},
    footer:"经文：圣经和合本（1919，公有领域）／King James Version（公有领域）。本 App 为个人与教会学习用途。" },
  en:{ lang:"en", key:"en", rk:"re", vk:"ke",
-   title:"隨身經典", sub:"Topical Scripture Index", mark1:"隨身", mark2:"經典",
+   title:"銘刻心版", sub:"Topical Scripture Index", mark1:"銘刻", mark2:"心版", ed:"",
    search:"Search topics…",
    lead:"Tap a topic for its entries; tap an entry for the full text.",
    entries:"refs", pg:"p.",
@@ -817,7 +821,8 @@ function refreshList(){
   if(box) box.innerHTML=listBox(L());
 }
 function viewList(s){
-  return bar('<span class="wordmark">'+esc(s.mark1)+"<i>"+esc(s.mark2)+"</i></span>")+
+  return bar('<span class="wordmark">'+esc(s.mark1)+"<i>"+esc(s.mark2)+"</i>"+
+      (s.ed ? '<b class="ed">'+esc(s.ed)+"</b>" : "")+"</span>")+
     '<main><div class="wrap">'+
     '<input class="search" id="q" placeholder="'+esc(s.search)+'" value="'+esc(st.q)+'">'+
     '<div class="filt" style="margin:12px 0 12px">'+
@@ -951,13 +956,14 @@ function openEg(cite, from){
     st.eg.loading = 0; st.eg.err = err ? 1 : 0; render();
   });
 }
-/* 已翻好的段落用中英對照；還沒翻的先給英文 */
+/* 段落資料：[頁.段, 英文] 或 [頁.段, 英文, 繁, 簡]
+   已翻好的用中英對照；還沒翻的先給英文 */
 function egText(bk, id, s){
   var m = EGT[bk]; if(!m) return null;
   var row = m[id]; if(!row) return null;
-  if(typeof row === "string") return { zh: "", en: row };
-  if(s.key === "en") return { zh: "", en: row[0] };
-  return { zh: row[s.key === "hans" ? 2 : 1] || "", en: row[0] };
+  var o = { r: bk + " " + row[0], en: row[1], zh: "" };
+  if(s.key !== "en" && row.length > 2) o.zh = row[s.key === "hans" ? 3 : 2] || "";
+  return o;
 }
 function egChips(egs, s){
   return '<div class="egrow">' + egs.map(function(c){
@@ -982,6 +988,7 @@ function viewEg(s){
       var x = egText(c.b, id.split("#")[1], s);
       if(!x) return "";
       return '<div class="egpara' + (c.core[i] ? " core" : "") + '">' +
+        '<div class="egref">' + esc(x.r) + "</div>" +
         (x.zh ? '<p class="egzh">' + esc(x.zh) + "</p>" : "") +
         '<p class="egen' + (x.zh ? " alt" : "") + '">' + esc(x.en) + "</p></div>";
     }).join("") + '<div class="egnote">' + esc(s.egNote) + "</div>";
