@@ -2264,9 +2264,8 @@ document.addEventListener("click",function(e){
   if(d.tadd!==undefined){
     var tdef=ctFind(TOPICS[st.tid].defId);
     if(!tdef) return;
-    var trr=ctAddRange(tdef, st.tbk);
-    if(trr) st.bAdded=cuRef(trr, L().key==="en"?2:(L().key==="hans"?1:0));
-    st.tbk.a=0; st.tbk.z=0;
+    ctAddRange(tdef, st.tbk);
+    st.tbk=null; st.bAdded="";   /* 加入後直接關閉挑選面板，回到主題詳細頁 */
     st.keepScroll=0; return render();
   }
   if(d.vscroll!==undefined){
