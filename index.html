@@ -212,6 +212,62 @@ main{padding:18px 0 calc(104px * var(--fs))}
   border-left:2px solid var(--rule)}
 
 /* ---------- 前後文（整章） ---------- */
+/* ---- bottom tabs ---- */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;
+  background:var(--surface);border-top:1px solid var(--rule);
+  padding-bottom:env(safe-area-inset-bottom)}
+.tabbar button{flex:1;padding:13px 4px;font-size:calc(13.5px * var(--fs));
+  color:var(--muted);font-weight:500;letter-spacing:.02em}
+.tabbar button[aria-current="true"]{color:var(--brass);font-weight:600}
+body.hastab main{padding-bottom:92px}
+.fab{position:fixed;right:20px;z-index:41;width:54px;height:54px;border-radius:50%;
+  bottom:calc(74px + env(safe-area-inset-bottom));
+  background:var(--brass);color:var(--ground);font-size:26px;line-height:1;font-weight:400;
+  display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.fab:active{opacity:.85}
+.libempty{text-align:center;padding:70px 10px;color:var(--muted)}
+.libempty p{margin:0;font-size:calc(16px * var(--fs))}
+.libempty .sub{margin-top:10px;font-size:calc(13.5px * var(--fs));color:var(--faint)}
+.lrow{display:flex;align-items:center;gap:12px}
+.lmain{flex:1 1 auto;min-width:0}
+.ltitle{display:block;font-size:calc(15.5px * var(--fs));line-height:1.4}
+.plan{background:var(--surface);border:1px solid var(--rule);border-radius:12px;
+  padding:14px 16px;margin:2px 0 12px}
+.prow1{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  font-size:calc(14px * var(--fs))}
+.prow1 .n{font-family:var(--f-mono);font-size:calc(11.5px * var(--fs));color:var(--muted)}
+.pbar{height:6px;border-radius:3px;background:var(--surface-2);margin-top:10px;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--brass);border-radius:3px}
+/* ---- topic picker ---- */
+.prow{display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+  padding:12px 0;border-bottom:1px solid var(--rule-soft)}
+.prow .ck{width:21px;height:21px;border-radius:50%;flex:0 0 auto;border:1.5px solid var(--rule);
+  display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent}
+.prow[aria-pressed="true"] .ck{background:var(--brass);border-color:var(--brass);color:var(--ground)}
+.prow.dim{opacity:.4}
+.prow .pt{flex:1 1 auto;min-width:0}
+.prow .pn{display:block;font-family:var(--f-mono);font-size:calc(11px * var(--fs));
+  color:var(--faint);margin-top:2px}
+/* ---- settings ---- */
+.scard{background:var(--surface);border:1px solid var(--rule);border-radius:12px;
+  padding:16px;margin-bottom:6px;font-size:calc(14px * var(--fs));line-height:1.65;color:var(--muted)}
+.scard p{margin:0}
+.slab{font-family:var(--f-mono);font-size:calc(11px * var(--fs));letter-spacing:.08em;
+  text-transform:uppercase;color:var(--faint);margin-bottom:10px}
+.dchips{display:flex;flex-wrap:wrap;gap:7px}
+.dchip{font-family:var(--f-mono);font-size:calc(12px * var(--fs));padding:7px 13px;
+  border:1px solid var(--rule);border-radius:8px;color:var(--muted)}
+.dchip[aria-pressed="true"]{background:var(--brass-soft);color:var(--brass-ink);
+  border-color:var(--brass-line);font-weight:600}
+.dcustom{display:flex;gap:8px;margin-top:12px;align-items:center}
+.dnum{width:92px;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;
+  background:var(--surface-2);color:var(--ink);font-family:var(--f-mono);
+  font-size:calc(13px * var(--fs));-webkit-appearance:none}
+.note2{margin-top:12px !important;font-size:calc(12px * var(--fs));color:var(--faint);line-height:1.6}
+.stat2{margin-top:12px;padding-top:12px;border-top:1px solid var(--rule);
+  font-size:calc(14.5px * var(--fs));color:var(--brass-ink)}
+.steps{margin:8px 0 0;padding-left:0;list-style:none}
+.steps li{margin-top:7px;font-size:calc(13.5px * var(--fs));line-height:1.6}
 .egrow{display:flex;flex-wrap:wrap;gap:6px;margin:-2px 0 12px;padding-left:26px}
 .egchip{font-family:var(--f-mono);font-size:calc(10.5px * var(--fs));letter-spacing:.04em;
   color:var(--brass-ink);background:var(--brass-soft);border:1px solid var(--brass-line);
@@ -380,6 +436,25 @@ var S = {
    egNote:"底色標出的是引註那幾頁的段落，前後各兩段是上下文。中文譯文陸續補上。",
    egOnce:"第一次看某一本書需要連網，之後就存在手機裡。",
    egErr:"讀不到這一段。懷氏著作的段落放在你自己的網站上，預覽版沒有這些檔案。",
+   tabTopics:"主題", tabLib:"背誦庫", tabSet:"設定",
+   libEmpty:"背誦庫還是空的。", libEmpty2:"點右下角的 ＋，挑選你想背的主題。",
+   libAdd:"挑選主題", libPickHint:"勾選想加入背誦庫的主題。已在庫裡的會變暗。",
+   libConfirm:"加入背誦庫", libConfirmN:"加入 %1 個主題", libNone:"沒有可加入的主題了。",
+   libIn:"已在庫中", libDrop:"移出背誦庫", libDropAsk:"再按一次移出",
+   libCount:"%1 個主題　%2 節經文", topicRead:"這一頁只供閱讀查考；要背誦請到「背誦庫」。",
+   readTapVerse:"點一節經文，可以讀那一整章。",
+   planTitle:"複習計畫", planDays:"複習天數", planCustom:"或自訂天數",
+   planSet:"設定", planDay:"%1 天", planTarget:"今日目標 %1 節",
+   planDoneN:"今日已完成 %1 節", planEmpty:"背誦庫還沒有內容，先加幾個主題。",
+   planHow:"把背誦庫裡的經文平均分到這些天裡，算出每天該練幾節。",
+   remindTitle:"每日提醒", remindWhy:"網頁 App 沒辦法自己在固定時間跳通知——那要有伺服器才做得到，而這個 App 是放在靜態空間上的。",
+   remindHow:"可以用 iPhone 內建的「捷徑」App 代替，效果一樣準時：",
+   remindS1:"1　打開「捷徑」App，點下方的「自動化」。",
+   remindS2:"2　點右上角 ＋ →「時刻」。",
+   remindS3:"3　選好時間（例如早上 7:00），重複選「每天」，按「下一步」。",
+   remindS4:"4　搜尋並選「打開 App」，App 選「銘刻心版」。",
+   remindS5:"5　把「執行前先詢問」關掉，完成。",
+   setProgress:"進度", setAbout:"關於",
    spChapter:"章", spVerse:"節", spTo:"到", spAnd:"、",
    tapReveal:"點一下顯示答案", tapEach:"點各段出處，逐一顯示",
    refLabel:"出處", refDigits:"只遮數字", refAll:"連書卷",
@@ -432,6 +507,25 @@ var S = {
    egNote:"底色标出的是引注那几页的段落，前后各两段是上下文。中文译文陆续补上。",
    egOnce:"第一次看某一本书需要连网，之后就存在手机里。",
    egErr:"读不到这一段。怀氏著作的段落放在你自己的网站上，预览版没有这些档案。",
+   tabTopics:"主题", tabLib:"背诵库", tabSet:"设定",
+   libEmpty:"背诵库还是空的。", libEmpty2:"点右下角的 ＋，挑选你想背的主题。",
+   libAdd:"挑选主题", libPickHint:"勾选想加入背诵库的主题。已在库里的会变暗。",
+   libConfirm:"加入背诵库", libConfirmN:"加入 %1 个主题", libNone:"没有可加入的主题了。",
+   libIn:"已在库中", libDrop:"移出背诵库", libDropAsk:"再按一次移出",
+   libCount:"%1 个主题　%2 节经文", topicRead:"这一页只供阅读查考；要背诵请到「背诵库」。",
+   readTapVerse:"点一节经文，可以读那一整章。",
+   planTitle:"复习计画", planDays:"复习天数", planCustom:"或自订天数",
+   planSet:"设定", planDay:"%1 天", planTarget:"今日目标 %1 节",
+   planDoneN:"今日已完成 %1 节", planEmpty:"背诵库还没有内容，先加几个主题。",
+   planHow:"把背诵库里的经文平均分到这些天里，算出每天该练几节。",
+   remindTitle:"每日提醒", remindWhy:"网页 App 没办法自己在固定时间跳通知——那要有伺服器才做得到，而这个 App 是放在静态空间上的。",
+   remindHow:"可以用 iPhone 内建的「捷径」App 代替，效果一样准时：",
+   remindS1:"1　打开「捷径」App，点下方的「自动化」。",
+   remindS2:"2　点右上角 ＋ →「时刻」。",
+   remindS3:"3　选好时间（例如早上 7:00），重复选「每天」，按「下一步」。",
+   remindS4:"4　搜寻并选「打开 App」，App 选「铭刻心版」。",
+   remindS5:"5　把「执行前先询问」关掉，完成。",
+   setProgress:"进度", setAbout:"关于",
    spChapter:"章", spVerse:"节", spTo:"到", spAnd:"、",
    tapReveal:"点一下显示答案", tapEach:"点各段出处，逐一显示",
    refLabel:"出处", refDigits:"只遮数字", refAll:"连书卷",
@@ -484,6 +578,25 @@ var S = {
    egNote:"Shaded paragraphs are the pages cited; two paragraphs on either side give the context.",
    egOnce:"A book is fetched the first time you open it, then kept on the device.",
    egErr:"This passage could not be loaded. The Ellen White text lives on your own site; the preview does not carry those files.",
+   tabTopics:"Topics", tabLib:"Memorize", tabSet:"Settings",
+   libEmpty:"Your list is empty.", libEmpty2:"Tap ＋ to pick the topics you want to learn.",
+   libAdd:"Pick topics", libPickHint:"Check the topics to add. Ones already on your list are dimmed.",
+   libConfirm:"Add to list", libConfirmN:"Add %1 topics", libNone:"Every topic is already on your list.",
+   libIn:"On your list", libDrop:"Remove", libDropAsk:"Tap again to remove",
+   libCount:"%1 topics · %2 verses", topicRead:"This page is for reading. Drills live under Memorize.",
+   readTapVerse:"Tap a verse to read the whole chapter.",
+   planTitle:"Review plan", planDays:"Spread over", planCustom:"Or set your own",
+   planSet:"Set", planDay:"%1 days", planTarget:"Today: %1 verses",
+   planDoneN:"Done today: %1", planEmpty:"Add a few topics first.",
+   planHow:"Divides the verses on your list evenly across these days.",
+   remindTitle:"Daily reminder", remindWhy:"A web app cannot raise a notification on its own schedule — that needs a server, and this app is hosted as static files.",
+   remindHow:"The Shortcuts app on iPhone does the same job just as reliably:",
+   remindS1:"1  Open Shortcuts, tap Automation.",
+   remindS2:"2  Tap + in the corner, choose Time of Day.",
+   remindS3:"3  Pick a time, repeat Daily, tap Next.",
+   remindS4:"4  Search for Open App and choose this app.",
+   remindS5:"5  Turn off Ask Before Running. Done.",
+   setProgress:"Progress", setAbout:"About",
    spChapter:" chapter ", spVerse:" verse ", spTo:" to ", spAnd:", ",
    tapReveal:"Tap to show the answer", tapEach:"Tap each reference to reveal it",
    refLabel:"Ref", refDigits:"Numbers", refAll:"+ Book",
@@ -516,6 +629,44 @@ P.i = P.i||{}; P.v = P.v||{};
 
 var LVS = ["hint","fill","blank"];
 function tkey(tid){ var t=TOPICS[tid]; return (t && t.en) ? t.en : String(tid); }
+
+/* ---- 背誦庫：存英文主題名，主題增刪時位置不會跑掉 ---- */
+if(!(P.lib instanceof Array)) P.lib = [];
+if(typeof P.days !== "number" || P.days < 1) P.days = 100;
+if(!P.day || typeof P.day !== "object") P.day = { d:"", n:0 };
+function today(){
+  var d=new Date();
+  return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+}
+function bumpToday(){
+  var t=today();
+  if(P.day.d!==t){ P.day.d=t; P.day.n=0; }
+  P.day.n++; save();
+}
+function doneToday(){ return (P.day.d===today()) ? P.day.n : 0; }
+function inLib(tid){ return P.lib.indexOf(tkey(tid))>=0; }
+function libTopics(){
+  var m={}; TOPICS.forEach(function(t){ m[t.en]=t; });
+  return P.lib.map(function(k){ return m[k]; }).filter(Boolean);
+}
+function libAdd(keys){
+  keys.forEach(function(k){ if(P.lib.indexOf(k)<0) P.lib.push(k); });
+  save();
+}
+function libDrop(k){
+  var i=P.lib.indexOf(k); if(i>=0){ P.lib.splice(i,1); save(); }
+}
+function verseCount(tp){
+  var n=0; tp.items.forEach(function(it){ if(it.k==="e"&&it.vs) n+=it.vs.length; });
+  return n;
+}
+function libVerses(){
+  var n=0; libTopics().forEach(function(t){ n+=verseCount(t); }); return n;
+}
+function dayTarget(){
+  var n=libVerses(); if(!n) return 0;
+  return Math.max(1, Math.ceil(n / Math.max(1, P.days)));
+}
 function ikey(tid,ix,lv){ return tkey(tid)+"\u0001"+ix+":"+lv; }
 function isSolid(tid,ix,lv){ var r=P.i[ikey(tid,ix,lv)]; return !!(r && r.last===1); }
 function iState(tid,ix,lv){
@@ -553,6 +704,7 @@ function vStateAny(v){
   return any ? "weak" : "new";
 }
 function markVerse(v,lv,ok){
+  bumpToday();
   var k=vkeyOf(v,lv), r=P.v[k]||{ok:0,ng:0,last:null};
   if(ok) r.ok++; else r.ng++;
   r.last = ok?1:0; P.v[k]=r; save();
@@ -698,7 +850,7 @@ var st = { lang: P.lang||"zh", screen:"list", tid:null, q:"",
            seq:null, itemIdx:null, vd:null,
            sort: (P.sort==="za"||P.sort==="az") ? P.sort : "orig",
            /* default to the harder setting: hide the book name too */
-           refmask: (P.refmask==="digits") ? "digits" : "all",
+           refmask: (P.refmask==="all") ? "all" : "digits",
            fs: (typeof P.fs==="number" && P.fs>=0 && P.fs<5) ? P.fs : 1,
            fsOpen:false };
 function applyFs(){ document.documentElement.style.setProperty("--fs", FS[st.fs]); }
@@ -739,7 +891,14 @@ function render(){
   else if(st.screen==="chapter")h=viewChapter(s);
   else if(st.screen==="readmode")h=viewReadMode(s);
   else if(st.screen==="egw")   h=viewEg(s);
+  else if(st.screen==="lib")     h=viewLib(s);
+  else if(st.screen==="libpick") h=viewLibPick(s);
+  else if(st.screen==="libtopic")h=viewLibTopic(s);
+  else if(st.screen==="settings")h=viewSettings(s);
   h = h.replace('<main><div class="wrap">', '<main><div class="wrap">'+fsPanel(s));
+  var root = !!ROOT[st.screen];
+  if(root) h += tabbar(s);
+  try{ document.body.classList.toggle("hastab", root); }catch(e){}
   app.innerHTML=h;
   window.scrollTo(0, st.keepScroll||0); st.keepScroll=0;
   if(st.screen==="chapter" && st.ch && st.ch.v){
@@ -1049,6 +1208,139 @@ function orderedItems(tp, s){
   groups.forEach(function(g){ out = out.concat(g); });
   return out;
 }
+/* ---------------- bottom tabs ---------------- */
+var ROOT = { list:"topics", lib:"lib", settings:"settings" };
+function tabbar(s){
+  var cur = ROOT[st.screen];
+  return '<nav class="tabbar">'+
+    [["list","topics",s.tabTopics],["lib","lib",s.tabLib],["settings","settings",s.tabSet]]
+      .map(function(x){
+        return '<button data-tab="'+x[0]+'" aria-current="'+(cur===x[1])+'">'+esc(x[2])+"</button>";
+      }).join("")+"</nav>";
+}
+
+/* ---------------- 背誦庫 ---------------- */
+function viewLib(s){
+  var ts = libTopics();
+  var tgt = dayTarget(), got = doneToday();
+  var head = bar('<span class="bar-title">'+esc(s.tabLib)+"</span>");
+  if(!ts.length){
+    return head+'<main><div class="wrap"><div class="libempty">'+
+      "<p>"+esc(s.libEmpty)+"</p><p class=\"sub\">"+esc(s.libEmpty2)+"</p></div></div></main>"+
+      '<button class="fab" data-libpick="1" aria-label="'+esc(s.libAdd)+'">＋</button>';
+  }
+  var pct = tgt ? Math.min(100, Math.round(100*got/tgt)) : 0;
+  var plan = '<div class="plan"><div class="prow1"><span>'+esc(t(s.planTarget,tgt))+"</span>"+
+    '<span class="n">'+esc(t(s.planDoneN,got))+"</span></div>"+
+    '<div class="pbar"><i style="width:'+pct+'%"></i></div></div>';
+  var rows = ts.map(function(tp){
+    var n=verseCount(tp), solid=0;
+    tp.items.forEach(function(it){
+      if(it.k==="e"&&it.vs) it.vs.forEach(function(v){ if(vSolidAny(v)) solid++; });
+    });
+    return '<button class="entry lrow" data-libopen="'+tp.id+'">'+
+      '<span class="lmain"><span class="ltitle">'+esc(tp[s.key==="en"?"en":s.key])+"</span>"+
+      (s.key==="en"?"":'<span class="een" style="padding:0">'+esc(tp.en)+"</span>")+"</span>"+
+      '<span class="count">'+solid+"/"+n+"</span></button>";
+  }).join("");
+  return head+'<main><div class="wrap">'+plan+
+    '<div class="src" style="margin:0 0 14px">'+esc(t(s.libCount, ts.length, libVerses()))+"</div>"+
+    rows+"</div></main>"+
+    '<button class="fab" data-libpick="1" aria-label="'+esc(s.libAdd)+'">＋</button>';
+}
+
+function pickRows(s){
+  var sel = st.pick || (st.pick = {});
+  var q = (st.pq||"").trim().toLowerCase();
+  return sortedTopics().filter(function(tp){
+    if(!q) return true;
+    return (tp.zh+tp.hans+tp.en).toLowerCase().indexOf(q) >= 0;
+  }).map(function(tp){
+    var has = inLib(tp.id);
+    if(has){
+      return '<div class="prow dim"><span class="ck"></span>'+
+        '<span class="pt"><span class="ltitle">'+esc(tp[s.key==="en"?"en":s.key])+"</span>"+
+        '<span class="pn">'+esc(s.libIn)+"</span></span></div>";
+    }
+    return '<button class="prow" data-pick="'+tp.en+'" aria-pressed="'+(!!sel[tp.en])+'">'+
+      '<span class="ck">✓</span><span class="pt"><span class="ltitle">'+
+      esc(tp[s.key==="en"?"en":s.key])+"</span>"+
+      '<span class="pn">'+verseCount(tp)+" "+esc(s.entries)+"</span></span></button>";
+  }).join("") || '<div class="note">'+esc(s.libNone)+"</div>";
+}
+function viewLibPick(s){
+  var sel = st.pick || (st.pick = {});
+  var n = 0; for(var k in sel) if(sel[k]) n++;
+  return bar(backBtn(s)+'<span class="bar-title">'+esc(s.libAdd)+"</span>")+
+    '<main><div class="wrap">'+
+    '<input class="search" id="pq" placeholder="'+esc(s.search)+'" value="'+esc(st.pq||"")+'">'+
+    '<p class="hint" style="margin:12px 0 6px">'+esc(s.libPickHint)+"</p>"+
+    '<div id="pickbox">'+pickRows(s)+"</div>"+
+    '<div style="height:90px"></div></div></main>'+
+    '<div class="footbar"><div class="wrap">'+
+      '<button class="btn btn-p btn-wide" data-pickok="1"'+(n?"":" disabled")+">"+
+      esc(n ? t(s.libConfirmN, n) : s.libConfirm)+"</button></div></div>";
+}
+
+function viewLibTopic(s){
+  var tp=TOPICS[st.tid];
+  var rows=tp.items.map(function(it,ii){
+    if(it.k!=="e"||!it.vs||!it.vs.length) return "";
+    return '<button class="vrow" data-item="'+ii+'">'+
+      '<span class="vkey">'+esc(it[s.rk])+"</span>"+
+      '<span class="vtext" style="font-family:var(--f-ui);font-size:14px">'+esc(it[s.key])+
+      '<br><span style="color:var(--faint);font-size:11.5px;font-family:var(--f-mono)">'+
+      esc(t(s.verseOf,it.vs.length))+"</span></span></button>";
+  }).join("");
+  return bar(backBtn(s)+'<span class="bar-title">'+esc(s.tabLib)+"</span>")+
+    '<main><div class="wrap"><div class="thead"><h1>'+esc(tp[s.key==="en"?"en":s.key])+"</h1>"+
+    (s.key==="en"?"":'<div class="en">'+esc(tp.en)+"</div>")+"</div>"+
+    '<div class="actions">'+
+      '<button class="btn btn-p btn-wide" data-seq="1">'+esc(s.seqDrill)+"</button>"+
+      '<button class="btn btn-brass btn-wide" data-vscroll="1"'+(rows?"":" disabled")+">"+
+        esc(s.verseDrill)+"</button>"+
+    "</div>"+
+    '<p class="hint" id="vpick">'+esc(s.vpick)+"</p>"+
+    (rows||'<div class="note">'+esc(s.noVerse)+"</div>")+
+    '<button class="clearbtn'+(st.armTopic?" armed":"")+'" data-clear="topic">'+
+      esc(st.armTopic?s.confirmClear:s.clearTopic)+"</button>"+
+    '<button class="clearbtn'+(st.armDrop?" armed":"")+'" data-libdrop="1">'+
+      esc(st.armDrop?s.libDropAsk:s.libDrop)+"</button>"+
+    "</div></main>";
+}
+
+/* ---------------- 設定 ---------------- */
+function viewSettings(s){
+  var opts=[30,60,100,365];
+  var chips=opts.map(function(d){
+    return '<button class="dchip" data-days="'+d+'" aria-pressed="'+(P.days===d)+'">'+
+      esc(t(s.planDay,d))+"</button>"; }).join("");
+  var tgt=dayTarget();
+  return bar('<span class="bar-title">'+esc(s.tabSet)+"</span>")+
+    '<main><div class="wrap">'+
+    '<div class="sub" style="margin-top:4px"><em>'+esc(s.planTitle)+"</em></div>"+
+    '<div class="scard">'+
+      '<div class="slab">'+esc(s.planDays)+"</div>"+
+      '<div class="dchips">'+chips+"</div>"+
+      '<div class="dcustom"><input class="dnum" id="dnum" type="number" min="1" max="3650" '+
+        'inputmode="numeric" value="'+P.days+'" aria-label="'+esc(s.planCustom)+'">'+
+        '<button class="btn" data-daysok="1">'+esc(s.planSet)+"</button></div>"+
+      '<p class="note2">'+esc(s.planHow)+"</p>"+
+      '<div class="stat2">'+esc(tgt ? t(s.planTarget,tgt) : s.planEmpty)+"</div>"+
+    "</div>"+
+    '<div class="sub"><em>'+esc(s.remindTitle)+"</em></div>"+
+    '<div class="scard">'+
+      "<p>"+esc(s.remindWhy)+"</p>"+
+      '<p style="margin-top:10px">'+esc(s.remindHow)+"</p>"+
+      '<ol class="steps">'+[s.remindS1,s.remindS2,s.remindS3,s.remindS4,s.remindS5]
+        .map(function(x){ return "<li>"+esc(x)+"</li>"; }).join("")+"</ol>"+
+    "</div>"+
+    '<div class="sub"><em>'+esc(s.setProgress)+"</em></div>"+
+    '<button class="clearbtn'+(st.armAll?" armed":"")+'" data-clear="all">'+
+      esc(st.armAll?s.confirmClear:s.clearAll)+"</button>"+
+    '<p class="foot">'+esc(s.footer)+"</p></div></main>";
+}
+
 function viewTopic(s){
   var tp=TOPICS[st.tid], n=0;
   var body=orderedItems(tp,s).map(function(pr){
@@ -1079,16 +1371,10 @@ function viewTopic(s){
     '<h1>'+esc(tp[s.key==="en"?"en":s.key])+"</h1>"+
     (s.key==="en"?"":'<div class="en">'+esc(tp.en)+"</div>")+
     '<div class="src">'+refsOf(tp).length+" "+esc(s.entries)+"</div></div>"+
-    '<div class="actions">'+
-      '<button class="btn btn-p btn-wide" data-seq="1">'+esc(s.seqDrill)+"</button>"+
-      '<button class="btn btn-brass btn-wide" data-vpick="1"'+(tp._hasv?"":" disabled")+">"+
-        esc(s.verseDrill)+(tp._hasv?"":" "+esc(s.noSample))+"</button>"+
-    "</div>"+
     '<button class="btn btn-wide" data-readmode="1" style="margin-bottom:18px">'+
       "&#128266;&nbsp;&nbsp;"+esc(s.readMode)+"</button>"+
     body+
-    '<button class="clearbtn'+(st.armTopic?" armed":"")+'" data-clear="topic">'+
-      esc(st.armTopic?s.confirmClear:s.clearTopic)+"</button>"+
+    '<p class="foot" style="text-align:left">'+esc(s.topicRead)+"</p>"+
     "</div></main>";
 }
 
@@ -1100,7 +1386,7 @@ function seqList(tp,lv,filter){
 }
 function startSeq(filter,level){
   var tp=TOPICS[st.tid];
-  var lv = level || (st.seq&&st.seq.level) || "hint";
+  var lv = level || (st.seq&&st.seq.level) || "fill";
   var f  = filter || "all";
   st.seq={ level:lv, filter:f, list:seqList(tp,lv,f), i:0, revealed:false,
            ok:0, ng:0, shown:{}, rshown:{}, salt:0, hist:[] };
@@ -1226,6 +1512,19 @@ function viewVerses(s){
       '<div class="en">'+esc(it[s.rk])+"</div></div>"+
       '<div class="note">'+esc(s.noVerse)+"</div></div></main>";
   }
+  if(st.mode==="read"){
+    var rr=it.vs.map(function(v,vi){
+      return '<button class="vrow" data-opench="'+vi+'">'+
+        '<span class="vkey">'+esc(v[s.vk])+"</span>"+
+        '<span class="vtext">'+esc(v[s.key])+"</span></button>";
+    }).join("");
+    return head+'<main><div class="wrap"><div class="thead">'+
+      "<h1>"+esc(it[s.key])+"</h1>"+
+      '<div class="en">'+esc(it[s.rk])+"</div>"+
+      '<div class="src">'+esc(t(s.verseOf,it.vs.length))+
+        (it.trunc?" "+esc(s.trunc):"")+"</div></div>"+
+      '<p class="hint">'+esc(s.readTapVerse)+"</p>"+rr+"</div></main>";
+  }
   var f=st.vfilt||"all";
   var shown=it.vs.map(function(v,vi){ return {v:v,vi:vi,st:vStateAny(v)}; })
                  .filter(function(x){ return f==="all" || x.st!=="solid"; });
@@ -1290,7 +1589,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-eg],[data-readmode],[data-rmfull],[data-rmhow],[data-ctx],[data-chgo],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
+  var el=e.target.closest("[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-readmode],[data-rmfull],[data-rmhow],[data-ctx],[data-chgo],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.fs){
@@ -1304,10 +1603,11 @@ document.addEventListener("click",function(e){
   if(d.back!==undefined){
     if(st.screen==="readmode") st.screen="topic";
     else if(st.screen==="egw") st.screen=(st.eg&&st.eg.from)||"topic";
-    else if(st.screen==="chapter") st.screen="verse";
+    else if(st.screen==="chapter") st.screen=st.chFrom||"verse";
     else if(st.screen==="verse") st.screen="verses";
     else if(st.screen==="verses") st.screen=st.from||"topic";
-    else if(st.screen==="seq"||st.screen==="vpick") st.screen="topic";
+    else if(st.screen==="seq"||st.screen==="vpick") st.screen="libtopic";
+    else if(st.screen==="libtopic"||st.screen==="libpick") st.screen="lib";
     else st.screen="list";
     st.armAll=false; st.armTopic=false;
     return render();
@@ -1357,8 +1657,11 @@ document.addEventListener("click",function(e){
     q.i++; q.revealed=false; q.shown={}; q.rshown={}; q.salt=0; return render();
   }
   if(d.restart!==undefined){ return startSeq(); }
-  if(d.item!==undefined){ st.from=st.screen; st.itemIdx=+d.item; st.screen="verses"; return render(); }
-  if(d.openv!==undefined){ st.from="seq"; st.itemIdx=+d.openv; st.screen="verses"; return render(); }
+  if(d.item!==undefined){
+    st.from=st.screen; st.mode=(st.screen==="topic")?"read":"drill";
+    st.itemIdx=+d.item; st.screen="verses"; st.keepScroll=0; return render();
+  }
+  if(d.openv!==undefined){ st.from="seq"; st.mode="drill"; st.itemIdx=+d.openv; st.screen="verses"; return render(); }
   if(d.verse!==undefined){
     st.vd={vi:+d.verse, level:"fill", revealed:false, shown:{}, salt:0};
     st.screen="verse"; return render();
@@ -1368,10 +1671,54 @@ document.addEventListener("click",function(e){
   if(d.rmhow!==undefined){
     P.rmHideHow = (d.rmhow==="0"); save(); st.keepScroll=0; return render();
   }
+  if(d.tab){
+    st.screen = (d.tab==="lib") ? "lib" : (d.tab==="settings" ? "settings" : "list");
+    st.armAll=false; st.armTopic=false; st.armDrop=false; st.keepScroll=0; return render();
+  }
+  if(d.libpick!==undefined){
+    st.pick={}; st.pq=""; st.screen="libpick"; st.keepScroll=0; return render();
+  }
+  if(d.pick!==undefined){
+    st.pick=st.pick||{};
+    var on=!st.pick[d.pick]; st.pick[d.pick]=on;
+    el.setAttribute("aria-pressed", on);
+    var n2=0; for(var kk in st.pick) if(st.pick[kk]) n2++;
+    var ok=document.querySelector("[data-pickok]");
+    if(ok){ ok.disabled=!n2; ok.textContent = n2 ? t(L().libConfirmN,n2) : L().libConfirm; }
+    return;
+  }
+  if(d.pickok!==undefined){
+    var ks=[]; for(var k in st.pick) if(st.pick[k]) ks.push(k);
+    libAdd(ks); st.pick={}; st.screen="lib"; st.keepScroll=0; return render();
+  }
+  if(d.libopen!==undefined){
+    st.tid=+d.libopen; st.screen="libtopic"; st.armTopic=false; st.armDrop=false;
+    st.vfilt="all"; st.keepScroll=0; return render();
+  }
+  if(d.libdrop!==undefined){
+    if(!st.armDrop){ st.armDrop=true; st.keepScroll=window.scrollY; return render(); }
+    libDrop(tkey(st.tid)); st.armDrop=false; st.screen="lib"; st.keepScroll=0; return render();
+  }
+  if(d.vscroll!==undefined){
+    var h=document.getElementById("vpick");
+    if(h){ try{ h.scrollIntoView({block:"start",behavior:"smooth"}); }catch(e2){} }
+    return;
+  }
+  if(d.days!==undefined){ P.days=+d.days; save(); st.keepScroll=window.scrollY; return render(); }
+  if(d.daysok!==undefined){
+    var el2=document.getElementById("dnum"), v=el2?parseInt(el2.value,10):0;
+    if(v>0&&v<=3650){ P.days=v; save(); }
+    st.keepScroll=window.scrollY; return render();
+  }
+  if(d.opench!==undefined){
+    var tp0=TOPICS[st.tid], it0=tp0.items[st.itemIdx], v0=it0.vs[+d.opench];
+    if(v0){ st.chFrom="verses"; openChapter(v0.bi, v0.c, v0.v); }
+    return;
+  }
   if(d.eg!==undefined){ return openEg(d.eg, st.screen==="verse" ? "verse" : "topic"); }
   if(d.ctx!==undefined){
     var tp=TOPICS[st.tid], it=tp.items[st.itemIdx], v=it.vs[st.vd.vi];
-    if(v) openChapter(v.bi, v.c, v.v);
+    if(v){ st.chFrom="verse"; openChapter(v.bi, v.c, v.v); }
     return;
   }
   if(d.chgo!==undefined){
@@ -1405,19 +1752,27 @@ document.addEventListener("click",function(e){
   }
 });
 var composing=false;
+function isSearch(el){ return el && (el.id==="q" || el.id==="pq"); }
 document.addEventListener("compositionstart",function(e){
-  if(e.target.id==="q") composing=true;
+  if(isSearch(e.target)) composing=true;
 });
 document.addEventListener("compositionend",function(e){
-  if(e.target.id!=="q") return;
-  composing=false; st.q=e.target.value; refreshList();
+  if(!isSearch(e.target)) return;
+  composing=false; searchInput(e.target);
 });
 document.addEventListener("input",function(e){
-  if(e.target.id!=="q") return;
-  st.q=e.target.value;
+  if(!isSearch(e.target)) return;
+  if(e.target.id==="q") st.q=e.target.value; else st.pq=e.target.value;
   if(composing || e.isComposing) return;   /* 組字中，等選完字再篩選 */
-  refreshList();
+  searchInput(e.target);
 });
+function searchInput(el){
+  if(el.id==="q"){ st.q=el.value; return refreshList(); }
+  st.pq=el.value;
+  var box=document.getElementById("pickbox");
+  if(!box) return;
+  box.innerHTML=pickRows(L());
+  }
 render();
 })();
 </script>
