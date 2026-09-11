@@ -191,6 +191,22 @@ main{padding:18px 0 calc(104px * var(--fs))}
   border-top:1px solid var(--rule-soft);padding:10px 0 max(10px,env(safe-area-inset-bottom))}
 .footbar .wrap{display:flex;gap:8px}
 
+/* ---------- 聖經瀏覽：書卷／章／節的格子 ---------- */
+.bgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
+  background:var(--rule);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.bcell{padding:15px 3px;font-size:calc(14px * var(--fs));line-height:1.25;
+  color:#EAE6DF;background:var(--surface-2);text-align:center;word-break:break-all}
+.bcell.num{font-family:var(--f-mono);font-size:calc(14.5px * var(--fs));padding:17px 3px}
+.bcell:active{filter:brightness(1.25)}
+.bcell.on{outline:2px solid var(--brass);outline-offset:-2px;filter:brightness(1.35)}
+.bcell.law{background:#7C7A46}  .bcell.hist{background:#4A6B7C}
+.bcell.poet{background:#7C5A46} .bcell.maj{background:#4E7C55}
+.bcell.min{background:#8A5257}  .bcell.gos{background:#6E7C46}
+.bcell.acts{background:#46707C} .bcell.epi{background:#4E7C63}
+.bcell.rev{background:#8A5257}
+.badded{background:var(--brass-soft);border:1px solid var(--brass-line);color:var(--brass-ink);
+  border-radius:10px;padding:10px 14px;margin:0 0 12px;font-size:calc(13.5px * var(--fs))}
+
 /* ---------- 前後文（整章） ---------- */
 /* ---- bottom tabs ---- */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;
@@ -441,12 +457,20 @@ var S = {
    egNote:"底色標出的是引註那幾頁的段落，前後各兩段是上下文。中文譯文陸續補上。",
    egOnce:"第一次看某一本書需要連網，之後就存在手機裡。",
    egErr:"讀不到這一段。懷氏著作的段落放在你自己的網站上，預覽版沒有這些檔案。",
-   tabTopics:"主題", tabLib:"背誦庫", tabSet:"設定",
-   libEmpty:"背誦庫還是空的。", libEmpty2:"點右下角的 ＋，挑選你想背的主題。",
+   tabBible:"聖經", tabTopics:"主題", tabLib:"背誦庫", tabSet:"設定",
+   bibleNote:"點書卷看各章；第一次讀某一卷需要連網，之後就存在手機裡，離線也讀得到。",
+   bChapHint:"點一章直接讀整章經文。",
+   bPickBtn:"挑選經文加入背誦庫", bPickTitle:"挑選經文",
+   bPick1:"點一節開始選；要選連續多節，再點結束的那一節。",
+   bPick2:"已選一節。要選連續多節，再點結束的那一節；再點同一節取消。",
+   bPick3:"已選好這一段。再點任一節可重新選。",
+   bAddNone:"先選經文", bAddN:"加入背誦庫（%1）", bAddDone:"已在背誦庫裡",
+   bAdded:"已加入背誦庫：%1",
+   libEmpty:"背誦庫還是空的。", libEmpty2:"點右下角的 ＋ 挑選主題；或到「聖經」分頁挑自己指定的經文。",
    libAdd:"挑選主題", libPickHint:"勾選想加入背誦庫的主題。已在庫裡的會變暗。",
    libConfirm:"加入背誦庫", libConfirmN:"加入 %1 個主題", libNone:"沒有可加入的主題了。",
    libIn:"已在庫中", libDrop:"移出背誦庫", libDropAsk:"再按一次移出",
-   libCount:"%1 個主題　%2 節經文", topicRead:"這一頁只供閱讀查考；要背誦請到「背誦庫」。",
+   libCount:"%1 個主題　%2 節經文", libCount2:"%1 個主題・%2 段自訂經文　%3 節經文", topicRead:"這一頁只供閱讀查考；要背誦請到「背誦庫」。",
    readTapVerse:"點一節經文，可以讀那一整章。",
    planTitle:"複習計畫", planDays:"一節經文的重複天數", planCustom:"或自訂天數",
    planSet:"設定", planDay:"%1 天", planTarget:"今日待複習 %1 節",
@@ -516,12 +540,20 @@ var S = {
    egNote:"底色标出的是引注那几页的段落，前后各两段是上下文。中文译文陆续补上。",
    egOnce:"第一次看某一本书需要连网，之后就存在手机里。",
    egErr:"读不到这一段。怀氏著作的段落放在你自己的网站上，预览版没有这些档案。",
-   tabTopics:"主题", tabLib:"背诵库", tabSet:"设定",
-   libEmpty:"背诵库还是空的。", libEmpty2:"点右下角的 ＋，挑选你想背的主题。",
+   tabBible:"圣经", tabTopics:"主题", tabLib:"背诵库", tabSet:"设定",
+   bibleNote:"点书卷看各章；第一次读某一卷需要连网，之后就存在手机里，离线也读得到。",
+   bChapHint:"点一章直接读整章经文。",
+   bPickBtn:"挑选经文加入背诵库", bPickTitle:"挑选经文",
+   bPick1:"点一节开始选；要选连续多节，再点结束的那一节。",
+   bPick2:"已选一节。要选连续多节，再点结束的那一节；再点同一节取消。",
+   bPick3:"已选好这一段。再点任一节可重新选。",
+   bAddNone:"先选经文", bAddN:"加入背诵库（%1）", bAddDone:"已在背诵库里",
+   bAdded:"已加入背诵库：%1",
+   libEmpty:"背诵库还是空的。", libEmpty2:"点右下角的 ＋ 挑选主题；或到「圣经」分页挑自己指定的经文。",
    libAdd:"挑选主题", libPickHint:"勾选想加入背诵库的主题。已在库里的会变暗。",
    libConfirm:"加入背诵库", libConfirmN:"加入 %1 个主题", libNone:"没有可加入的主题了。",
    libIn:"已在库中", libDrop:"移出背诵库", libDropAsk:"再按一次移出",
-   libCount:"%1 个主题　%2 节经文", topicRead:"这一页只供阅读查考；要背诵请到「背诵库」。",
+   libCount:"%1 个主题　%2 节经文", libCount2:"%1 个主题・%2 段自订经文　%3 节经文", topicRead:"这一页只供阅读查考；要背诵请到「背诵库」。",
    readTapVerse:"点一节经文，可以读那一整章。",
    planTitle:"复习计画", planDays:"一节经文的重复天数", planCustom:"或自订天数",
    planSet:"设定", planDay:"%1 天", planTarget:"今日待复习 %1 节",
@@ -591,12 +623,20 @@ var S = {
    egNote:"Shaded paragraphs are the pages cited; two paragraphs on either side give the context.",
    egOnce:"A book is fetched the first time you open it, then kept on the device.",
    egErr:"This passage could not be loaded. The Ellen White text lives on your own site; the preview does not carry those files.",
-   tabTopics:"Topics", tabLib:"Memorize", tabSet:"Settings",
-   libEmpty:"Your list is empty.", libEmpty2:"Tap ＋ to pick the topics you want to learn.",
+   tabBible:"Bible", tabTopics:"Topics", tabLib:"Memorize", tabSet:"Settings",
+   bibleNote:"Tap a book for its chapters. A book is fetched the first time you open it, then kept on the device for offline use.",
+   bChapHint:"Tap a chapter to read it.",
+   bPickBtn:"Pick verses to memorize", bPickTitle:"Pick verses",
+   bPick1:"Tap a verse to start. For a range, tap the last verse as well.",
+   bPick2:"One verse selected. Tap another to make a range, or tap it again to clear.",
+   bPick3:"Range selected. Tap any verse to start over.",
+   bAddNone:"Pick a verse first", bAddN:"Add to list (%1)", bAddDone:"Already on your list",
+   bAdded:"Added to your list: %1",
+   libEmpty:"Your list is empty.", libEmpty2:"Tap ＋ to pick topics, or use the Bible tab to pick verses of your own.",
    libAdd:"Pick topics", libPickHint:"Check the topics to add. Ones already on your list are dimmed.",
    libConfirm:"Add to list", libConfirmN:"Add %1 topics", libNone:"Every topic is already on your list.",
    libIn:"On your list", libDrop:"Remove", libDropAsk:"Tap again to remove",
-   libCount:"%1 topics · %2 verses", topicRead:"This page is for reading. Drills live under Memorize.",
+   libCount:"%1 topics · %2 verses", libCount2:"%1 topics · %2 custom passages · %3 verses", topicRead:"This page is for reading. Drills live under Memorize.",
    readTapVerse:"Tap a verse to read the whole chapter.",
    planTitle:"Review plan", planDays:"Days to repeat one verse", planCustom:"Or set your own",
    planSet:"Set", planDay:"%1 days", planTarget:"Due today: %1 verses",
@@ -637,6 +677,23 @@ function t(s){ var a=arguments; return String(s).replace(/%(\d)/g,function(m,i){
 /* 每日提醒的說明依平台不同：iOS 用「捷徑」，Android 用 Google 助理「日常安排」 */
 function isAndroid(){
   return typeof navigator !== "undefined" && /Android/i.test(navigator.userAgent || "");
+}
+
+/* ---------------- 聖經瀏覽：書卷索引 ---------------- */
+/* 每卷幾章。只有 179 個位元組，章的格子就能立刻畫出來、離線也能用，
+   不必為了知道章數先下載整卷（詩篇一卷就 635 KB）。 */
+var CHN=[50,40,27,36,34,24,21,4,31,24,22,25,29,36,10,13,10,42,150,31,12,8,66,52,5,48,12,14,3,9,1,4,7,3,3,3,2,14,4,28,16,24,21,28,16,16,13,6,6,4,4,5,3,6,4,3,1,13,5,5,3,5,1,1,1,22];
+/* 書卷分類，只用來配色 */
+function bookGrp(bi){
+  if(bi<5)  return "law";    /* 摩西五經 */
+  if(bi<17) return "hist";   /* 歷史書 */
+  if(bi<22) return "poet";   /* 詩歌智慧書 */
+  if(bi<27) return "maj";    /* 大先知書 */
+  if(bi<39) return "min";    /* 小先知書 */
+  if(bi<43) return "gos";    /* 四福音 */
+  if(bi<44) return "acts";   /* 使徒行傳 */
+  if(bi<65) return "epi";    /* 書信 */
+  return "rev";              /* 啟示錄 */
 }
 
 /* ---------------- storage ---------------- */
@@ -704,6 +761,68 @@ function rollStats(){
   });
   return { due:due, active:active, done:done };
 }
+/* ---- 自訂經文：從「聖經」分頁挑出來的單節或連續多節 ----
+   P.cu  每一筆是一段範圍 {b:書卷, c:章, a:起節, z:迄節}
+   P.cut 那些經文的內文，加入時一併存起來，之後離線也背得動
+   內文格式和內建的經文表 VT 一樣（繁、簡、英），開機時併回 VT，
+   hydrate() 就能照舊把任何一節組出來，背誦進度完全不用改。 */
+if(!(P.cu instanceof Array)) P.cu = [];
+if(!P.cut || typeof P.cut !== "object") P.cut = {};
+for(var _ck in P.cut){ if(!VT[_ck]) VT[_ck] = P.cut[_ck]; }
+
+function vkeyStr(b,c,v){ return b+"."+c+"."+v; }
+/* 「創4:1」「創4:1-5」三種語言各一個寫法 */
+function cuRef(r, i){
+  var b=BOOKS[r.b], ab=(i===2)?(b[2]+" "):b[i];
+  return ab + r.c + ":" + r.a + (r.z>r.a ? "-"+r.z : "");
+}
+function cuKey(r){ return cuRef(r, 2); }          /* 英文寫法當儲存用的鍵 */
+function cuHas(r){
+  var k=cuKey(r);
+  return P.cu.some(function(x){ return cuKey(x)===k; });
+}
+/* 自訂經文包成和主題一樣的結構，背誦庫、複習計畫、單節背誦全部照舊運作 */
+function cuTopic(r, id){
+  var vs=[], v;
+  for(v=r.a; v<=r.z; v++){
+    var k=vkeyStr(r.b,r.c,v);
+    if(VT[k]) vs.push(hydrate(k));
+  }
+  /* 條目文字用第一節的經文，背誦庫的清單看起來才有意義 */
+  var f=vs[0];
+  var it={ k:"e", _ix:0, cu:1,
+           rz:cuRef(r,0), rh:cuRef(r,1), re:cuRef(r,2),
+           zh:f?f.zh:cuRef(r,0), hans:f?f.hans:cuRef(r,1), en:f?f.en:cuRef(r,2), vs:vs };
+  return { id:id, cu:1, r:r,
+           zh:cuRef(r,0), hans:cuRef(r,1), en:cuRef(r,2),
+           items:[it], _hasv:vs.length>0 };
+}
+/* TOPICS 後面掛著自訂經文；P.cu 一有增刪就整段重建 */
+function buildCustom(){
+  while(TOPICS.length && TOPICS[TOPICS.length-1].cu) TOPICS.pop();
+  P.cu.forEach(function(r){ TOPICS.push(cuTopic(r, TOPICS.length)); });
+}
+function cuAdd(r){
+  if(cuHas(r)) return false;
+  P.cu.push(r); save(); buildCustom(); return true;
+}
+function cuDrop(key){
+  var i=-1;
+  P.cu.forEach(function(x,n){ if(cuKey(x)===key) i=n; });
+  if(i<0) return;
+  var r=P.cu[i];
+  P.cu.splice(i,1);
+  /* 這一段的經文內文若沒有別段在用，就一起清掉 */
+  for(var v=r.a; v<=r.z; v++){
+    var k=vkeyStr(r.b,r.c,v), used=false;
+    P.cu.forEach(function(x){
+      if(x.b===r.b && x.c===r.c && v>=x.a && v<=x.z) used=true;
+    });
+    if(!used) delete P.cut[k];
+  }
+  save(); buildCustom();
+}
+
 function inLib(tid){ return P.lib.indexOf(tkey(tid))>=0; }
 function libTopics(){
   var m={}; TOPICS.forEach(function(t){ m[t.en]=t; });
@@ -922,6 +1041,8 @@ TOPICS.forEach(function(tp){
   });
   tp._hasv = tp.items.some(function(it){ return it.vs && it.vs.length; });
 });
+/* 自訂經文接在內建主題後面（它們的經文已經組好，不進上面那一輪） */
+buildCustom();
 function refsOf(tp){ return tp.items.filter(function(x){ return x.k==="e" && x.rz }); }
 function topicSolid(tp){
   var n=0;
@@ -940,6 +1061,9 @@ function render(){
   var s=L();
   var h="";
   if(st.screen==="list")        h=viewList(s);
+  else if(st.screen==="bible")  h=viewBible(s);
+  else if(st.screen==="bchap")  h=viewBChap(s);
+  else if(st.screen==="bvpick") h=viewBVpick(s);
   else if(st.screen==="topic")  h=viewTopic(s);
   else if(st.screen==="seq")    h=viewSeq(s);
   else if(st.screen==="vpick")  h=viewVpick(s);
@@ -1000,7 +1124,8 @@ function backBtn(s){ return '<button class="back" data-back="1">‹&nbsp;'+esc(s
 
 /* ---- topic list ---- */
 function sortedTopics(){
-  var a=TOPICS.slice();
+  /* 自訂經文只出現在背誦庫，不進主題清單，也不進「挑選主題」 */
+  var a=TOPICS.filter(function(x){ return !x.cu; });
   /* 「主題」＝原書順序：TOPICS 本來就照原書排，id 就是原書的序號 */
   if(st.sort==="orig"){
     a.sort(function(x,y){ return x.id-y.id; });
@@ -1053,6 +1178,56 @@ function viewList(s){
     '<p class="foot">'+esc(s.footer)+"</p></div></main>";
 }
 
+/* ---------------- 聖經：書卷 → 章 → 整章經文 ---------------- */
+function bookName(bi, s){
+  var b=BOOKS[bi];
+  return (s.key==="en") ? b[5] : (s.key==="hans" ? b[4] : b[3]);
+}
+function viewBible(s){
+  var cells=BOOKS.map(function(b,bi){
+    return '<button class="bcell '+bookGrp(bi)+'" data-bbook="'+bi+'">'+
+           esc(bookName(bi,s))+"</button>";
+  }).join("");
+  return bar('<span class="bar-title">'+esc(s.tabBible)+"</span>")+
+    '<main><div class="wrap"><div class="bgrid">'+cells+"</div>"+
+    '<p class="foot" style="text-align:left">'+esc(s.bibleNote)+"</p></div></main>";
+}
+function viewBChap(s){
+  var bi=st.bi, n=CHN[bi]||0, cells="", c;
+  for(c=1;c<=n;c++)
+    cells+='<button class="bcell num '+bookGrp(bi)+'" data-bchap="'+c+'">'+c+"</button>";
+  return bar(backBtn(s)+'<span class="bar-title">'+esc(bookName(bi,s))+"</span>")+
+    '<main><div class="wrap"><div class="bgrid">'+cells+"</div>"+
+    '<p class="foot" style="text-align:left">'+esc(s.bChapHint)+"</p></div></main>";
+}
+/* 節的格子：點起始節、再點結束節，選出單節或連續多節 */
+function viewBVpick(s){
+  var p=st.bp, bi=p.bi, nums=[], cells="";
+  var ch=BIB[bi] && BIB[bi][p.c];
+  if(ch) nums=Object.keys(ch).map(Number).sort(function(a,b){ return a-b; });
+  var lo=Math.min(p.a||0,p.z||0), hi=Math.max(p.a||0,p.z||0);
+  nums.forEach(function(n){
+    var on=(p.a && n>=lo && n<=hi);
+    cells+='<button class="bcell num '+bookGrp(bi)+(on?" on":"")+'" data-bv="'+n+'">'+n+"</button>";
+  });
+  var title=bookName(bi,s)+" "+p.c;
+  var picked=p.a ? { b:bi, c:p.c, a:lo, z:hi } : null;
+  var already=picked && cuHas(picked);
+  var hint = !p.a ? s.bPick1 : (p.a===p.z ? s.bPick2 : s.bPick3);
+  return bar(backBtn(s)+'<span class="bar-title">'+esc(title)+"</span>")+
+    '<main><div class="wrap"><div class="thead" style="margin-top:0">'+
+    "<h1>"+esc(s.bPickTitle)+"</h1>"+
+    '<div class="src">'+esc(title)+"</div></div>"+
+    (st.bAdded ? '<div class="badded">'+esc(t(s.bAdded, st.bAdded))+"</div>" : "")+
+    '<p class="hint" style="margin:0 0 12px">'+esc(hint)+"</p>"+
+    '<div class="bgrid">'+cells+"</div>"+
+    '<div style="height:90px"></div></div></main>'+
+    '<div class="footbar"><div class="wrap">'+
+      '<button class="btn btn-p btn-wide" data-badd="1"'+((picked&&!already)?"":" disabled")+">"+
+      esc(!picked ? s.bAddNone : (already ? s.bAddDone : t(s.bAddN, cuRef(picked,s.key==="en"?2:(s.key==="hans"?1:0)))))+
+      "</button></div></div>";
+}
+
 /* ---------------- 前後文：整章經文 ---------------- */
 /* 全本聖經拆成 66 個檔放在網站上，點「前後文」才抓那一卷，抓過就留在手機裡。 */
 var BIB = {};
@@ -1076,11 +1251,7 @@ function openChapter(bi, c, v){
     render();
   });
 }
-function chapterCount(bi){
-  var b = BIB[bi]; if(!b) return 0;
-  var max = 0; for(var k in b){ if(+k > max) max = +k; }
-  return max;
-}
+function chapterCount(bi){ return CHN[bi] || 0; }
 function viewChapter(s){
   var ch = st.ch, b = BOOKS[ch.bi];
   var name = (s.key === "en") ? b[5] : (s.key === "hans" ? b[4] : b[3]);
@@ -1104,9 +1275,13 @@ function viewChapter(s){
       (ch.c < last ? '<button class="btn btn-wide" data-chgo="' + (ch.c + 1) + '">' + esc(s.chNext) + "&nbsp;&rsaquo;</button>" : "") +
       "</div>";
   }
+  /* 從「聖經」分頁讀經時，這裡才進得去挑選經文的節格子 */
+  var pickBtn = (st.chFrom === "bchap" && !ch.loading && !ch.err && BIB[ch.bi] && BIB[ch.bi][ch.c])
+    ? '<button class="btn btn-brass btn-wide" style="margin-bottom:16px" data-bpick="1">' +
+      esc(s.bPickBtn) + "</button>" : "";
   return bar(backBtn(s) + '<span class="bar-title">' + esc(title) + "</span>") +
     '<main><div class="wrap"><div class="thead"><h1>' + esc(title) + "</h1>" +
-    '<div class="src">' + esc(s.ctxOnce) + "</div></div>" + body + "</div></main>";
+    '<div class="src">' + esc(s.ctxOnce) + "</div></div>" + pickBtn + body + "</div></main>";
 }
 
 /* ---- Ellen White passages: one file per source book, fetched on demand ---- */
@@ -1197,24 +1372,34 @@ function orderedItems(tp, s){
   return out;
 }
 /* ---------------- bottom tabs ---------------- */
-var ROOT = { list:"topics", lib:"lib", settings:"settings" };
+var ROOT = { bible:"bible", list:"topics", lib:"lib", settings:"settings" };
 /* 深層畫面也留著分頁列：用最近一次待過的根分頁來標示目前位置 */
 var TABOF = { list:"topics", topic:"topics", verses:"topics", chapter:"topics",
               egw:"topics",
+              bible:"bible", bchap:"bible", bvpick:"bible",
               lib:"lib", libpick:"lib", libtopic:"lib", seq:"lib", vpick:"lib", verse:"lib",
               settings:"settings" };
 function tabbar(s){
   var cur = TABOF[st.screen] || (st.mode==="read" ? "topics" : "lib");
   if(st.screen==="verses"||st.screen==="verse"||st.screen==="chapter")
     cur = (st.mode==="read") ? "topics" : "lib";
+  /* 整章經文可能是從主題來的，也可能是從「聖經」分頁來的 */
+  if(st.screen==="chapter" && st.chFrom==="bchap") cur = "bible";
   return '<nav class="tabbar">'+
-    [["list","topics",s.tabTopics],["lib","lib",s.tabLib],["settings","settings",s.tabSet]]
+    [["bible","bible",s.tabBible],["list","topics",s.tabTopics],
+     ["lib","lib",s.tabLib],["settings","settings",s.tabSet]]
       .map(function(x){
         return '<button data-tab="'+x[0]+'" aria-current="'+(cur===x[1])+'">'+esc(x[2])+"</button>";
       }).join("")+"</nav>";
 }
 
 /* ---------------- 背誦庫 ---------------- */
+/* 背誦庫可能同時有主題和自訂經文，數量分開算才不會把經文說成主題 */
+function cntLine(ts, s){
+  var cu=0; ts.forEach(function(x){ if(x.cu) cu++; });
+  return cu ? t(s.libCount2, ts.length-cu, cu, libVerses())
+            : t(s.libCount, ts.length, libVerses());
+}
 function viewLib(s){
   var ts = libTopics();
   var rs = rollStats(), tgt = rs.due, got = doneToday();
@@ -1242,7 +1427,7 @@ function viewLib(s){
       '<span class="count">'+solid+"/"+n+"</span></button>";
   }).join("");
   return head+'<main><div class="wrap">'+plan+
-    '<div class="src" style="margin:0 0 14px">'+esc(t(s.libCount, ts.length, libVerses()))+"</div>"+
+    '<div class="src" style="margin:0 0 14px">'+esc(cntLine(ts,s))+"</div>"+
     rows+"</div></main>"+
     '<button class="fab" data-libpick="1" aria-label="'+esc(s.libAdd)+'">＋</button>';
 }
@@ -1294,7 +1479,8 @@ function viewLibTopic(s){
     '<main><div class="wrap"><div class="thead"><h1>'+esc(tp[s.key==="en"?"en":s.key])+"</h1>"+
     (s.key==="en"?"":'<div class="en">'+esc(tp.en)+"</div>")+"</div>"+
     '<div class="actions">'+
-      '<button class="btn btn-p btn-wide" data-seq="1">'+esc(s.seqDrill)+"</button>"+
+      /* 自訂經文沒有主題索引的條目文字，順序背誦對它沒有意義 */
+      (tp.cu ? "" : '<button class="btn btn-p btn-wide" data-seq="1">'+esc(s.seqDrill)+"</button>")+
       '<button class="btn btn-brass btn-wide" data-vscroll="1"'+(rows?"":" disabled")+">"+
         esc(s.verseDrill)+"</button>"+
     "</div>"+
@@ -1563,7 +1749,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
+  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.fs){
@@ -1576,6 +1762,8 @@ document.addEventListener("click",function(e){
   if(d.lang){ st.lang=d.lang; P.lang=d.lang; save(); return render(); }
   if(d.back!==undefined){
     if(st.screen==="egw") st.screen=(st.eg&&st.eg.from)||"topic";
+    else if(st.screen==="bchap") st.screen="bible";
+    else if(st.screen==="bvpick"){ st.chFrom="bchap"; st.screen="chapter"; }
     else if(st.screen==="chapter") st.screen=st.chFrom||"verse";
     else if(st.screen==="verse") st.screen="verses";
     else if(st.screen==="verses") st.screen=st.from||"topic";
@@ -1656,8 +1844,44 @@ document.addEventListener("click",function(e){
     st.keepScroll=window.scrollY; return render();
   }
   if(d.tab){
-    st.screen = (d.tab==="lib") ? "lib" : (d.tab==="settings" ? "settings" : "list");
-    st.armAll=false; st.armTopic=false; st.armDrop=false; st.keepScroll=0; return render();
+    st.screen = ROOT[d.tab] ? d.tab : "list";
+    st.armAll=false; st.armTopic=false; st.armDrop=false; st.bAdded=""; st.keepScroll=0;
+    return render();
+  }
+  /* ---- 聖經瀏覽 ---- */
+  if(d.bbook!==undefined){
+    st.bi=+d.bbook; st.screen="bchap"; st.keepScroll=0; return render();
+  }
+  if(d.bchap!==undefined){
+    st.chFrom="bchap"; return openChapter(st.bi, +d.bchap, 0);
+  }
+  if(d.bpick!==undefined){
+    st.bp={ bi:st.ch.bi, c:st.ch.c, a:0, z:0 };
+    st.bAdded=""; st.screen="bvpick"; st.keepScroll=0; return render();
+  }
+  if(d.bv!==undefined){
+    var bn=+d.bv, bp=st.bp;
+    if(!bp.a || bp.done){ bp.a=bn; bp.z=bn; bp.done=false; }   /* 重新選起始節 */
+    else if(bn===bp.a && bp.a===bp.z){ bp.a=0; bp.z=0; }       /* 再點一次取消 */
+    else { bp.z=bn; bp.done=true; }                            /* 選定結束節 */
+    st.bAdded=""; st.keepScroll=window.scrollY; return render();
+  }
+  if(d.badd!==undefined){
+    var q=st.bp; if(!q.a) return;
+    var lo=Math.min(q.a,q.z), hi=Math.max(q.a,q.z), rr={ b:q.bi, c:q.c, a:lo, z:hi };
+    /* 把這幾節的內文一起存進手機，之後離線也背得動 */
+    var src=BIB[q.bi] && BIB[q.bi][q.c];
+    if(!src) return;
+    for(var vv=lo; vv<=hi; vv++){
+      var kk=vkeyStr(q.bi,q.c,vv), row=src[String(vv)];
+      if(row){ P.cut[kk]=row; if(!VT[kk]) VT[kk]=row; }
+    }
+    if(cuAdd(rr)){
+      libAdd([cuKey(rr)]);
+      st.bAdded=cuRef(rr, L().key==="en"?2:(L().key==="hans"?1:0));
+    }
+    st.bp={ bi:q.bi, c:q.c, a:0, z:0 };
+    st.keepScroll=0; return render();
   }
   if(d.libpick!==undefined){
     st.pick={}; st.pq=""; st.screen="libpick"; st.keepScroll=0; return render();
@@ -1681,7 +1905,10 @@ document.addEventListener("click",function(e){
   }
   if(d.libdrop!==undefined){
     if(!st.armDrop){ st.armDrop=true; st.keepScroll=window.scrollY; return render(); }
-    libDrop(tkey(st.tid)); st.armDrop=false; st.screen="lib"; st.keepScroll=0; return render();
+    var dk=tkey(st.tid), dcu=TOPICS[st.tid] && TOPICS[st.tid].cu;
+    libDrop(dk);
+    if(dcu) cuDrop(dk);          /* 自訂經文移出後就整段刪掉，不留在手機裡 */
+    st.armDrop=false; st.screen="lib"; st.keepScroll=0; return render();
   }
   if(d.vscroll!==undefined){
     var h=document.getElementById("vpick");
