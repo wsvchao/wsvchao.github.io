@@ -186,30 +186,10 @@ main{padding:18px 0 calc(104px * var(--fs))}
   letter-spacing:.05em;margin-top:-6px}
 .rbk{font-size:.72em;color:var(--faint);letter-spacing:0}
 .spacer{flex:1 1 auto}
-.footbar{position:fixed;left:0;right:0;bottom:0;z-index:20;
+.footbar{position:fixed;left:0;right:0;bottom:0;z-index:39;
   background:color-mix(in srgb,var(--ground) 92%,transparent);backdrop-filter:blur(12px);
   border-top:1px solid var(--rule-soft);padding:10px 0 max(10px,env(safe-area-inset-bottom))}
 .footbar .wrap{display:flex;gap:8px}
-
-/* ---------- 朗讀模式：給系統朗讀器讀的乾淨版面 ---------- */
-.rmhow{background:var(--sunk,var(--surface-2));border:1px solid var(--rule-soft);
-  border-radius:12px;padding:14px 16px;margin:0 0 22px}
-.rmhow p{margin:0 0 6px;font-size:calc(13.5px * var(--fs));line-height:1.7;color:var(--ink)}
-.rmhow p.sub{margin:0 0 10px;font-size:calc(12px * var(--fs));color:var(--muted)}
-.rmhide{font-family:var(--f-mono);font-size:calc(11px * var(--fs));letter-spacing:.05em;
-  color:var(--brass-ink);border:1px solid var(--brass-line);background:var(--brass-soft);
-  border-radius:99px;padding:4px 12px}
-.rmshow{font-family:var(--f-mono);font-size:calc(11px * var(--fs));letter-spacing:.05em;
-  color:var(--muted);border:1px solid var(--rule-soft);background:var(--surface);
-  border-radius:99px;padding:4px 12px;margin:0 0 20px}
-.rmbody{font-family:var(--f-scr);font-size:calc(19px * var(--fs));line-height:2.05;
-  letter-spacing:.01em;color:var(--ink)}
-.rmbody.en{font-family:var(--f-ui);font-size:calc(17px * var(--fs));line-height:1.85}
-.rmbody h2{font-family:var(--f-ui);font-size:calc(15px * var(--fs));font-weight:600;
-  color:var(--brass-ink);margin:26px 0 8px;letter-spacing:.02em}
-.rmbody p{margin:0 0 10px}
-.rmbody p.vs{color:var(--muted);font-size:calc(17px * var(--fs));margin:0 0 14px;padding-left:12px;
-  border-left:2px solid var(--rule)}
 
 /* ---------- 前後文（整章） ---------- */
 /* ---- bottom tabs ---- */
@@ -219,7 +199,9 @@ main{padding:18px 0 calc(104px * var(--fs))}
 .tabbar button{flex:1;padding:13px 4px;font-size:calc(13.5px * var(--fs));
   color:var(--muted);font-weight:500;letter-spacing:.02em}
 .tabbar button[aria-current="true"]{color:var(--brass);font-weight:600}
-body.hastab main{padding-bottom:92px}
+body.hastab main{padding-bottom:96px}
+body.hastab .footbar{bottom:calc(48px + env(safe-area-inset-bottom))}
+body.hastab.hasfoot main{padding-bottom:168px}
 .fab{position:fixed;right:20px;z-index:41;width:54px;height:54px;border-radius:50%;
   bottom:calc(74px + env(safe-area-inset-bottom));
   background:var(--brass);color:var(--ground);font-size:26px;line-height:1;font-weight:400;
@@ -268,6 +250,33 @@ body.hastab main{padding-bottom:92px}
   font-size:calc(14.5px * var(--fs));color:var(--brass-ink)}
 .steps{margin:8px 0 0;padding-left:0;list-style:none}
 .steps li{margin-top:7px;font-size:calc(13.5px * var(--fs));line-height:1.6}
+/* ---- 順序背誦：整頁清單 ---- */
+.sprog{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  font-family:var(--f-mono);font-size:calc(11.5px * var(--fs));color:var(--muted);
+  padding:4px 0 10px;margin-bottom:4px;border-bottom:1px solid var(--rule)}
+.sprog .n{color:var(--faint)}
+.srow{border-bottom:1px solid var(--rule-soft);padding:4px 0 8px}
+.sline{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;padding:10px 0 4px}
+.srow .sblk{border-bottom:1.5px dashed var(--brass-line);padding:0 2px 1px}
+.srow .sblk.on{border-bottom-color:transparent}
+.sline .vstate{margin-top:7px;flex:0 0 auto}
+.skey{flex:0 0 auto;max-width:44%;font-family:var(--f-mono);
+  font-size:calc(13.5px * var(--fs));color:var(--brass);line-height:1.5;
+  font-variant-numeric:tabular-nums;word-break:break-word}
+.rseg2{display:inline-block}
+.rseg2.hid{color:var(--faint);border-bottom:1.5px dashed var(--brass-line);
+  padding-bottom:1px;cursor:pointer;user-select:none}
+.rseg2.hid:active{background:var(--brass-soft);border-radius:3px}
+.srow .blk{vertical-align:baseline}
+.stext{flex:1 1 auto;min-width:0;font-size:calc(14.5px * var(--fs));line-height:1.5}
+.stext .sn{display:block;font-family:var(--f-mono);font-size:calc(11px * var(--fs));
+  color:var(--faint);margin-top:3px}
+.smark{display:flex;gap:7px;padding:2px 0 6px 30px}
+.smark button{font-size:calc(12px * var(--fs));padding:5px 14px;border-radius:7px;
+  border:1px solid var(--rule);color:var(--muted)}
+.smark button:first-child{color:var(--clay);border-color:var(--clay-soft)}
+.smark button:last-child{color:var(--sage);border-color:var(--sage-soft)}
+.sall{margin-left:auto}
 .egrow{display:flex;flex-wrap:wrap;gap:6px;margin:-2px 0 12px;padding-left:26px}
 .egchip{font-family:var(--f-mono);font-size:calc(10.5px * var(--fs));letter-spacing:.04em;
   color:var(--brass-ink);background:var(--brass-soft);border:1px solid var(--brass-line);
@@ -425,10 +434,6 @@ var S = {
    fsNames:["小","標準","大","特大","最大"],
    fsSampleK:"約3:16", fsSample:"上帝愛世人，甚至將祂的獨生子賜給他們。",
    filtAll:"全部", filtWeak:"只練不熟的", sortOrig:"主題",
-   readMode:"朗讀模式（給 iPhone 朗讀螢幕用）", rmTitle:"朗讀模式",
-   rmHow:"用兩指從螢幕最上方往下滑，iPhone 就會從頭唸到尾，並自動捲動。",
-   rmSetup:"要先開啟：設定 → 輔助使用 → 朗讀內容 → 朗讀螢幕。同一頁的「語音」可以下載品質較好的聲音。",
-   rmFull:"含經文全文", rmPlain:"只有條目", rmHide:"收起說明", rmShow:"操作說明",
    ctx:"前後文", ctxLoad:"載入中…", chPrev:"上一章", chNext:"下一章",
    ctxErr:"讀不到這一章。前後文的經文放在你自己的網站上，預覽版沒有這些檔案。",
    ctxOnce:"第一次看某一卷需要連網，之後就存在手機裡，離線也讀得到。",
@@ -443,10 +448,12 @@ var S = {
    libIn:"已在庫中", libDrop:"移出背誦庫", libDropAsk:"再按一次移出",
    libCount:"%1 個主題　%2 節經文", topicRead:"這一頁只供閱讀查考；要背誦請到「背誦庫」。",
    readTapVerse:"點一節經文，可以讀那一整章。",
-   planTitle:"複習計畫", planDays:"複習天數", planCustom:"或自訂天數",
-   planSet:"設定", planDay:"%1 天", planTarget:"今日目標 %1 節",
+   planTitle:"複習計畫", planDays:"一節經文的重複天數", planCustom:"或自訂天數",
+   planSet:"設定", planDay:"%1 天", planTarget:"今日待複習 %1 節",
    planDoneN:"今日已完成 %1 節", planEmpty:"背誦庫還沒有內容，先加幾個主題。",
-   planHow:"把背誦庫裡的經文平均分到這些天裡，算出每天該練幾節。",
+   planHow:"一節經文開始背之後，會連續留在每天的複習清單裡這麼多天，滿了就算背熟，不再出現。",
+   planIdle:"還沒有開始背的經文；到背誦庫點開任何一節就開始計算。",
+   planRoll:"複習中 %1 節　已滿期 %2 節",
    remindTitle:"每日提醒", remindWhy:"網頁 App 沒辦法自己在固定時間跳通知——那要有伺服器才做得到，而這個 App 是放在靜態空間上的。",
    remindHow:"可以用 iPhone 內建的「捷徑」App 代替，效果一樣準時：",
    remindS1:"1　打開「捷徑」App，點下方的「自動化」。",
@@ -454,11 +461,17 @@ var S = {
    remindS3:"3　選好時間（例如早上 7:00），重複選「每天」，按「下一步」。",
    remindS4:"4　搜尋並選「打開 App」，App 選「銘刻心版」。",
    remindS5:"5　把「執行前先詢問」關掉，完成。",
+   remindHowA:"可以用 Google 助理的「日常安排」代替，效果一樣準時（要先把這個網頁加到主畫面，Android 才會把它當成一個 App）：",
+   remindA1:"1　開啟 Google 助理 App，點右上角頭像 →「日常安排」。",
+   remindA2:"2　點「新增日常安排」，在「執行時間」加入想要的時間，重複選「每天」。",
+   remindA3:"3　在「動作」點「新增動作」→「一般」→「開啟應用程式」。",
+   remindA4:"4　選「銘刻心版」（要先加到主畫面才會出現在清單裡）。",
+   remindA5:"5　儲存，完成。",
    setProgress:"進度", setAbout:"關於",
    spChapter:"章", spVerse:"節", spTo:"到", spAnd:"、",
    tapReveal:"點一下顯示答案", tapEach:"點各段出處，逐一顯示",
    refLabel:"出處", refDigits:"只遮數字", refAll:"連書卷",
-   mastered:"已熟", lvMastered:"本難度已熟",
+   mastered:"已熟", lvMastered:"本難度已熟", hideAll:"全部遮起", showAll2:"全部顯示",
    allSolid:"這個難度的題目都熟了", backAll:"回到全部練一遍",
    againN:"再練剩下的 %1 題",
    stSolid:"已熟", stWeak:"待複習", stNew:"未練",
@@ -496,10 +509,6 @@ var S = {
    fsNames:["小","标准","大","特大","最大"],
    fsSampleK:"约3:16", fsSample:"上帝爱世人，甚至将祂的独生子赐给他们。",
    filtAll:"全部", filtWeak:"只练不熟的", sortOrig:"主题",
-   readMode:"朗读模式（给 iPhone 朗读萤幕用）", rmTitle:"朗读模式",
-   rmHow:"用两指从萤幕最上方往下滑，iPhone 就会从头念到尾，并自动捲动。",
-   rmSetup:"要先开启：设定 → 辅助使用 → 朗读内容 → 朗读萤幕。同一页的「语音」可以下载品质较好的声音。",
-   rmFull:"含经文全文", rmPlain:"只有条目", rmHide:"收起说明", rmShow:"操作说明",
    ctx:"前后文", ctxLoad:"载入中…", chPrev:"上一章", chNext:"下一章",
    ctxErr:"读不到这一章。前后文的经文放在你自己的网站上，预览版没有这些档案。",
    ctxOnce:"第一次看某一卷需要连网，之后就存在手机里，离线也读得到。",
@@ -514,10 +523,12 @@ var S = {
    libIn:"已在库中", libDrop:"移出背诵库", libDropAsk:"再按一次移出",
    libCount:"%1 个主题　%2 节经文", topicRead:"这一页只供阅读查考；要背诵请到「背诵库」。",
    readTapVerse:"点一节经文，可以读那一整章。",
-   planTitle:"复习计画", planDays:"复习天数", planCustom:"或自订天数",
-   planSet:"设定", planDay:"%1 天", planTarget:"今日目标 %1 节",
+   planTitle:"复习计画", planDays:"一节经文的重复天数", planCustom:"或自订天数",
+   planSet:"设定", planDay:"%1 天", planTarget:"今日待复习 %1 节",
    planDoneN:"今日已完成 %1 节", planEmpty:"背诵库还没有内容，先加几个主题。",
-   planHow:"把背诵库里的经文平均分到这些天里，算出每天该练几节。",
+   planHow:"一节经文开始背之后，会连续留在每天的复习清单里这么多天，满了就算背熟，不再出现。",
+   planIdle:"还没有开始背的经文；到背诵库点开任何一节就开始计算。",
+   planRoll:"复习中 %1 节　已满期 %2 节",
    remindTitle:"每日提醒", remindWhy:"网页 App 没办法自己在固定时间跳通知——那要有伺服器才做得到，而这个 App 是放在静态空间上的。",
    remindHow:"可以用 iPhone 内建的「捷径」App 代替，效果一样准时：",
    remindS1:"1　打开「捷径」App，点下方的「自动化」。",
@@ -525,11 +536,17 @@ var S = {
    remindS3:"3　选好时间（例如早上 7:00），重复选「每天」，按「下一步」。",
    remindS4:"4　搜寻并选「打开 App」，App 选「铭刻心版」。",
    remindS5:"5　把「执行前先询问」关掉，完成。",
+   remindHowA:"可以用 Google 助理的「日常安排」代替，效果一样准时（要先把这个网页加到主画面，Android 才会把它当成一个 App）：",
+   remindA1:"1　开启 Google 助理 App，点右上角头像 →「日常安排」。",
+   remindA2:"2　点「新增日常安排」，在「执行时间」加入想要的时间，重复选「每天」。",
+   remindA3:"3　在「动作」点「新增动作」→「一般」→「开启应用程式」。",
+   remindA4:"4　选「铭刻心版」（要先加到主画面才会出现在清单里）。",
+   remindA5:"5　储存，完成。",
    setProgress:"进度", setAbout:"关于",
    spChapter:"章", spVerse:"节", spTo:"到", spAnd:"、",
    tapReveal:"点一下显示答案", tapEach:"点各段出处，逐一显示",
    refLabel:"出处", refDigits:"只遮数字", refAll:"连书卷",
-   mastered:"已熟", lvMastered:"本难度已熟",
+   mastered:"已熟", lvMastered:"本难度已熟", hideAll:"全部遮起", showAll2:"全部显示",
    allSolid:"这个难度的题目都熟了", backAll:"回到全部练一遍",
    againN:"再练剩下的 %1 题",
    stSolid:"已熟", stWeak:"待复习", stNew:"未练",
@@ -567,10 +584,6 @@ var S = {
    fsNames:["Small","Default","Large","Larger","Largest"],
    fsSampleK:"John 3:16", fsSample:"For God so loved the world, that he gave his only begotten Son.",
    filtAll:"All", filtWeak:"Not yet solid", sortOrig:"Topical",
-   readMode:"Reading mode (for iPhone Speak Screen)", rmTitle:"Reading mode",
-   rmHow:"Swipe down with two fingers from the very top of the screen and iPhone reads the page, scrolling as it goes.",
-   rmSetup:"Turn it on first: Settings → Accessibility → Spoken Content → Speak Screen. Better voices can be downloaded from the Voices page there.",
-   rmFull:"With full verses", rmPlain:"Entries only", rmHide:"Hide the note", rmShow:"How to use",
    ctx:"In context", ctxLoad:"Loading…", chPrev:"Previous chapter", chNext:"Next chapter",
    ctxErr:"This chapter could not be loaded. The full text lives on your own site; the preview does not carry those files.",
    ctxOnce:"A book is fetched the first time you open it, then kept on the device for offline use.",
@@ -585,10 +598,12 @@ var S = {
    libIn:"On your list", libDrop:"Remove", libDropAsk:"Tap again to remove",
    libCount:"%1 topics · %2 verses", topicRead:"This page is for reading. Drills live under Memorize.",
    readTapVerse:"Tap a verse to read the whole chapter.",
-   planTitle:"Review plan", planDays:"Spread over", planCustom:"Or set your own",
-   planSet:"Set", planDay:"%1 days", planTarget:"Today: %1 verses",
+   planTitle:"Review plan", planDays:"Days to repeat one verse", planCustom:"Or set your own",
+   planSet:"Set", planDay:"%1 days", planTarget:"Due today: %1 verses",
    planDoneN:"Done today: %1", planEmpty:"Add a few topics first.",
-   planHow:"Divides the verses on your list evenly across these days.",
+   planHow:"Once you start a verse it stays in the daily list for this many days, then retires.",
+   planIdle:"Nothing started yet — open any verse under Memorize to begin.",
+   planRoll:"In rotation: %1 · Retired: %2",
    remindTitle:"Daily reminder", remindWhy:"A web app cannot raise a notification on its own schedule — that needs a server, and this app is hosted as static files.",
    remindHow:"The Shortcuts app on iPhone does the same job just as reliably:",
    remindS1:"1  Open Shortcuts, tap Automation.",
@@ -596,11 +611,17 @@ var S = {
    remindS3:"3  Pick a time, repeat Daily, tap Next.",
    remindS4:"4  Search for Open App and choose this app.",
    remindS5:"5  Turn off Ask Before Running. Done.",
+   remindHowA:"Google Assistant's Routines feature does the same job (add this page to your Home Screen first, so Android treats it as an app):",
+   remindA1:"1  Open Google Assistant, tap your profile photo, then Routines.",
+   remindA2:"2  Tap New Routine. Under “When”, add the time you want, repeat Every day.",
+   remindA3:"3  Under “Actions”, tap Add action → General → Open app.",
+   remindA4:"4  Choose this app (it only appears after you add it to the Home Screen).",
+   remindA5:"5  Save. Done.",
    setProgress:"Progress", setAbout:"About",
    spChapter:" chapter ", spVerse:" verse ", spTo:" to ", spAnd:", ",
    tapReveal:"Tap to show the answer", tapEach:"Tap each reference to reveal it",
    refLabel:"Ref", refDigits:"Numbers", refAll:"+ Book",
-   mastered:"solid", lvMastered:"solid at this level",
+   mastered:"solid", lvMastered:"solid at this level", hideAll:"Hide all", showAll2:"Show all",
    allSolid:"Everything at this level is solid", backAll:"Practise all again",
    againN:"Practise the remaining %1",
    stSolid:"solid", stWeak:"review", stNew:"new",
@@ -612,6 +633,11 @@ var S = {
    footer:"Scripture: Chinese Union Version (1919, public domain) / King James Version (public domain). This app is for personal and church study." }
 };
 function t(s){ var a=arguments; return String(s).replace(/%(\d)/g,function(m,i){return a[+i]}); }
+
+/* 每日提醒的說明依平台不同：iOS 用「捷徑」，Android 用 Google 助理「日常安排」 */
+function isAndroid(){
+  return typeof navigator !== "undefined" && /Android/i.test(navigator.userAgent || "");
+}
 
 /* ---------------- storage ---------------- */
 var PK="textionary.v1";
@@ -632,7 +658,9 @@ function tkey(tid){ var t=TOPICS[tid]; return (t && t.en) ? t.en : String(tid); 
 
 /* ---- 背誦庫：存英文主題名，主題增刪時位置不會跑掉 ---- */
 if(!(P.lib instanceof Array)) P.lib = [];
-if(typeof P.days !== "number" || P.days < 1) P.days = 100;
+if(typeof P.days !== "number" || P.days < 1) P.days = 49;
+if(!P.vs || typeof P.vs !== "object") P.vs = {};   /* 每節第一次練的日期 */
+if(!P.vd2 || typeof P.vd2 !== "object") P.vd2 = {}; /* 每節最後一次練的日期 */
 if(!P.day || typeof P.day !== "object") P.day = { d:"", n:0 };
 function today(){
   var d=new Date();
@@ -644,6 +672,38 @@ function bumpToday(){
   P.day.n++; save();
 }
 function doneToday(){ return (P.day.d===today()) ? P.day.n : 0; }
+function dnum(s){
+  var a=String(s||"").split("-");
+  if(a.length!==3) return null;
+  return Date.UTC(+a[0], +a[1]-1, +a[2]) / 86400000;
+}
+function daysSince(s){
+  var a=dnum(s), b=dnum(today());
+  return (a===null||b===null) ? null : (b-a);
+}
+function startVerse(v){
+  var k=v.kz;
+  if(!P.vs[k]) P.vs[k]=today();
+  P.vd2[k]=today(); save();
+}
+/* 複習中／已滿期／今日待複習 */
+function rollStats(){
+  var due=0, active=0, done=0, t=today();
+  libTopics().forEach(function(tp){
+    tp.items.forEach(function(it){
+      if(it.k!=="e"||!it.vs) return;
+      it.vs.forEach(function(v){
+        var st0=P.vs[v.kz]; if(!st0) return;
+        var d=daysSince(st0);
+        if(d===null) return;
+        if(d>=P.days){ done++; return; }
+        active++;
+        if(P.vd2[v.kz]!==t) due++;
+      });
+    });
+  });
+  return { due:due, active:active, done:done };
+}
 function inLib(tid){ return P.lib.indexOf(tkey(tid))>=0; }
 function libTopics(){
   var m={}; TOPICS.forEach(function(t){ m[t.en]=t; });
@@ -663,10 +723,7 @@ function verseCount(tp){
 function libVerses(){
   var n=0; libTopics().forEach(function(t){ n+=verseCount(t); }); return n;
 }
-function dayTarget(){
-  var n=libVerses(); if(!n) return 0;
-  return Math.max(1, Math.ceil(n / Math.max(1, P.days)));
-}
+function dayTarget(){ return rollStats().due; }
 function ikey(tid,ix,lv){ return tkey(tid)+"\u0001"+ix+":"+lv; }
 function isSolid(tid,ix,lv){ var r=P.i[ikey(tid,ix,lv)]; return !!(r && r.last===1); }
 function iState(tid,ix,lv){
@@ -704,7 +761,7 @@ function vStateAny(v){
   return any ? "weak" : "new";
 }
 function markVerse(v,lv,ok){
-  bumpToday();
+  bumpToday(); startVerse(v);
   var k=vkeyOf(v,lv), r=P.v[k]||{ok:0,ng:0,last:null};
   if(ok) r.ok++; else r.ng++;
   r.last = ok?1:0; P.v[k]=r; save();
@@ -889,16 +946,17 @@ function render(){
   else if(st.screen==="verses") h=viewVerses(s);
   else if(st.screen==="verse")  h=viewVerse(s);
   else if(st.screen==="chapter")h=viewChapter(s);
-  else if(st.screen==="readmode")h=viewReadMode(s);
   else if(st.screen==="egw")   h=viewEg(s);
   else if(st.screen==="lib")     h=viewLib(s);
   else if(st.screen==="libpick") h=viewLibPick(s);
   else if(st.screen==="libtopic")h=viewLibTopic(s);
   else if(st.screen==="settings")h=viewSettings(s);
   h = h.replace('<main><div class="wrap">', '<main><div class="wrap">'+fsPanel(s));
-  var root = !!ROOT[st.screen];
-  if(root) h += tabbar(s);
-  try{ document.body.classList.toggle("hastab", root); }catch(e){}
+  h += tabbar(s);
+  try{
+    document.body.classList.add("hastab");
+    document.body.classList.toggle("hasfoot", h.indexOf('class="footbar"') >= 0);
+  }catch(e){}
   app.innerHTML=h;
   window.scrollTo(0, st.keepScroll||0); st.keepScroll=0;
   if(st.screen==="chapter" && st.ch && st.ch.v){
@@ -993,49 +1051,6 @@ function viewList(s){
     '<button class="clearbtn'+(st.armAll?" armed":"")+'" data-clear="all">'+
       esc(st.armAll?s.confirmClear:s.clearAll)+"</button>"+
     '<p class="foot">'+esc(s.footer)+"</p></div></main>";
-}
-
-/* ---------------- 朗讀模式 ---------------- */
-/* iOS 的「朗讀螢幕」是系統功能，網頁沒有辦法用程式叫出來，也沒辦法控制它。
-   能做的是把整個主題排成一頁乾淨、標點完整的文章，讓系統朗讀器一路唸下去。
-   出處也先換成「創世記2章2節」這種唸得出來的寫法。 */
-function rmEnd(txt, s){
-  var t2 = String(txt || "").trim();
-  if(!t2) return "";
-  var last = t2.charAt(t2.length - 1);
-  if("。！？；.!?;".indexOf(last) >= 0) return t2;
-  return t2 + (s.key === "en" ? "." : "。");
-}
-function viewReadMode(s){
-  var tp = TOPICS[st.tid], full = !!st.rmFull, out = [];
-  orderedItems(tp, s).forEach(function(pr){
-    var it = pr[0];
-    if(it.k === "h"){ out.push("<h2>" + esc(it[s.key === "en" ? "en" : s.key]) + "</h2>"); return; }
-    var line = it[s.key] || "";
-    if(it.rz) line += (s.key === "en" ? " — " : "——") + speakRef(it[s.rk], s);
-    out.push("<p>" + esc(rmEnd(line, s)) + "</p>");
-    if(full && it.vs && it.vs.length){
-      it.vs.forEach(function(v){
-        if(v[s.key]) out.push('<p class="vs">' + esc(rmEnd(v[s.key], s)) + "</p>");
-      });
-    }
-  });
-  var showHow = !P.rmHideHow;
-  return bar(backBtn(s) + '<span class="bar-title">' + esc(s.rmTitle) + "</span>", 1) +
-    '<main><div class="wrap">' +
-    '<div aria-hidden="true">' +
-      (showHow
-        ? '<div class="rmhow"><p>' + esc(s.rmHow) + '</p><p class="sub">' + esc(s.rmSetup) + "</p>" +
-          '<button class="rmhide" data-rmhow="0">' + esc(s.rmHide) + "</button></div>"
-        : '<button class="rmshow" data-rmhow="1">' + esc(s.rmShow) + "</button>") +
-      '<div class="filt" style="margin:0 0 22px">' +
-        '<button data-rmfull="0" aria-pressed="' + (!full) + '">' + esc(s.rmPlain) + "</button>" +
-        '<button data-rmfull="1" aria-pressed="' + full + '">' + esc(s.rmFull) + "</button>" +
-      "</div>" +
-    "</div>" +
-    '<div class="thead" style="margin-top:0"><h1>' + esc(tp[s.key === "en" ? "en" : s.key]) + "</h1></div>" +
-    '<div class="rmbody' + (s.key === "en" ? " en" : "") + '">' + out.join("") + "</div>" +
-    "</div></main>";
 }
 
 /* ---------------- 前後文：整章經文 ---------------- */
@@ -1160,33 +1175,6 @@ function viewEg(s){
     '<div class="src">' + esc(s.egOnce) + "</div></div>" + body + "</div></main>";
 }
 
-/* 「創1:1-5」在朗讀模式裡要寫成「創世記1章1到5節」，系統朗讀器才唸得出來 */
-function speakRef(ref, s){
-  if(!ref) return "";
-  var segs = refSegs(ref), out = [];
-  segs.forEach(function(sg){
-    var m = /^\s*([^\d]+?)\s*(\d+)\s*(?::\s*([\d,\-–\s]+))?/.exec(sg);
-    if(!m){ out.push(sg); return; }
-    var ab = m[1].replace(/[\s.]+$/, ""), full = ab, i, b;
-    for(i = 0; i < BOOKS.length; i++){
-      b = BOOKS[i];
-      if(b[0] === ab || b[1] === ab || b[2] === ab ||
-         b[2].replace(/\.$/, "") === ab.replace(/\.$/, "")){
-        full = (s.key === "en") ? b[5] : (s.key === "hans" ? b[4] : b[3]);
-        break;
-      }
-    }
-    var en = (s.key === "en");
-    var t2 = en ? (full + s.spChapter + m[2]) : (full + m[2] + s.spChapter);
-    if(m[3]){
-      var v = m[3].replace(/[–-]/g, s.spTo).replace(/,/g, s.spAnd).replace(/\s+/g, "");
-      t2 += en ? (s.spVerse + v) : (v + s.spVerse);
-    }
-    out.push(t2);
-  });
-  return out.join(s.key === "en" ? "; " : "；");
-}
-
 /* ---- topic detail ---- */
 
 /* 速查表類的主題（名篇速查）原書按英文字母排，中文模式下看起來是亂的；
@@ -1210,8 +1198,15 @@ function orderedItems(tp, s){
 }
 /* ---------------- bottom tabs ---------------- */
 var ROOT = { list:"topics", lib:"lib", settings:"settings" };
+/* 深層畫面也留著分頁列：用最近一次待過的根分頁來標示目前位置 */
+var TABOF = { list:"topics", topic:"topics", verses:"topics", chapter:"topics",
+              egw:"topics",
+              lib:"lib", libpick:"lib", libtopic:"lib", seq:"lib", vpick:"lib", verse:"lib",
+              settings:"settings" };
 function tabbar(s){
-  var cur = ROOT[st.screen];
+  var cur = TABOF[st.screen] || (st.mode==="read" ? "topics" : "lib");
+  if(st.screen==="verses"||st.screen==="verse"||st.screen==="chapter")
+    cur = (st.mode==="read") ? "topics" : "lib";
   return '<nav class="tabbar">'+
     [["list","topics",s.tabTopics],["lib","lib",s.tabLib],["settings","settings",s.tabSet]]
       .map(function(x){
@@ -1222,17 +1217,20 @@ function tabbar(s){
 /* ---------------- 背誦庫 ---------------- */
 function viewLib(s){
   var ts = libTopics();
-  var tgt = dayTarget(), got = doneToday();
+  var rs = rollStats(), tgt = rs.due, got = doneToday();
   var head = bar('<span class="bar-title">'+esc(s.tabLib)+"</span>");
   if(!ts.length){
     return head+'<main><div class="wrap"><div class="libempty">'+
       "<p>"+esc(s.libEmpty)+"</p><p class=\"sub\">"+esc(s.libEmpty2)+"</p></div></div></main>"+
       '<button class="fab" data-libpick="1" aria-label="'+esc(s.libAdd)+'">＋</button>';
   }
-  var pct = tgt ? Math.min(100, Math.round(100*got/tgt)) : 0;
-  var plan = '<div class="plan"><div class="prow1"><span>'+esc(t(s.planTarget,tgt))+"</span>"+
-    '<span class="n">'+esc(t(s.planDoneN,got))+"</span></div>"+
-    '<div class="pbar"><i style="width:'+pct+'%"></i></div></div>';
+  var pct = (tgt+got) ? Math.min(100, Math.round(100*got/(tgt+got))) : 0;
+  var plan = (rs.active+rs.done)
+    ? '<div class="plan"><div class="prow1"><span>'+esc(t(s.planTarget,tgt))+"</span>"+
+        '<span class="n">'+esc(t(s.planDoneN,got))+"</span></div>"+
+        '<div class="pbar"><i style="width:'+pct+'%"></i></div></div>'
+    : '<div class="plan"><div class="prow1"><span class="n" style="font-family:var(--f-ui)">'+
+        esc(s.planIdle)+"</span></div></div>";
   var rows = ts.map(function(tp){
     var n=verseCount(tp), solid=0;
     tp.items.forEach(function(it){
@@ -1311,11 +1309,11 @@ function viewLibTopic(s){
 
 /* ---------------- 設定 ---------------- */
 function viewSettings(s){
-  var opts=[30,60,100,365];
+  var opts=[23,49,77];
   var chips=opts.map(function(d){
     return '<button class="dchip" data-days="'+d+'" aria-pressed="'+(P.days===d)+'">'+
       esc(t(s.planDay,d))+"</button>"; }).join("");
-  var tgt=dayTarget();
+  var rs=rollStats();
   return bar('<span class="bar-title">'+esc(s.tabSet)+"</span>")+
     '<main><div class="wrap">'+
     '<div class="sub" style="margin-top:4px"><em>'+esc(s.planTitle)+"</em></div>"+
@@ -1326,14 +1324,21 @@ function viewSettings(s){
         'inputmode="numeric" value="'+P.days+'" aria-label="'+esc(s.planCustom)+'">'+
         '<button class="btn" data-daysok="1">'+esc(s.planSet)+"</button></div>"+
       '<p class="note2">'+esc(s.planHow)+"</p>"+
-      '<div class="stat2">'+esc(tgt ? t(s.planTarget,tgt) : s.planEmpty)+"</div>"+
+      '<div class="stat2">'+esc(
+         !libTopics().length ? s.planEmpty
+         : (rs.active+rs.done ? t(s.planTarget,rs.due) : s.planIdle))+"</div>"+
+      (rs.active+rs.done ? '<div class="stat3">'+esc(t(s.planRoll,rs.active,rs.done))+"</div>" : "")+
     "</div>"+
     '<div class="sub"><em>'+esc(s.remindTitle)+"</em></div>"+
     '<div class="scard">'+
       "<p>"+esc(s.remindWhy)+"</p>"+
-      '<p style="margin-top:10px">'+esc(s.remindHow)+"</p>"+
-      '<ol class="steps">'+[s.remindS1,s.remindS2,s.remindS3,s.remindS4,s.remindS5]
-        .map(function(x){ return "<li>"+esc(x)+"</li>"; }).join("")+"</ol>"+
+      (isAndroid()
+        ? '<p style="margin-top:10px">'+esc(s.remindHowA)+"</p>"+
+          '<ol class="steps">'+[s.remindA1,s.remindA2,s.remindA3,s.remindA4,s.remindA5]
+            .map(function(x){ return "<li>"+esc(x)+"</li>"; }).join("")+"</ol>"
+        : '<p style="margin-top:10px">'+esc(s.remindHow)+"</p>"+
+          '<ol class="steps">'+[s.remindS1,s.remindS2,s.remindS3,s.remindS4,s.remindS5]
+            .map(function(x){ return "<li>"+esc(x)+"</li>"; }).join("")+"</ol>")+
     "</div>"+
     '<div class="sub"><em>'+esc(s.setProgress)+"</em></div>"+
     '<button class="clearbtn'+(st.armAll?" armed":"")+'" data-clear="all">'+
@@ -1371,8 +1376,6 @@ function viewTopic(s){
     '<h1>'+esc(tp[s.key==="en"?"en":s.key])+"</h1>"+
     (s.key==="en"?"":'<div class="en">'+esc(tp.en)+"</div>")+
     '<div class="src">'+refsOf(tp).length+" "+esc(s.entries)+"</div></div>"+
-    '<button class="btn btn-wide" data-readmode="1" style="margin-bottom:18px">'+
-      "&#128266;&nbsp;&nbsp;"+esc(s.readMode)+"</button>"+
     body+
     '<p class="foot" style="text-align:left">'+esc(s.topicRead)+"</p>"+
     "</div></main>";
@@ -1385,17 +1388,26 @@ function seqList(tp,lv,filter){
   return all.filter(function(it){ return !isSolid(tp.id,it._ix,lv); });
 }
 function startSeq(filter,level){
-  var tp=TOPICS[st.tid];
-  var lv = level || (st.seq&&st.seq.level) || "fill";
-  var f  = filter || "all";
-  st.seq={ level:lv, filter:f, list:seqList(tp,lv,f), i:0, revealed:false,
-           ok:0, ng:0, shown:{}, rshown:{}, salt:0, hist:[] };
-  st.screen="seq"; render();
+  var q = st.seq || {};
+  st.seq = { level: level || q.level || "fill",
+             filter: filter || q.filter || "all",
+             tx: {}, rf: {}, all: false };
+  st.screen="seq"; st.keepScroll=0; render();
 }
+
+/* 同一頁有很多列，每一列的空格編號要各自獨立 */
+function rowScope(html, ix){
+  return html.replace(/data-b="/g, 'data-b="'+ix+':')
+             .replace(/data-s="/g, 'data-s="'+ix+':');
+}
+
+/* 經文順序背誦：整個主題列成一頁，點一個空格就只顯示那一格 */
 function viewSeq(s){
-  var tp=TOPICS[st.tid], q=st.seq, list=q.list, all=refsOf(tp);
+  var tp=TOPICS[st.tid], q=st.seq;
+  var all=refsOf(tp);
+  var list=seqList(tp,q.level,q.filter);
   var nWeak=seqList(tp,q.level,"weak").length;
-  var nSolidLv=all.length-nWeak;
+  var nSolid=all.length-nWeak;
   var lvSeg='<div class="seg" role="group" style="margin-bottom:12px;width:100%">'+
     ["hint","fill","blank"].map(function(k){
       return '<button data-lv="'+k+'" aria-pressed="'+(q.level===k)+'" style="flex:1">'+
@@ -1404,88 +1416,50 @@ function viewSeq(s){
     '<button data-filt="all" aria-pressed="'+(q.filter==="all")+'">'+esc(s.filtAll)+" "+all.length+"</button>"+
     '<button data-filt="weak" aria-pressed="'+(q.filter==="weak")+'">'+esc(s.filtWeak)+" "+nWeak+"</button>"+
     "</div>";
-
-  if(!list.length){
-    return bar(backBtn(s)+'<span class="bar-title">'+esc(s.seqDrill)+"</span>")+
-      '<main><div class="wrap">'+lvSeg+filtRow+
-      '<div class="done"><div class="big">'+nSolidLv+"/"+all.length+"</div>"+
-      "<p>"+esc(s.allSolid)+"</p>"+
-      '<div class="actions"><button class="btn btn-p btn-wide" data-filt="all">'+esc(s.backAll)+"</button>"+
-      '<button class="btn btn-wide" data-back="1">'+esc(s.back)+"</button></div></div></div></main>";
-  }
-  if(q.i>=list.length){
-    var pct=list.length?Math.round(100*q.ok/list.length):0;
-    var left=seqList(tp,q.level,"weak").length;
-    return bar(backBtn(s)+'<span class="bar-title">'+esc(s.seqDrill)+"</span>")+
-      '<main><div class="wrap"><div class="done"><div class="big">'+pct+'%</div>'+
-      "<p>"+esc(s.allDone)+" · "+esc(t(s.scoreline,q.ok,q.ng))+"<br>"+
-      esc(s.lvMastered)+" "+(all.length-left)+"/"+all.length+"</p>"+
-      '<div class="actions">'+
-        (left?'<button class="btn btn-p btn-wide" data-filt="weak">'+esc(t(s.againN,left))+"</button>":"")+
-        '<button class="btn'+(left?"":" btn-p")+' btn-wide" data-restart="1">'+esc(s.restart)+"</button>"+
-        '<button class="btn btn-wide" data-back="1">'+esc(s.back)+"</button>"+
-      "</div></div></div></main>";
-  }
-  var it=list[q.i], ctx=ctxOf(tp,it);
-  var txt;
-  if(q.revealed || q.level==="hint") txt=esc(it[s.key]);
-  else if(q.level==="fill")           txt=maskUnits(it[s.key],s.lang,.40,"seq"+q.i+"."+q.salt,q.shown,
-                                                     isEn(s.lang)?1:2);
-  else                                txt=blankAll(it[s.key],s.lang);
-  var segs=refSegs(it[s.rk]);
-  /* the chapter:verse numbers are identical in both languages — only the book
-     name carries new information, so it rides along in brackets */
-  var oSegs=refSegs(s.key==="en" ? it.rz : it.re);
-  var oTail=(s.key==="en") ? /[\s\d:,\-\u2013章]+$/ : /[\s\d:,\-\u2013]+$/;
-  var sep=(s.key==="en") ? "; " : "；";
-  var refShown = q.revealed || segs.every(function(_,i){ return q.rshown[i]; });
-  var refTxt = segs.map(function(sg,i){
-    var on = q.revealed || q.rshown[i];
-    if(!on) return '<span class="rseg hid" data-rseg="'+i+'">'+
-                     esc(maskRef(sg,st.refmask))+"</span>";
-    var bk = oSegs[i] ? oSegs[i].replace(oTail,"") : "";
-    return '<span class="rseg">'+esc(sg)+
-      (bk?'<span class="rbk">（'+esc(bk)+"）</span>":"")+"</span>";
-  }).join(segs.length>1 ? '<span class="rline"></span>'
-                        : '<span class="rsep">'+sep+"</span>");
   var refChips='<div class="rchips"><span class="lbl">'+esc(s.refLabel)+"</span>"+
     '<button data-refmask="digits" aria-pressed="'+(st.refmask==="digits")+'">'+esc(s.refDigits)+"</button>"+
-    '<button data-refmask="all" aria-pressed="'+(st.refmask==="all")+'">'+esc(s.refAll)+"</button></div>";
+    '<button data-refmask="all" aria-pressed="'+(st.refmask==="all")+'">'+esc(s.refAll)+"</button>"+
+    '<button data-sall="'+(q.all?0:1)+'" class="sall">'+esc(q.all?s.hideAll:s.showAll2)+"</button></div>";
+  var head='<div class="sprog"><span>'+esc(s.lvMastered)+" "+nSolid+"/"+all.length+"</span>"+
+    '<span class="n">'+list.length+" "+esc(s.entries)+"</span></div>";
+
+  var rows=list.map(function(it){
+    var ix=it._ix, stt=iState(tp.id,ix,q.level);
+    var tx=q.tx[ix]||(q.tx[ix]={}), rf=q.rf[ix]||(q.rf[ix]={});
+    /* 提示句：每一個空格單獨點開 */
+    var clue;
+    if(q.all || q.level==="hint") clue=esc(it[s.key]);
+    else if(q.level==="fill")     clue=rowScope(maskUnits(it[s.key],s.lang,.40,"sq"+ix,tx,
+                                                          isEn(s.lang)?1:2), ix);
+    else                          clue=rowScope(segMask(it[s.key],s.lang,"blank",tx), ix);
+    /* 出處：一處一處點開 */
+    var segs=refSegs(it[s.rk]);
+    var allRef=true;
+    var refTxt=segs.map(function(sg,i){
+      var on=q.all||rf[i];
+      if(!on) allRef=false;
+      return on ? '<span class="rseg2">'+esc(sg)+"</span>"
+                : '<span class="rseg2 hid" data-rseg="'+ix+":"+i+'">'+
+                    esc(maskRef(sg,st.refmask))+"</span>";
+    }).join('<span class="rsep">'+(s.key==="en"?"; ":"；")+"</span>");
+    return '<div class="srow">'+
+      '<div class="sline">'+
+        '<i class="vstate '+stt+'"></i>'+
+        '<span class="skey">'+refTxt+"</span>"+
+        '<span class="stext">'+clue+
+          (it.vs&&it.vs.length?'<span class="sn">'+esc(t(s.verseOf,it.vs.length))+"</span>":"")+
+        "</span>"+
+      "</div>"+
+      (allRef ? '<div class="smark">'+
+              '<button data-smark="'+ix+':0">'+esc(s.forgot)+"</button>"+
+              '<button data-smark="'+ix+':1">'+esc(s.got)+"</button></div>" : "")+
+      "</div>";
+  }).join("") || '<div class="note">'+esc(s.allSolid)+"</div>";
+
   return bar(backBtn(s)+'<span class="bar-title">'+esc(tp[s.key==="en"?"en":s.key])+"</span>")+
-   '<main><div class="wrap">'+lvSeg+filtRow+
-   '<div class="prog"><i style="width:'+Math.round(100*q.i/Math.max(1,list.length))+'%"></i></div>'+
-   '<div class="qmeta"><span class="n">'+
-     (q.hist.length?'<button class="stepback" data-prev="1">‹ '+esc(s.prev)+"</button>　":"")+
-     esc(t(s.qn,q.i+1,list.length))+"</span>"+
-   '<span class="n">'+esc(s.lvMastered)+" "+nSolidLv+"/"+all.length+"</span></div>"+
-   '<div class="card">'+
-     (ctx?'<div class="ctx">'+esc(ctx[s.key==="en"?"en":s.key])+"</div>":"")+
-     '<div class="qtext'+(!q.revealed&&q.level==="blank"?" tap":"")+'"'+
-       (!q.revealed&&q.level==="blank"?' data-reveal="1"':"")+">"+txt+"</div>"+
-     (s.key!=="en" && (q.level==="hint"||q.revealed)
-        ? '<div class="qen">'+esc(it.en)+"</div>" : "")+
-     "<hr>"+
-     '<div class="answer">'+refTxt+"</div>"+
-     '<div class="taprow">'+
-       (refShown?"":'<span class="h">'+esc(segs.length>1?s.tapEach:s.tapReveal)+"</span>")+
-       refChips+"</div>"+
-   "</div>"+
-   (refShown?'<div class="actions" style="margin-top:14px">'+
-      '<button class="btn btn-wide" data-retry="1">'+esc(s.retry)+"</button>"+
-      (it.vs&&it.vs.length
-        ? '<button class="btn btn-brass btn-wide" data-openv="'+tp.items.indexOf(it)+'">'+
-          esc(s.vsHead)+" · "+esc(t(s.verseOf,it.vs.length))+"</button>" : "")+
-    "</div>":"")+
-   "</div></main>"+
-   '<div class="footbar"><div class="wrap">'+
-     (refShown
-       ? '<button class="btn btn-clay btn-wide" data-mark="0">'+esc(s.forgot)+"</button>"+
-         '<button class="btn btn-sage btn-wide" data-mark="1">'+esc(s.got)+"</button>"
-       : '<button class="btn btn-p btn-wide" data-reveal="1">'+esc(s.reveal)+"</button>")+
-   "</div></div>";
+    '<main><div class="wrap">'+lvSeg+filtRow+refChips+head+rows+"</div></main>";
 }
 
-/* ---- pick a passage (verse drill entry) ---- */
 function viewVpick(s){
   var tp=TOPICS[st.tid];
   var rows=tp.items.map(function(it,ii){
@@ -1589,7 +1563,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-readmode],[data-rmfull],[data-rmhow],[data-ctx],[data-chgo],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
+  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.fs){
@@ -1601,8 +1575,7 @@ document.addEventListener("click",function(e){
   }
   if(d.lang){ st.lang=d.lang; P.lang=d.lang; save(); return render(); }
   if(d.back!==undefined){
-    if(st.screen==="readmode") st.screen="topic";
-    else if(st.screen==="egw") st.screen=(st.eg&&st.eg.from)||"topic";
+    if(st.screen==="egw") st.screen=(st.eg&&st.eg.from)||"topic";
     else if(st.screen==="chapter") st.screen=st.chFrom||"verse";
     else if(st.screen==="verse") st.screen="verses";
     else if(st.screen==="verses") st.screen=st.from||"topic";
@@ -1631,7 +1604,13 @@ document.addEventListener("click",function(e){
     st.keepScroll=window.scrollY; return render();
   }
   if(d.rseg!==undefined){
-    st.seq.rshown[d.rseg]=1; st.keepScroll=window.scrollY; return render();
+    if(!st.seq) return;
+    var rp=String(d.rseg).split(":");
+    if(rp.length===2){
+      var rm=st.seq.rf[rp[0]]||(st.seq.rf[rp[0]]={});
+      rm[rp[1]]=1;
+    } else if(st.seq.rshown){ st.seq.rshown[d.rseg]=1; }
+    st.keepScroll=window.scrollY; return render();
   }
   if(d.refmask){
     st.refmask=d.refmask; P.refmask=d.refmask; save();
@@ -1666,10 +1645,15 @@ document.addEventListener("click",function(e){
     st.vd={vi:+d.verse, level:"fill", revealed:false, shown:{}, salt:0};
     st.screen="verse"; return render();
   }
-  if(d.readmode!==undefined){ st.screen="readmode"; st.keepScroll=0; return render(); }
-  if(d.rmfull!==undefined){ st.rmFull = (d.rmfull==="1"); st.keepScroll=0; return render(); }
-  if(d.rmhow!==undefined){
-    P.rmHideHow = (d.rmhow==="0"); save(); st.keepScroll=0; return render();
+  if(d.sall!==undefined){
+    if(!st.seq) return;
+    st.seq.all = (d.sall==="1"); st.keepScroll=window.scrollY; return render();
+  }
+  if(d.smark!==undefined){
+    if(!st.seq) return;
+    var sp=d.smark.split(":");
+    markItem(st.tid, +sp[0], st.seq.level, sp[1]==="1");
+    st.keepScroll=window.scrollY; return render();
   }
   if(d.tab){
     st.screen = (d.tab==="lib") ? "lib" : (d.tab==="settings" ? "settings" : "list");
@@ -1739,15 +1723,23 @@ document.addEventListener("click",function(e){
     return render();
   }
   if(el.classList.contains("sblk")){
-    if(st.screen!=="verse" || !st.vd) return;
-    st.vd.shown[el.dataset.s]=1;
+    var si=el.dataset.s, sp2=String(si).split(":");
+    if(st.screen==="seq" && st.seq && sp2.length===2){
+      var sm=st.seq.tx[sp2[0]]||(st.seq.tx[sp2[0]]={});
+      sm[sp2[1]]=1;
+    } else if(st.screen==="verse" && st.vd){
+      st.vd.shown[si]=1;
+    } else return;
     st.keepScroll=window.scrollY; return render();
   }
   if(el.classList.contains("blk")){
-    var bi=el.dataset.b;
-    if(st.screen==="verse" && st.vd)     st.vd.shown[bi]=1;
-    else if(st.screen==="seq" && st.seq) st.seq.shown[bi]=1;
-    else return;
+    var bi=el.dataset.b, bp=String(bi).split(":");
+    if(st.screen==="seq" && st.seq && bp.length===2){
+      var bm=st.seq.tx[bp[0]]||(st.seq.tx[bp[0]]={});
+      bm[bp[1]]=1;
+    } else if(st.screen==="verse" && st.vd){
+      st.vd.shown[bi]=1;
+    } else return;
     st.keepScroll=window.scrollY; return render();
   }
 });
