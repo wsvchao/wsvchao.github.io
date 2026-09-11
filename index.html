@@ -418,6 +418,14 @@ body.hastab.hasfoot main{padding-bottom:168px}
 var DATA = JSON.parse(document.getElementById("bt-data").textContent);
 var TOPICS = DATA.topics, VT = DATA.v, BOOKS = DATA.books;
 var EG = DATA.eg || {}, EGV = 2;
+/* 英文書卷縮寫（僅用於書卷格子，避免全名太長被截斷），順序與 BOOKS 一致 */
+var EN_ABBR = ["Gen","Exod","Lev","Num","Deut","Josh","Judg","Ruth","1Sam","2Sam",
+  "1Kgs","2Kgs","1Chr","2Chr","Ezra","Neh","Esth","Job","Ps","Prov",
+  "Eccl","Song","Isa","Jer","Lam","Ezek","Dan","Hos","Joel","Amos",
+  "Obad","Jonah","Mic","Nah","Hab","Zeph","Hag","Zech","Mal","Matt",
+  "Mark","Luke","John","Acts","Rom","1Cor","2Cor","Gal","Eph","Phil",
+  "Col","1Thess","2Thess","1Tim","2Tim","Titus","Phlm","Heb","Jas","1Pet",
+  "2Pet","1John","2John","3John","Jude","Rev"];
 
 /* Verses are stored once each and referenced by "bookIndex.chapter.verse".
    Rebuild the objects the views expect; repeated verses share one object. */
@@ -1308,8 +1316,9 @@ function bookName(bi, s){
 /* 書卷／章／節的格子畫面：標準的「聖經」分頁和背誦庫「＋」裡的內嵌版共用同一套 */
 function bookGridCells(s, attr){
   return BOOKS.map(function(b,bi){
+    var label = (s.key==="en") ? (EN_ABBR[bi] || bookName(bi,s)) : bookName(bi,s);
     return '<button class="bcell '+bookGrp(bi)+'" data-'+attr+'="'+bi+'">'+
-           esc(bookName(bi,s))+"</button>";
+           esc(label)+"</button>";
   }).join("");
 }
 function chapGridCells(bi, attr){
