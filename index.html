@@ -368,7 +368,9 @@ body.hastab.hasfoot main{padding-bottom:168px}
 .hl-color-btn.hl-yellow{background:rgba(255,193,7,.6)}
 .hl-color-btn.hl-orange{background:rgba(255,152,0,.6)}
 .hl-color-btn.hl-red{background:rgba(244,67,54,.6)}
-.hl-toolbar .hl-del{color:var(--clay);flex-shrink:0}
+.hl-toolbar .hl-del{color:var(--clay);flex-shrink:0;font-weight:600;white-space:nowrap;
+  border-color:var(--clay);background:var(--clay-soft)}
+.hlhint{margin-top:6px}
 .blk{display:inline-block;background:var(--brass-soft);border-bottom:1.5px solid var(--brass-line);
   border-radius:3px;color:transparent;margin:0 1px;cursor:pointer;user-select:none}
 .blk.on{background:transparent;border-bottom-color:var(--brass);color:var(--brass-ink)}
@@ -499,6 +501,8 @@ var S = {
    ctx:"前後文", ctxLoad:"載入中…", chPrev:"上一章", chNext:"下一章",
    ctxErr:"讀不到這一章。前後文的經文放在你自己的網站上，預覽版沒有這些檔案。",
    ctxOnce:"第一次看某一卷需要連網，之後就存在手機裡，離線也讀得到。",
+   hlDel:"刪除標記", hlCancel:"取消",
+   hlHint:"長按經文可以標記顏色；點一下已標記的字，可以換色或刪除。",
    egBtn:"懷氏參閱", egPg:"第 %1 頁",
    egNote:"底色標出的是引註那幾頁的段落，前後各兩段是上下文。中文譯文陸續補上。",
    egOnce:"第一次看某一本書需要連網，之後就存在手機裡。",
@@ -588,6 +592,8 @@ var S = {
    ctx:"前后文", ctxLoad:"载入中…", chPrev:"上一章", chNext:"下一章",
    ctxErr:"读不到这一章。前后文的经文放在你自己的网站上，预览版没有这些档案。",
    ctxOnce:"第一次看某一卷需要连网，之后就存在手机里，离线也读得到。",
+   hlDel:"删除标记", hlCancel:"取消",
+   hlHint:"长按经文可以标记颜色；点一下已标记的字，可以换色或删除。",
    egBtn:"怀氏参阅", egPg:"第 %1 页",
    egNote:"底色标出的是引注那几页的段落，前后各两段是上下文。中文译文陆续补上。",
    egOnce:"第一次看某一本书需要连网，之后就存在手机里。",
@@ -677,6 +683,8 @@ var S = {
    ctx:"In context", ctxLoad:"Loading…", chPrev:"Previous chapter", chNext:"Next chapter",
    ctxErr:"This chapter could not be loaded. The full text lives on your own site; the preview does not carry those files.",
    ctxOnce:"A book is fetched the first time you open it, then kept on the device for offline use.",
+   hlDel:"Remove", hlCancel:"Cancel",
+   hlHint:"Press and hold a verse to mark it; tap a mark to change its colour or remove it.",
    egBtn:"Ellen White", egPg:"p. %1",
    egNote:"Shaded paragraphs are the pages cited; two paragraphs on either side give the context.",
    egOnce:"A book is fetched the first time you open it, then kept on the device.",
@@ -1167,8 +1175,10 @@ function hlEdit(el){
   var id=el.getAttribute("data-hl");
   if(!hlById(id)) return;
   hlEditId=id;
+  var s0=L();
   hlToolbar(el.getBoundingClientRect(),
-    hlSwatches("data-hlset")+'<button class="hl-del" data-hlrm="1" aria-label="delete">✕</button>',
+    hlSwatches("data-hlset")+
+    '<button class="hl-del" data-hlrm="1">'+esc(s0.hlDel)+"</button>",
     function(tb){
       tb.querySelectorAll("[data-hlset]").forEach(function(btn){
         btn.addEventListener("click",function(ev){
@@ -1194,11 +1204,16 @@ function hlRemove(id){
 }
 
 /* ---- 手勢：方案C，長按才出現配色列，不跟系統的選字選單搶 ---- */
-var hlEditId=null, hlLong=false, hlLongT=null, hlOffT=null, hlSelT=null;
-function hlArm(){
-  hlLong=false;
+var hlEditId=null, hlLong=false, hlLongT=null, hlOffT=null, hlSelT=null, hlHitEl=null;
+function hlArm(hit){
+  hlLong=false; hlHitEl=hit||null;
   clearTimeout(hlLongT); clearTimeout(hlOffT);
   hlLongT=setTimeout(function(){
+    /* 長按已經標記的字＝想改它，直接給換色／刪除，不要再跳新增 */
+    if(hlHitEl && document.body.contains(hlHitEl)){
+      try{ window.getSelection().removeAllRanges(); }catch(e){}
+      return hlEdit(hlHitEl);
+    }
     hlLong=true;
     hlPick();                                  /* 系統已經選好字就直接跳 */
   }, 500);
@@ -1211,13 +1226,14 @@ function hlDisarm(){
 }
 document.addEventListener("touchstart",function(e){
   var t=e.target;
-  if(t && t.closest && t.closest(".chtext")) hlArm(); else hlLong=false;
+  if(t && t.closest && t.closest(".chtext")) hlArm(t.closest(".hl[data-hl]"));
+  else { hlLong=false; hlHitEl=null; }
 },{passive:true});
 document.addEventListener("touchend",hlDisarm,{passive:true});
 document.addEventListener("touchcancel",hlDisarm,{passive:true});
 /* 選取一有變動就看看要不要跳配色列（長按中才算） */
 document.addEventListener("selectionchange",function(){
-  if(!hlLong) return;
+  if(!hlLong || hlHitEl) return;
   clearTimeout(hlSelT);
   hlSelT=setTimeout(function(){ if(hlLong) hlPick(); }, 120);
 });
@@ -1666,9 +1682,12 @@ function viewChapter(s){
   var pickBtn = (st.chFrom === "bchap" && !ch.loading && !ch.err && BIB[ch.bi] && BIB[ch.bi][ch.c])
     ? '<button class="btn btn-brass btn-wide" style="margin-bottom:16px" data-bpick="1">' +
       esc(s.bPickBtn) + "</button>" : "";
+  var readable = !ch.loading && !ch.err && BIB[ch.bi] && BIB[ch.bi][ch.c];
   return bar(backBtn(s) + '<span class="bar-title">' + esc(title) + "</span>") +
     '<main><div class="wrap"><div class="thead"><h1>' + esc(title) + "</h1>" +
-    '<div class="src">' + esc(s.ctxOnce) + "</div></div>" + pickBtn + body + "</div></main>";
+    '<div class="src">' + esc(s.ctxOnce) + "</div>" +
+    (readable ? '<div class="src hlhint">' + esc(s.hlHint) + "</div>" : "") +
+    "</div>" + pickBtn + body + "</div></main>";
 }
 
 /* ---- Ellen White passages: one file per source book, fetched on demand ---- */
