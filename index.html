@@ -343,6 +343,32 @@ body.hastab.hasfoot main{padding-bottom:168px}
 .vtext{font-family:var(--f-scr);font-size:calc(15px * var(--fs));line-height:1.6;flex:1 1 auto;min-width:0}
 .vbody{font-family:var(--f-scr);font-size:calc(20px * var(--fs));line-height:1.95;letter-spacing:.01em}
 .vbody.en{line-height:1.7;letter-spacing:0}
+
+/* ---------- highlight markup ---------- */
+.hl{cursor:pointer;border-radius:3px;position:relative;transition:opacity .2s}
+.hl-yellow{background:rgba(255,193,7,.4)}
+.hl-orange{background:rgba(255,152,0,.4)}
+.hl-red{background:rgba(244,67,54,.4)}
+@media (prefers-color-scheme:dark){
+  .hl-yellow{background:rgba(255,193,7,.2)}
+  .hl-orange{background:rgba(255,152,0,.25)}
+  .hl-red{background:rgba(244,67,54,.25)}
+}
+.hl:active{opacity:.7}
+
+/* highlight toolbar */
+.hl-toolbar{position:fixed;z-index:50;user-select:none;-webkit-user-select:none;background:var(--surface);border:1px solid var(--rule);
+  border-radius:12px;box-shadow:var(--shadow);display:flex;gap:8px;padding:10px;
+  max-width:280px}
+.hl-toolbar button{padding:8px 12px;border-radius:8px;border:1px solid var(--rule-soft);
+  font-size:calc(13px * var(--fs));font-weight:500;white-space:nowrap}
+.hl-toolbar button:active{background:var(--surface-2)}
+.hl-toolbar .hl-menu{display:flex;gap:6px;align-items:center}
+.hl-color-btn{width:32px;height:32px;border-radius:6px;border:2px solid transparent;padding:0}
+.hl-color-btn.hl-yellow{background:rgba(255,193,7,.6)}
+.hl-color-btn.hl-orange{background:rgba(255,152,0,.6)}
+.hl-color-btn.hl-red{background:rgba(244,67,54,.6)}
+.hl-toolbar .hl-del{color:var(--clay);flex-shrink:0}
 .blk{display:inline-block;background:var(--brass-soft);border-bottom:1.5px solid var(--brass-line);
   border-radius:3px;color:transparent;margin:0 1px;cursor:pointer;user-select:none}
 .blk.on{background:transparent;border-bottom-color:var(--brass);color:var(--brass-ink)}
@@ -816,6 +842,9 @@ if(typeof P.ctSeq !== "number") P.ctSeq = 0;
 if(!P.cut || typeof P.cut !== "object") P.cut = {};
 for(var _ck in P.cut){ if(!VT[_ck]) VT[_ck] = P.cut[_ck]; }
 
+/* 高光標記 */
+if(!(P.highlights instanceof Array)) P.highlights = [];
+
 function vkeyStr(b,c,v){ return b+"."+c+"."+v; }
 /* 「創4:1」「創4:1-5」三種語言各一個寫法 */
 function cuRef(r, i){
@@ -1025,6 +1054,191 @@ function clearTopic(tid){
   });
   save();
 }
+
+/* ---- 高光標記 ----
+   標記存在 P.highlights，每筆 {id,b,c,v,s,e,text,color}，
+   s/e 是這一節經文純文字的字元位置，重新畫面時照位置套色，
+   不必在 DOM 上找字串，換語言、換章節都不會錯位。 */
+function hlKey(b,c,v){ return b+"."+c+"."+v; }
+function hlNewId(){ return "h"+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+/* 位置是按「那個語言的經文」算的，所以只畫同一個語言的標記 */
+function hlFor(b,c,v){
+  var k=hlKey(b,c,v);
+  return P.highlights.filter(function(h){
+    return hlKey(h.b,h.c,h.v)===k && (h.l||"zh")===st.lang;
+  });
+}
+function hlById(id){
+  var f=null;
+  P.highlights.forEach(function(h){ if(h.id===id) f=h; });
+  return f;
+}
+/* 一節經文 → 已套色的 HTML（重疊的區段以先開始的為準） */
+function hlHtml(text, b, c, v){
+  text=String(text);
+  var hs=hlFor(b,c,v).slice().sort(function(x,y){ return x.s-y.s; });
+  if(!hs.length) return esc(text);
+  var out="", pos=0;
+  hs.forEach(function(h){
+    var s=Math.max(0,Math.min(h.s,text.length)), e=Math.max(s,Math.min(h.e,text.length));
+    if(e<=pos) return;
+    if(s<pos) s=pos;
+    if(s>pos) out+=esc(text.slice(pos,s));
+    out+='<span class="hl hl-'+esc(h.color)+'" data-hl="'+esc(h.id)+'">'+esc(text.slice(s,e))+"</span>";
+    pos=e;
+  });
+  if(pos<text.length) out+=esc(text.slice(pos));
+  return out;
+}
+/* 選取範圍 → 這一節裡的字元位置；跨節選取只取開頭那一節 */
+function hlRange(){
+  var sel=window.getSelection();
+  if(!sel || sel.isCollapsed || !sel.rangeCount) return null;
+  var range=sel.getRangeAt(0);
+  var host=range.startContainer;
+  if(host.nodeType===3) host=host.parentNode;
+  host=host && host.closest ? host.closest(".chtext") : null;
+  if(!host) return null;
+  var line=host.closest("[data-hv]");
+  if(!line) return null;
+  var w=document.createTreeWalker(host,NodeFilter.SHOW_TEXT,null,false),
+      n, pos=0, s=-1, e=-1;
+  while(n=w.nextNode()){
+    if(n===range.startContainer) s=pos+range.startOffset;
+    if(n===range.endContainer)   e=pos+range.endOffset;
+    pos+=n.textContent.length;
+  }
+  if(s<0) return null;
+  if(e<0 || e>pos) e=pos;              /* 選到別節去了，切到本節結尾 */
+  if(e<=s) return null;
+  var a=line.dataset.hv.split(".");
+  return { b:+a[0], c:+a[1], v:+a[2], s:s, e:e,
+           text:(host.textContent||"").slice(s,e) };
+}
+function hlDrop(){
+  var t=document.querySelector(".hl-toolbar");
+  if(t) t.remove();
+  hlEditId=null;
+}
+function hlToolbar(rect, html, wire){
+  hlDrop();
+  var tb=document.createElement("div");
+  tb.className="hl-toolbar";
+  tb.innerHTML='<div class="hl-menu">'+html+"</div>";
+  document.body.appendChild(tb);
+  var w=tb.offsetWidth||180, x=Math.max(8,Math.min(rect.left, window.innerWidth-w-8));
+  var top=rect.top-tb.offsetHeight-10;
+  if(top<8) top=Math.min(rect.bottom+10, window.innerHeight-tb.offsetHeight-8);
+  tb.style.left=x+"px";
+  tb.style.top=Math.max(8,top)+"px";
+  wire(tb);
+  return tb;
+}
+function hlSwatches(attr){
+  return ["yellow","orange","red"].map(function(c){
+    return '<button class="hl-color-btn hl-'+c+'" '+attr+'="'+c+'" aria-label="'+c+'"></button>';
+  }).join("");
+}
+/* 長按選好字之後跳出的配色列 */
+function hlPick(){
+  var r=hlRange();
+  if(!r) return;
+  var sel=window.getSelection(), rect=sel.getRangeAt(0).getBoundingClientRect();
+  if(!rect || (!rect.width && !rect.height)) return;
+  hlToolbar(rect, hlSwatches("data-hlnew"), function(tb){
+    tb.querySelectorAll("[data-hlnew]").forEach(function(btn){
+      btn.addEventListener("click",function(ev){
+        ev.preventDefault(); ev.stopPropagation();
+        hlAdd(r, btn.getAttribute("data-hlnew"));
+      });
+    });
+  });
+}
+function hlAdd(r, color){
+  P.highlights.push({ id:hlNewId(), l:st.lang, b:r.b, c:r.c, v:r.v,
+                      s:r.s, e:r.e, text:r.text, color:color });
+  save();
+  try{ window.getSelection().removeAllRanges(); }catch(e){}
+  hlDrop();
+  st.keepScroll=window.scrollY; render();
+}
+/* 點已標記的字：換色或刪除 */
+function hlEdit(el){
+  var id=el.getAttribute("data-hl");
+  if(!hlById(id)) return;
+  hlEditId=id;
+  hlToolbar(el.getBoundingClientRect(),
+    hlSwatches("data-hlset")+'<button class="hl-del" data-hlrm="1" aria-label="delete">✕</button>',
+    function(tb){
+      tb.querySelectorAll("[data-hlset]").forEach(function(btn){
+        btn.addEventListener("click",function(ev){
+          ev.preventDefault(); ev.stopPropagation();
+          var h=hlById(id);
+          if(h){ h.color=btn.getAttribute("data-hlset"); save(); }
+          hlDrop(); st.keepScroll=window.scrollY; render();
+        });
+      });
+      tb.querySelector("[data-hlrm]").addEventListener("click",function(ev){
+        ev.preventDefault(); ev.stopPropagation();
+        hlRemove(id);
+      });
+    });
+}
+function hlRemove(id){
+  var ix=-1;
+  P.highlights.forEach(function(h,i){ if(h.id===id) ix=i; });
+  if(ix<0) return;
+  P.highlights.splice(ix,1); save();
+  hlDrop();
+  st.keepScroll=window.scrollY; render();
+}
+
+/* ---- 手勢：方案C，長按才出現配色列，不跟系統的選字選單搶 ---- */
+var hlEditId=null, hlLong=false, hlLongT=null, hlOffT=null, hlSelT=null;
+function hlArm(){
+  hlLong=false;
+  clearTimeout(hlLongT); clearTimeout(hlOffT);
+  hlLongT=setTimeout(function(){
+    hlLong=true;
+    hlPick();                                  /* 系統已經選好字就直接跳 */
+  }, 500);
+}
+function hlDisarm(){
+  clearTimeout(hlLongT);
+  /* 手放開之後系統才把字選起來，這裡再等一下，選好了一樣算長按 */
+  clearTimeout(hlOffT);
+  hlOffT=setTimeout(function(){ hlLong=false; }, 1500);
+}
+document.addEventListener("touchstart",function(e){
+  var t=e.target;
+  if(t && t.closest && t.closest(".chtext")) hlArm(); else hlLong=false;
+},{passive:true});
+document.addEventListener("touchend",hlDisarm,{passive:true});
+document.addEventListener("touchcancel",hlDisarm,{passive:true});
+/* 選取一有變動就看看要不要跳配色列（長按中才算） */
+document.addEventListener("selectionchange",function(){
+  if(!hlLong) return;
+  clearTimeout(hlSelT);
+  hlSelT=setTimeout(function(){ if(hlLong) hlPick(); }, 120);
+});
+/* 桌機用滑鼠選字，放開就跳 */
+document.addEventListener("mouseup",function(e){
+  if(e.target && e.target.closest && e.target.closest(".hl-toolbar")) return;
+  setTimeout(function(){
+    var r=hlRange();
+    if(r) hlPick();
+  },0);
+});
+/* 點標記＝編輯，點別處＝收起 */
+document.addEventListener("click",function(e){
+  var t=e.target;
+  if(!t || !t.closest) return;
+  if(t.closest(".hl-toolbar")) return;
+  var hit=t.closest(".hl[data-hl]");
+  if(hit){ e.preventDefault(); e.stopPropagation(); return hlEdit(hit); }
+  hlDrop();
+},true);
+
 
 /* ---------------- helpers ---------------- */
 function esc(s){ return String(s).replace(/[&<>"]/g,function(c){
@@ -1436,9 +1650,11 @@ function viewChapter(s){
     var vs = BIB[ch.bi][ch.c], nums = Object.keys(vs).map(Number).sort(function(a, b2){ return a - b2; });
     var col = (s.key === "en") ? 2 : (s.key === "hans" ? 1 : 0);
     body = nums.map(function(n){
-      return '<div class="chline' + (n === ch.v ? " cur" : "") + '" id="' + (n === ch.v ? "chcur" : "") + '">' +
+      return '<div class="chline' + (n === ch.v ? " cur" : "") + '" id="' + (n === ch.v ? "chcur" : "") + '"' +
+        ' data-hv="' + ch.bi + "." + ch.c + "." + n + '">' +
         '<span class="chn">' + n + "</span>" +
-        '<span class="chtext' + (s.key === "en" ? " en" : "") + '">' + esc(vs[String(n)][col]) + "</span></div>";
+        '<span class="chtext' + (s.key === "en" ? " en" : "") + '">' +
+        hlHtml(vs[String(n)][col], ch.bi, ch.c, n) + "</span></div>";
     }).join("");
     var last = chapterCount(ch.bi);
     body += '<div class="chnav">' +
@@ -2360,6 +2576,7 @@ function searchInput(el){
   box.innerHTML=pickRows(L());
   }
 render();
+
 })();
 </script>
 
