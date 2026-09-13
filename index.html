@@ -243,6 +243,7 @@ body.hastab.hasfoot main{padding-bottom:168px}
   display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent}
 .prow[aria-pressed="true"] .ck{background:var(--brass);border-color:var(--brass);color:var(--ground)}
 .prow.dim{opacity:.4}
+.prow .ck.ckopen{border:0;background:none;color:var(--brass);font-size:calc(19px * var(--fs))}
 .prow .pt{flex:1 1 auto;min-width:0}
 .prow .pn{display:block;font-family:var(--f-mono);font-size:calc(11px * var(--fs));
   color:var(--faint);margin-top:2px}
@@ -535,6 +536,9 @@ var S = {
    ctAddVerse:"＋ 新增經文", ctEmpty:"還沒有加入經文，點下面「＋ 新增經文」開始。",
    ctUp:"上移", ctDown:"下移", ctRemove:"移除",
    libConfirm:"加入背誦庫", libConfirmN:"加入 %1 個主題", libNone:"沒有可加入的主題了。",
+   fpHint:"勾選要加入背誦庫的篇章，每一篇會各自成為一個項目。",
+   fpRow:"共 %1 篇，可逐篇挑選", fpGot:"已加入 %1 篇",
+   fpAll:"全選", fpNone:"全部取消", fpConfirmN:"加入 %1 篇", fpConfirm:"加入背誦庫",
    libIn:"已在庫中", libDrop:"移出背誦庫", libDropAsk:"再按一次移出",
    libCount:"%1 個主題　%2 節經文", libCount2:"%1 個主題・%2 段自訂經文　%3 節經文", topicRead:"這一頁只供閱讀查考；要背誦請到「背誦庫」。",
    readTapVerse:"點一節經文，可以讀那一整章。",
@@ -626,6 +630,9 @@ var S = {
    ctAddVerse:"＋ 新增经文", ctEmpty:"还没有加入经文，点下面「＋ 新增经文」开始。",
    ctUp:"上移", ctDown:"下移", ctRemove:"移除",
    libConfirm:"加入背诵库", libConfirmN:"加入 %1 个主题", libNone:"没有可加入的主题了。",
+   fpHint:"勾选要加入背诵库的篇章，每一篇会各自成为一个项目。",
+   fpRow:"共 %1 篇，可逐篇挑选", fpGot:"已加入 %1 篇",
+   fpAll:"全选", fpNone:"全部取消", fpConfirmN:"加入 %1 篇", fpConfirm:"加入背诵库",
    libIn:"已在库中", libDrop:"移出背诵库", libDropAsk:"再按一次移出",
    libCount:"%1 个主题　%2 节经文", libCount2:"%1 个主题・%2 段自订经文　%3 节经文", topicRead:"这一页只供阅读查考；要背诵请到「背诵库」。",
    readTapVerse:"点一节经文，可以读那一整章。",
@@ -717,6 +724,9 @@ var S = {
    ctAddVerse:"+ Add a verse", ctEmpty:"No verses yet — tap “+ Add a verse” below.",
    ctUp:"Move up", ctDown:"Move down", ctRemove:"Remove",
    libConfirm:"Add to list", libConfirmN:"Add %1 topics", libNone:"Every topic is already on your list.",
+   fpHint:"Tick the passages to add. Each one becomes its own item on your list.",
+   fpRow:"%1 passages — pick individually", fpGot:"%1 added",
+   fpAll:"Select all", fpNone:"Clear all", fpConfirmN:"Add %1 passages", fpConfirm:"Add to list",
    libIn:"On your list", libDrop:"Remove", libDropAsk:"Tap again to remove",
    libCount:"%1 topics · %2 verses", libCount2:"%1 topics · %2 custom passages · %3 verses", topicRead:"This page is for reading. Drills live under Memorize.",
    readTapVerse:"Tap a verse to read the whole chapter.",
@@ -854,6 +864,7 @@ function rollStats(){
    P.cut 是這兩種共用的經文內文快取，加入時一併存起來，離線也背得動。
    內文格式和內建的經文表 VT 一樣（繁、簡、英），開機時併回 VT，
    hydrate() 就能照舊把任何一節組出來，背誦進度完全不用改。 */
+if(!(P.fp instanceof Array)) P.fp = [];   /* 名篇速查裡單獨挑出來背的篇章 */
 if(!(P.cu instanceof Array)) P.cu = [];
 if(!(P.ct instanceof Array)) P.ct = [];
 if(typeof P.ctSeq !== "number") P.ctSeq = 0;
@@ -911,11 +922,56 @@ function ctTopic(def, id){
            zh:def.name, hans:def.name, en:def.name,
            items:items, _hasv:items.some(function(it){ return it.vs && it.vs.length; }) };
 }
-/* TOPICS 後面掛著自訂經文；P.cu／P.ct 一有增刪就整段重建 */
+/* ---- 名篇速查：底下 51 篇各自獨立，可以只挑幾篇進背誦庫 ----
+   有 12 篇是跨不連續經文的（例如「羅16:17,18；林前1:10」橫跨兩卷），
+   自訂經文那種「一段連續範圍」存不下，所以這裡直接沿用原本那一條目，
+   只是外面包一層，讓它在背誦庫裡看起來就是一個獨立項目。 */
+var FP_EN = "FAMOUS PASSAGES";
+function isFP(tp){ return !!tp && tp.en===FP_EN && !tp.fp; }
+function fpSrc(){
+  var f=null;
+  TOPICS.forEach(function(t){ if(isFP(t)) f=t; });
+  return f;
+}
+function fpItems(){
+  var f=fpSrc(); if(!f) return [];
+  /* 沒有經文的那一條（「祭壇——為罪流血」）是段落標題，不能背 */
+  return f.items.filter(function(it){ return it.k==="e" && it.vs && it.vs.length; });
+}
+function fpKey(name){ return "fp:"+name; }
+function fpFind(name){
+  var found=null;
+  fpItems().forEach(function(it){ if(it.en===name) found=it; });
+  return found;
+}
+function fpTopic(name, id){
+  var src=fpFind(name); if(!src) return null;
+  var it={ k:"e", fp:1, _ix:0,
+           rz:src.rz, rh:src.rh, re:src.re,
+           zh:src.zh, hans:src.hans, en:src.en, vs:src.vs };
+  return { id:id, fp:1, fpName:name, cid:fpKey(name),
+           zh:src.zh, hans:src.hans, en:src.en,
+           items:[it], _hasv:true };
+}
+function fpAdd(names){
+  names.forEach(function(n){ if(P.fp.indexOf(n)<0 && fpFind(n)) P.fp.push(n); });
+  save(); buildCustom();
+  libAdd(names.map(fpKey));
+}
+function fpDrop(name){
+  var i=P.fp.indexOf(name);
+  if(i>=0){ P.fp.splice(i,1); save(); buildCustom(); }
+}
+/* TOPICS 後面掛著自訂經文；P.cu／P.ct／P.fp 一有增刪就整段重建 */
 function buildCustom(){
-  while(TOPICS.length && (TOPICS[TOPICS.length-1].cu || TOPICS[TOPICS.length-1].ct)) TOPICS.pop();
+  while(TOPICS.length && (TOPICS[TOPICS.length-1].cu || TOPICS[TOPICS.length-1].ct
+                          || TOPICS[TOPICS.length-1].fp)) TOPICS.pop();
   P.cu.forEach(function(r){ TOPICS.push(cuTopic(r, TOPICS.length)); });
   P.ct.forEach(function(def){ TOPICS.push(ctTopic(def, TOPICS.length)); });
+  P.fp.forEach(function(n){
+    var t=fpTopic(n, TOPICS.length);
+    if(t) TOPICS.push(t);
+  });
 }
 function cuAdd(r){
   if(cuHas(r)) return false;
@@ -1443,6 +1499,7 @@ function render(){
   else if(st.screen==="egw")   h=viewEg(s);
   else if(st.screen==="lib")     h=viewLib(s);
   else if(st.screen==="libpick") h=viewLibPick(s);
+  else if(st.screen==="fppick")  h=viewFpPick(s);
   else if(st.screen==="libtopic")h=viewLibTopic(s);
   else if(st.screen==="settings")h=viewSettings(s);
   h = h.replace('<main><div class="wrap">', '<main><div class="wrap">'+fsPanel(s));
@@ -1793,7 +1850,7 @@ var ROOT = { bible:"bible", list:"topics", lib:"lib", settings:"settings" };
 var TABOF = { list:"topics", topic:"topics", verses:"topics", chapter:"topics",
               egw:"topics",
               bible:"bible", bchap:"bible", bvpick:"bible",
-              lib:"lib", libpick:"lib", libtopic:"lib", seq:"lib", vpick:"lib", verse:"lib",
+              lib:"lib", libpick:"lib", fppick:"lib", libtopic:"lib", seq:"lib", vpick:"lib", verse:"lib",
               settings:"settings" };
 function tabbar(s){
   var cur = TABOF[st.screen] || (st.mode==="read" ? "topics" : "lib");
@@ -1848,6 +1905,12 @@ function viewLib(s){
     '<button class="fab" data-libpick="1" aria-label="'+esc(s.libAdd)+'">＋</button>';
 }
 
+function fpSyncBtn(){
+  var b=document.querySelector("[data-fpok]"), n=fpPickCount(), s=L();
+  if(!b) return;
+  b.disabled=!n;
+  b.textContent = n ? t(s.fpConfirmN, n) : s.fpConfirm;
+}
 function pickRows(s){
   var sel = st.pick || (st.pick = {});
   var q = (st.pq||"").trim().toLowerCase();
@@ -1855,6 +1918,15 @@ function pickRows(s){
     if(!q) return true;
     return (tp.zh+tp.hans+tp.en).toLowerCase().indexOf(q) >= 0;
   }).map(function(tp){
+    /* 名篇速查底下每一篇都能單獨背，所以不整個勾，改成點進去逐篇挑 */
+    if(isFP(tp)){
+      var tot=fpItems().length, got=P.fp.length;
+      return '<button class="prow" data-fpopen="1">'+
+        '<span class="ck ckopen">&rsaquo;</span><span class="pt"><span class="ltitle">'+
+        esc(tp[s.key==="en"?"en":s.key])+"</span>"+
+        '<span class="pn">'+esc(t(s.fpRow, tot))+
+        (got ? " · "+esc(t(s.fpGot, got)) : "")+"</span></span></button>";
+    }
     var has = inLib(tp.id);
     if(has){
       return '<div class="prow dim"><span class="ck"></span>'+
@@ -1866,6 +1938,43 @@ function pickRows(s){
       esc(tp[s.key==="en"?"en":s.key])+"</span>"+
       '<span class="pn">'+verseCount(tp)+" "+esc(s.entries)+"</span></span></button>";
   }).join("") || '<div class="note">'+esc(s.libNone)+"</div>";
+}
+/* ---- 名篇速查：逐篇挑選 ---- */
+function fpPickRows(s){
+  var sel = st.fpsel || (st.fpsel = {});
+  return fpItems().map(function(it){
+    var sub = esc(it[s.rk])+" · "+esc(t(s.verseOf, it.vs.length));
+    if(P.fp.indexOf(it.en) >= 0){
+      return '<div class="prow dim"><span class="ck"></span>'+
+        '<span class="pt"><span class="ltitle">'+esc(it[s.key])+"</span>"+
+        '<span class="pn">'+sub+" · "+esc(s.libIn)+"</span></span></div>";
+    }
+    return '<button class="prow" data-fppick="'+esc(it.en)+'" aria-pressed="'+(!!sel[it.en])+'">'+
+      '<span class="ck">&#10003;</span><span class="pt"><span class="ltitle">'+
+      esc(it[s.key])+"</span>"+
+      '<span class="pn">'+sub+"</span></span></button>";
+  }).join("");
+}
+function fpPickCount(){
+  var n=0, m=st.fpsel||{};
+  for(var k in m) if(m[k]) n++;
+  return n;
+}
+function viewFpPick(s){
+  var f=fpSrc(), n=fpPickCount();
+  return bar(backBtn(s)+'<span class="bar-title">'+
+      esc(f ? f[s.key==="en"?"en":s.key] : "")+"</span>")+
+    '<main><div class="wrap">'+
+    '<p class="hint" style="margin:12px 0 10px">'+esc(s.fpHint)+"</p>"+
+    '<div class="filt" style="margin:0 0 12px">'+
+      '<button data-fpall="1">'+esc(s.fpAll)+"</button>"+
+      '<button data-fpall="0">'+esc(s.fpNone)+"</button>"+
+    "</div>"+
+    '<div id="fpbox">'+fpPickRows(s)+"</div>"+
+    '<div style="height:90px"></div></div></main>'+
+    '<div class="footbar"><div class="wrap">'+
+      '<button class="btn btn-p btn-wide" data-fpok="1"'+(n?"":" disabled")+">"+
+      esc(n ? t(s.fpConfirmN, n) : s.fpConfirm)+"</button></div></div>";
 }
 /* 「＋」畫面上方的切換：選主題／選經文（內嵌小號聖經瀏覽）／自訂主題（自己命名） */
 function pickModeSeg(s){
@@ -2311,7 +2420,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-pmode],[data-pbook],[data-pchap],[data-pv],[data-padd],[data-ctcreate],[data-ctrenopen],[data-ctrenok],[data-ctrencancel],[data-ctup],[data-ctdown],[data-ctrm],[data-taddtoggle],[data-tbook],[data-tchap],[data-tv],[data-tadd],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-xref],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
+  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-fpopen],[data-fppick],[data-fpall],[data-fpok],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-pmode],[data-pbook],[data-pchap],[data-pv],[data-padd],[data-ctcreate],[data-ctrenopen],[data-ctrenok],[data-ctrencancel],[data-ctup],[data-ctdown],[data-ctrm],[data-taddtoggle],[data-tbook],[data-tchap],[data-tv],[data-tadd],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-xref],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.fs){
@@ -2329,6 +2438,7 @@ document.addEventListener("click",function(e){
     else if(st.screen==="chapter") st.screen=st.chFrom||"verse";
     else if(st.screen==="verse") st.screen="verses";
     else if(st.screen==="verses") st.screen=st.from||"topic";
+    else if(st.screen==="fppick") st.screen="libpick";
     else if(st.screen==="seq"||st.screen==="vpick") st.screen="libtopic";
     else if(st.screen==="libpick" && st.pmode==="bible" && st.pbk && st.pbk.c!=null){
       st.pbk.c=null; st.pbk.a=0; st.pbk.z=0; st.bAdded="";
@@ -2480,6 +2590,31 @@ document.addEventListener("click",function(e){
     if(ok){ ok.disabled=!n2; ok.textContent = n2 ? t(L().libConfirmN,n2) : L().libConfirm; }
     return;
   }
+  /* ---- 名篇速查：逐篇挑選 ---- */
+  if(d.fpopen!==undefined){
+    st.fpsel={}; st.screen="fppick"; st.keepScroll=0; return render();
+  }
+  if(d.fppick!==undefined){
+    st.fpsel=st.fpsel||{};
+    var fon=!st.fpsel[d.fppick]; st.fpsel[d.fppick]=fon;
+    el.setAttribute("aria-pressed", fon);
+    return fpSyncBtn();
+  }
+  if(d.fpall!==undefined){
+    st.fpsel={};
+    if(d.fpall==="1"){
+      fpItems().forEach(function(it){
+        if(P.fp.indexOf(it.en)<0) st.fpsel[it.en]=true;
+      });
+    }
+    var fbox=document.getElementById("fpbox");
+    if(fbox) fbox.innerHTML=fpPickRows(L());
+    return fpSyncBtn();
+  }
+  if(d.fpok!==undefined){
+    var fks=[]; for(var fk in st.fpsel) if(st.fpsel[fk]) fks.push(fk);
+    fpAdd(fks); st.fpsel={}; st.screen="lib"; st.keepScroll=0; return render();
+  }
   if(d.pickok!==undefined){
     var ks=[]; for(var k in st.pick) if(st.pick[k]) ks.push(k);
     libAdd(ks); st.pick={}; st.screen="lib"; st.keepScroll=0; return render();
@@ -2492,6 +2627,7 @@ document.addEventListener("click",function(e){
     if(!st.armDrop){ st.armDrop=true; st.keepScroll=window.scrollY; return render(); }
     var dtp=TOPICS[st.tid], dk=tkey(st.tid);
     libDrop(dk);
+    if(dtp && dtp.fp) fpDrop(dtp.fpName);      /* 名篇速查挑出來的，移出後回到可挑清單 */
     if(dtp && dtp.cu) cuDrop(dk);              /* 單節快速加入的，移出後整段刪掉 */
     else if(dtp && dtp.ct) ctDelete(dtp.defId); /* 自訂主題，移出後連同底下的經文一起刪掉 */
     st.armDrop=false; st.screen="lib"; st.keepScroll=0; return render();
