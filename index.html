@@ -761,7 +761,7 @@ var S = {
    confirmClear:"Tap again to confirm", cleared:"Cleared",
    weakHow:"“Not yet solid” = never answered correctly, or missed last time.",
    weakHowLv:"Only items you have not yet answered correctly at this level, or missed last time.",
-   vlvDesc:{fill:"Tap a blank to reveal just that word",hint:"Tap any clause to reveal just that clause",blank:"Tap any clause to reveal just that clause"},
+   vlvDesc:{fill:"Tap a blank to reveal just that word",hint:"Tap any word to reveal just that word",blank:"Tap any word to reveal just that word"},
    footer:"Scripture: Chinese Union Version (1919, public domain) / King James Version (public domain). This app is for personal and church study." }
 };
 function t(s){ var a=arguments; return String(s).replace(/%(\d)/g,function(m,i){return a[+i]}); }
@@ -1418,8 +1418,20 @@ function blankOne(t,lang){
     return "▁".repeat(w.length); });
   return "▁".repeat(t.length);
 }
+/* 英文逐字點開；中文／简体維持逐句點開 */
+function wordParts(text){
+  var re=/[A-Za-z0-9][A-Za-z0-9'’-]*/g, out=[], last=0, m;
+  while((m=re.exec(text))!==null){
+    if(m.index>last) out.push({p:true,s:text.slice(last,m.index)});
+    out.push({p:false,s:m[0]});
+    last=re.lastIndex;
+  }
+  if(last<text.length) out.push({p:true,s:text.slice(last)});
+  return out;
+}
+function segParts(text,lang){ return isEn(lang) ? wordParts(text) : clauseParts(text,lang); }
 function segMask(text,lang,mode,shown){
-  var parts=clauseParts(text,lang), html="", idx=0;
+  var parts=segParts(text,lang), html="", idx=0;
   parts.forEach(function(pt){
     if(pt.p){ html+=esc(pt.s); return; }
     var i=idx++, on=shown&&shown[i];
@@ -1429,7 +1441,7 @@ function segMask(text,lang,mode,shown){
   return html;
 }
 function clauseCount(text,lang){
-  var n=0; clauseParts(text,lang).forEach(function(p){ if(!p.p) n++; }); return n;
+  var n=0; segParts(text,lang).forEach(function(p){ if(!p.p) n++; }); return n;
 }
 function maskRef(ref,mode){
   if(!ref) return "";
