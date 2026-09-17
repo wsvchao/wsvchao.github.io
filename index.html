@@ -2776,7 +2776,20 @@ render();
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
-    navigator.serviceWorker.register("sw.js").catch(function () {});
+    navigator.serviceWorker.register("sw.js").then(function (reg) {
+      // 每次開啟、每次從背景切回來，都主動問一次有沒有新版（不用等瀏覽器自己排程）
+      reg.update();
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible") reg.update();
+      });
+    }).catch(function () {});
+    // 新版本裝好、準備接管頁面時，自動重新整理一次，換上新版本
+    var refreshed = false;
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+      if (refreshed) return;
+      refreshed = true;
+      window.location.reload();
+    });
   });
 }
 </script>
