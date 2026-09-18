@@ -2831,13 +2831,19 @@ render();
 
 <script>
 if ("serviceWorker" in navigator) {
+  var _swReg = null;
+  function _checkForUpdate() { if (_swReg) _swReg.update().catch(function () {}); }
   window.addEventListener("load", function () {
     navigator.serviceWorker.register("sw.js").then(function (reg) {
-      // 每次開啟、每次從背景切回來，都主動問一次有沒有新版（不用等瀏覽器自己排程）
-      reg.update();
+      _swReg = reg;
+      // 每次開啟、每次從背景切回來、每次從 iOS 的凍結狀態恢復，都主動問一次有沒有新版
+      _checkForUpdate();
       document.addEventListener("visibilitychange", function () {
-        if (document.visibilityState === "visible") reg.update();
+        if (document.visibilityState === "visible") _checkForUpdate();
       });
+      // iOS 把主畫面 App 從背景喚醒時，常常只是恢復凍結的頁面、不會重新觸發 load，
+      // 但一定會有 pageshow（尤其 persisted 為 true 時），藉此補一次檢查。
+      window.addEventListener("pageshow", function () { _checkForUpdate(); });
     }).catch(function () {});
     // 新版本裝好、準備接管頁面時，自動重新整理一次，換上新版本
     var refreshed = false;
