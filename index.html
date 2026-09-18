@@ -518,6 +518,8 @@ var S = {
    egNote:"底色標出的是引註那幾頁的段落，前後各兩段是上下文。中文譯文陸續補上。",
    egOnce:"第一次看某一本書需要連網，之後就存在手機裡。",
    egErr:"讀不到這一段。懷氏著作的段落放在你自己的網站上，預覽版沒有這些檔案。",
+   cmBtn:"SDA聖經注釋", cmNote:"摘自基督復臨安息日會官方《聖經注釋》（大部分書卷為英文原文，中文翻譯陸續補上；路加福音、帖撒羅尼迦後書已有完整中文注釋）。",
+   cmErr:"讀不到這一段注釋。注釋檔案放在你自己的網站上，預覽版沒有這些檔案。",
    tabBible:"聖經", tabTopics:"主題", tabLib:"背誦庫", tabSet:"設定",
    bibleNote:"點書卷看各章；第一次讀某一卷需要連網，之後就存在手機裡，離線也讀得到。",
    bChapHint:"點一章直接讀整章經文。",
@@ -612,6 +614,8 @@ var S = {
    egNote:"底色标出的是引注那几页的段落，前后各两段是上下文。中文译文陆续补上。",
    egOnce:"第一次看某一本书需要连网，之后就存在手机里。",
    egErr:"读不到这一段。怀氏著作的段落放在你自己的网站上，预览版没有这些档案。",
+   cmBtn:"SDA圣经注释", cmNote:"摘自基督复临安息日会官方《圣经注释》（大部分书卷为英文原文，中文翻译陆续补上；路加福音、帖撒罗尼迦后书已有完整中文注释）。",
+   cmErr:"读不到这一段注释。注释档案放在你自己的网站上，预览版没有这些档案。",
    tabBible:"圣经", tabTopics:"主题", tabLib:"背诵库", tabSet:"设定",
    bibleNote:"点书卷看各章；第一次读某一卷需要连网，之后就存在手机里，离线也读得到。",
    bChapHint:"点一章直接读整章经文。",
@@ -706,6 +710,8 @@ var S = {
    egNote:"Shaded paragraphs are the pages cited; two paragraphs on either side give the context.",
    egOnce:"A book is fetched the first time you open it, then kept on the device.",
    egErr:"This passage could not be loaded. The Ellen White text lives on your own site; the preview does not carry those files.",
+   cmBtn:"SDA Commentary", cmNote:"From the official Seventh-day Adventist Bible Commentary (most books are in the English original, with a Chinese translation added over time; Luke and 2 Thessalonians already have complete Chinese commentary).",
+   cmErr:"This commentary could not be loaded. The commentary files live on your own site; the preview does not carry those files.",
    tabBible:"Bible", tabTopics:"Topics", tabLib:"Memorize", tabSet:"Settings",
    bibleNote:"Tap a book for its chapters. A book is fetched the first time you open it, then kept on the device for offline use.",
    bChapHint:"Tap a chapter to read it.",
@@ -1509,6 +1515,7 @@ function render(){
   else if(st.screen==="verse")  h=viewVerse(s);
   else if(st.screen==="chapter")h=viewChapter(s);
   else if(st.screen==="egw")   h=viewEg(s);
+  else if(st.screen==="cm")    h=viewCm(s);
   else if(st.screen==="lib")     h=viewLib(s);
   else if(st.screen==="libpick") h=viewLibPick(s);
   else if(st.screen==="fppick")  h=viewFpPick(s);
@@ -1835,6 +1842,52 @@ function viewEg(s){
     '<div class="src">' + esc(s.egOnce) + "</div></div>" + body + "</div></main>";
 }
 
+/* ---- SDA Bible Commentary: one file per book (same index as BOOKS), fetched on demand.
+   DATA.cm is the flat list of "b.c.v" keys that have commentary text -- built once into a
+   lookup object so viewVerse can decide whether to show the button at all. */
+var CMSET = {};
+(DATA.cm || []).forEach(function(k){ CMSET[k] = 1; });
+var CMT = {}, CMV = 1;
+function cmUrl(bi){ return "commentary/" + (bi < 10 ? "0" + bi : bi) + ".json?v=" + CMV; }
+function loadCmBook(bi, cb){
+  if(CMT[bi]) return cb(null, CMT[bi]);
+  if(typeof fetch !== "function") return cb(1);
+  fetch(cmUrl(bi))
+    .then(function(r){ if(!r.ok) throw new Error("http"); return r.json(); })
+    .then(function(j){ CMT[bi] = j; cb(null, j); })
+    .catch(function(){ cb(1); });
+}
+function openCm(k, from){
+  if(!CMSET[k]) return;
+  var p = k.split("."), bi = +p[0];
+  st.cm = { k: k, bi: bi, c: p[1], v: p[2], from: from || "verse", loading: !CMT[bi], err: 0 };
+  st.screen = "cm"; st.keepScroll = 0; render();
+  if(CMT[bi]) return;
+  loadCmBook(bi, function(err){
+    if(!st.cm || st.screen !== "cm") return;
+    st.cm.loading = 0; st.cm.err = err ? 1 : 0; render();
+  });
+}
+function viewCm(s){
+  var g = st.cm, vv = hydrate(g.k);
+  var body;
+  if(g.loading){
+    body = '<div class="chload">' + esc(s.ctxLoad) + "</div>";
+  } else if(g.err || !CMT[g.bi]){
+    body = '<div class="note">' + esc(s.cmErr) + "</div>";
+  } else {
+    var m = CMT[g.bi][g.c] || {};
+    var txt = m[g.v];
+    body = txt
+      ? '<div class="egpara core"><p class="egen">' + esc(txt) + "</p></div>" +
+        '<div class="egnote">' + esc(s.cmNote) + "</div>"
+      : '<div class="note">' + esc(s.cmErr) + "</div>";
+  }
+  return bar(backBtn(s) + '<span class="bar-title">' + esc(vv[s.vk]) + "</span>") +
+    '<main><div class="wrap"><div class="thead"><h1>' + esc(vv[s.vk]) + "</h1>" +
+    '<div class="en">' + esc(s.cmBtn) + "</div></div>" + body + "</div></main>";
+}
+
 /* ---- topic detail ---- */
 
 /* 速查表類的主題（名篇速查）原書按英文字母排，中文模式下看起來是亂的；
@@ -1860,7 +1913,7 @@ function orderedItems(tp, s){
 var ROOT = { bible:"bible", list:"topics", lib:"lib", settings:"settings" };
 /* 深層畫面也留著分頁列：用最近一次待過的根分頁來標示目前位置 */
 var TABOF = { list:"topics", topic:"topics", verses:"topics", chapter:"topics",
-              egw:"topics",
+              egw:"topics", cm:"lib",
               bible:"bible", bchap:"bible", bvpick:"bible",
               lib:"lib", libpick:"lib", fppick:"lib", libtopic:"lib", seq:"lib", vpick:"lib", verse:"lib",
               settings:"settings" };
@@ -2421,6 +2474,7 @@ function viewVerse(s){
       '<button class="btn btn-wide" data-reshuffle="1">'+esc(s.reshuffle)+"</button>"+
       '<button class="btn btn-wide" data-ctx="1">'+esc(s.ctx)+"</button>"+
       (it.eg && EG[it.eg[0]] ? '<button class="btn btn-wide" data-eg="'+esc(it.eg[0])+'">'+esc(s.egBtn)+"</button>" : "")+
+      (CMSET[v.bi+"."+v.c+"."+v.v] ? '<button class="btn btn-wide" data-cm="'+esc(v.bi+"."+v.c+"."+v.v)+'">'+esc(s.cmBtn)+"</button>" : "")+
       (st.vd.vi+1<it.vs.length?'<button class="btn btn-wide" data-nextv="1">'+esc(s.nextv)+"</button>":"")+
     "</div></div></main>"+
     /* 不管有沒有先按「顯示全文」，記得／忘記都在，讓使用者可以自己判斷後直接標記 */
@@ -2432,7 +2486,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-fpopen],[data-fppick],[data-fpall],[data-fpok],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-pmode],[data-pbook],[data-pchap],[data-pv],[data-padd],[data-ctcreate],[data-ctrenopen],[data-ctrenok],[data-ctrencancel],[data-ctup],[data-ctdown],[data-ctrm],[data-taddtoggle],[data-tbook],[data-tchap],[data-tv],[data-tadd],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-xref],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],.blk,.sblk");
+  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-fpopen],[data-fppick],[data-fpall],[data-fpok],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-pmode],[data-pbook],[data-pchap],[data-pv],[data-padd],[data-ctcreate],[data-ctrenopen],[data-ctrenok],[data-ctrencancel],[data-ctup],[data-ctdown],[data-ctrm],[data-taddtoggle],[data-tbook],[data-tchap],[data-tv],[data-tadd],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-xref],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],[data-cm],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.fs){
@@ -2445,6 +2499,7 @@ document.addEventListener("click",function(e){
   if(d.lang){ st.lang=d.lang; P.lang=d.lang; save(); return render(); }
   if(d.back!==undefined){
     if(st.screen==="egw") st.screen=(st.eg&&st.eg.from)||"topic";
+    else if(st.screen==="cm") st.screen=(st.cm&&st.cm.from)||"verse";
     else if(st.screen==="bchap") st.screen="bible";
     else if(st.screen==="bvpick"){ st.chFrom="bchap"; st.screen="chapter"; }
     else if(st.screen==="chapter") st.screen=st.chFrom||"verse";
@@ -2702,6 +2757,7 @@ document.addEventListener("click",function(e){
     return;
   }
   if(d.eg!==undefined){ return openEg(d.eg, st.screen==="verse" ? "verse" : "topic"); }
+  if(d.cm!==undefined){ return openCm(d.cm, "verse"); }
   if(d.ctx!==undefined){
     var tp=TOPICS[st.tid], it=tp.items[st.itemIdx], v=it.vs[st.vd.vi];
     if(v){ st.chFrom="verse"; openChapter(v.bi, v.c, v.v); }
