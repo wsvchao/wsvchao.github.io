@@ -248,6 +248,10 @@ body.hastab.hasfoot main{padding-bottom:174px}
 .prow.dim{opacity:.4}
 .prow .ck.ckopen{border:0;background:none;color:var(--brass);font-size:calc(19px * var(--fs))}
 .prow .pt{flex:1 1 auto;min-width:0}
+/* 背誦庫清單「刪除主題」勾選模式：借用跟選主題畫面一樣的圓形勾選外觀 */
+.lrow .ck{width:21px;height:21px;border-radius:50%;flex:0 0 auto;border:1.5px solid var(--rule);
+  display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent}
+.lrow[aria-pressed="true"] .ck{background:var(--brass);border-color:var(--brass);color:var(--ground)}
 .prow .pn{display:block;font-family:var(--f-mono);font-size:calc(11px * var(--fs));
   color:var(--faint);margin-top:2px}
 /* ---- settings ---- */
@@ -594,7 +598,7 @@ var S = {
    againN:"再練剩下的 %1 題",
    stSolid:"已熟", stWeak:"待複習", stNew:"未練",
    clearTopic:"清除本主題進度", clearAll:"清除全部進度",
-   libClearAll:"清除全部主題",
+   libDelToggle:"刪除主題", libDelConfirm:"確定刪除", libDelConfirmN:"確定刪除（%1）",
    confirmClear:"再點一次確定清除", cleared:"已清除",
    weakHow:"「不熟」＝還沒答對過，或上次答忘記。",
    weakHowLv:"只出這個難度下還沒答對過、或上次答忘記的題目。",
@@ -698,7 +702,7 @@ var S = {
    againN:"再练剩下的 %1 题",
    stSolid:"已熟", stWeak:"待复习", stNew:"未练",
    clearTopic:"清除本主题进度", clearAll:"清除全部进度",
-   libClearAll:"清除全部主题",
+   libDelToggle:"删除主题", libDelConfirm:"确定删除", libDelConfirmN:"确定删除（%1）",
    confirmClear:"再点一次确定清除", cleared:"已清除",
    weakHow:"「不熟」＝还没答对过，或上次答忘记。",
    weakHowLv:"只出这个难度下还没答对过、或上次答忘记的题目。",
@@ -802,7 +806,7 @@ var S = {
    againN:"Practise the remaining %1",
    stSolid:"solid", stWeak:"review", stNew:"new",
    clearTopic:"Clear this topic's progress", clearAll:"Clear all progress",
-   libClearAll:"Remove all topics",
+   libDelToggle:"Delete topics", libDelConfirm:"Confirm delete", libDelConfirmN:"Confirm delete (%1)",
    confirmClear:"Tap again to confirm", cleared:"Cleared",
    weakHow:"“Not yet solid” = never answered correctly, or missed last time.",
    weakHowLv:"Only items you have not yet answered correctly at this level, or missed last time.",
@@ -1160,18 +1164,20 @@ function libAdd(keys){
 function libDrop(k){
   var i=P.lib.indexOf(k); if(i>=0){ P.lib.splice(i,1); save(); }
 }
-/* 一次移出背誦庫裡所有主題。原本是照 libTopics() 列出來的每一筆分別呼叫
-   fpDrop／cuDrop／ctDelete 去逐一比對 key 移除，但如果背誦庫清單裡混雜到舊版資料格式
-   （比方說更新前就存在的逐項挑選項目），key 對不起來就會漏刪：使用者清空後，
-   該筆從清單消失了，但底層 P.fp 裡的資料還在，之後在挑選畫面就一直卡在「已在庫中」
-   的暗色狀態、卻怎麼也選不到、也不在背誦庫裡——所以改成直接把底層資料整個歸零，
-   不管目前 TOPICS 重建出來的 key 對不對得上，保證清空一定是真的清空 */
-function libClearAll(){
-  P.lib = [];
-  P.fp = [];
-  P.cu = [];
-  P.ct = [];
-  P.cut = {};
+/* 移出背誦庫裡勾選的那幾筆（不是全部）。自訂經文／自訂主題／逐項挑選的項目連底下
+   資料一起清掉，不留孤兒資料；最後再用 dk 直接把 P.lib 過濾一次做保險——萬一某筆
+   key 對不起來、上面沒清乾淨，至少確保它不會繼續留在背誦庫清單裡 */
+function libDeleteSelected(dks){
+  var set={}; dks.forEach(function(k){ set[k]=true; });
+  libTopics().slice().forEach(function(tp){
+    var dk = tp.cid || tp.en;
+    if(!set[dk]) return;
+    libDrop(dk);
+    if(tp.fp) fpDrop({tp:tp.fpTp, n:tp.fpName});
+    if(tp.cu) cuDrop(dk);
+    else if(tp.ct) ctDelete(tp.defId);
+  });
+  P.lib = P.lib.filter(function(k){ return !set[k]; });
   save(); buildCustom();
 }
 function verseCount(tp){
@@ -2064,11 +2070,21 @@ function viewLib(s){
         '<div class="pbar"><i style="width:'+pct+'%"></i></div></div>'
     : '<div class="plan"><div class="prow1"><span class="n" style="font-family:var(--f-ui)">'+
         esc(s.planIdle)+"</span></div></div>";
+  var delMode = !!st.libDelMode, delSel = st.libDelSel || (st.libDelSel = {});
+  var delN = 0; if(delMode) for(var _dk in delSel) if(delSel[_dk]) delN++;
   var rows = ts.map(function(tp){
     var n=verseCount(tp), solid=0;
     tp.items.forEach(function(it){
       if(it.k==="e"&&it.vs) it.vs.forEach(function(v){ if(vSolidAny(v)) solid++; });
     });
+    var dk = tp.cid || tp.en;
+    if(delMode){
+      return '<button class="entry lrow" data-libdelpick="'+esc(dk)+'" aria-pressed="'+(!!delSel[dk])+'">'+
+        '<span class="ck">&#10003;</span>'+
+        '<span class="lmain"><span class="ltitle">'+esc(tp[s.key==="en"?"en":s.key])+"</span>"+
+        (s.key==="en"?"":'<span class="een" style="padding:0">'+esc(tp.en)+"</span>")+"</span>"+
+        '<span class="count">'+solid+"/"+n+"</span></button>";
+    }
     return '<button class="entry lrow" data-libopen="'+tp.id+'">'+
       '<span class="lmain"><span class="ltitle">'+esc(tp[s.key==="en"?"en":s.key])+"</span>"+
       (s.key==="en"?"":'<span class="een" style="padding:0">'+esc(tp.en)+"</span>")+"</span>"+
@@ -2077,10 +2093,10 @@ function viewLib(s){
   return head+'<main><div class="wrap">'+plan+
     '<div class="src" style="margin:0 0 14px">'+esc(cntLine(ts,s))+"</div>"+
     rows+
-    '<button class="clearbtn'+(st.armLibClear?" armed":"")+'" style="margin-top:18px" data-libclearall="1">'+
-      esc(st.armLibClear?s.confirmClear:s.libClearAll)+"</button>"+
+    '<button class="clearbtn" style="margin-top:18px" data-libdeltoggle="1">'+
+      esc(delMode ? (delN ? t(s.libDelConfirmN, delN) : s.libDelConfirm) : s.libDelToggle)+"</button>"+
     "</div></main>"+
-    '<button class="fab" data-libpick="1" aria-label="'+esc(s.libAdd)+'">＋</button>';
+    (delMode ? "" : '<button class="fab" data-libpick="1" aria-label="'+esc(s.libAdd)+'">＋</button>');
 }
 
 function fpSyncBtn(){
@@ -2690,7 +2706,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-libclearall],[data-fpopen],[data-fppick],[data-fpall],[data-fpok],[data-fpmodeitem],[data-fpmodetopic],[data-fpmodecustom],[data-fpmodecustomok],[data-taddmp],[data-mpsrc],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-pmode],[data-pbook],[data-pchap],[data-pv],[data-padd],[data-ctcreate],[data-ctrenopen],[data-ctrenok],[data-ctrencancel],[data-ctup],[data-ctdown],[data-ctrm],[data-ctedit],[data-taddtoggle],[data-tbook],[data-tchap],[data-tv],[data-tadd],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-xref],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],[data-cm],.blk,.sblk");
+  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-libdeltoggle],[data-libdelpick],[data-fpopen],[data-fppick],[data-fpall],[data-fpok],[data-fpmodeitem],[data-fpmodetopic],[data-fpmodecustom],[data-fpmodecustomok],[data-taddmp],[data-mpsrc],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-pmode],[data-pbook],[data-pchap],[data-pv],[data-padd],[data-ctcreate],[data-ctrenopen],[data-ctrenok],[data-ctrencancel],[data-ctup],[data-ctdown],[data-ctrm],[data-ctedit],[data-taddtoggle],[data-tbook],[data-tchap],[data-tv],[data-tadd],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-xref],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],[data-cm],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.fs){
@@ -2805,8 +2821,8 @@ document.addEventListener("click",function(e){
   }
   if(d.tab){
     st.screen = ROOT[d.tab] ? d.tab : "list";
-    st.armAll=false; st.armTopic=false; st.armDrop=false; st.armLibClear=false; st.bAdded=""; st.keepScroll=0;
-    st.fpInto=null; st.fpModeCustom=false; st.mpq="";
+    st.armAll=false; st.armTopic=false; st.armDrop=false; st.bAdded=""; st.keepScroll=0;
+    st.fpInto=null; st.fpModeCustom=false; st.mpq=""; st.libDelMode=false; st.libDelSel={};
     return render();
   }
   /* ---- 聖經瀏覽 ---- */
@@ -2852,7 +2868,8 @@ document.addEventListener("click",function(e){
     st.keepScroll=0; return render();
   }
   if(d.libpick!==undefined){
-    st.pick={}; st.pq=""; st.pmode="topic"; st.pbk=null; st.bAdded=""; st.armLibClear=false;
+    st.pick={}; st.pq=""; st.pmode="topic"; st.pbk=null; st.bAdded="";
+    st.libDelMode=false; st.libDelSel={};
     st.screen="libpick"; st.keepScroll=0; return render();
   }
   if(d.pick!==undefined){
@@ -2944,7 +2961,7 @@ document.addEventListener("click",function(e){
     libAdd(ks); st.pick={}; st.screen="lib"; st.keepScroll=0; return render();
   }
   if(d.libopen!==undefined){
-    st.tid=+d.libopen; st.screen="libtopic"; st.armTopic=false; st.armDrop=false; st.armLibClear=false;
+    st.tid=+d.libopen; st.screen="libtopic"; st.armTopic=false; st.armDrop=false;
     st.vfilt="all"; st.tbk=null; st.ctRen=false; st.ctEdit=false; st.bAdded=""; st.keepScroll=0;
     st.fpInto=null; st.fpModeCustom=false; st.mpq="";
     return render();
@@ -2958,9 +2975,24 @@ document.addEventListener("click",function(e){
     else if(dtp && dtp.ct) ctDelete(dtp.defId); /* 自訂主題，移出後連同底下的經文一起刪掉 */
     st.armDrop=false; st.screen="lib"; st.keepScroll=0; return render();
   }
-  if(d.libclearall!==undefined){
-    if(!st.armLibClear){ st.armLibClear=true; st.keepScroll=window.scrollY; return render(); }
-    libClearAll(); st.armLibClear=false; st.keepScroll=0; return render();
+  /* 「刪除主題」：先進勾選模式，勾好後再按「確定刪除」才真的刪；
+     沒勾就按確定，當作取消，直接退回正常列表 */
+  if(d.libdeltoggle!==undefined){
+    if(!st.libDelMode){ st.libDelMode=true; st.libDelSel={}; st.keepScroll=window.scrollY; return render(); }
+    var delKs=[]; for(var dk2 in st.libDelSel) if(st.libDelSel[dk2]) delKs.push(dk2);
+    if(delKs.length) libDeleteSelected(delKs);
+    st.libDelMode=false; st.libDelSel={}; st.keepScroll=0; return render();
+  }
+  if(d.libdelpick!==undefined){
+    st.libDelSel=st.libDelSel||{};
+    var dsOn=!st.libDelSel[d.libdelpick]; st.libDelSel[d.libdelpick]=dsOn;
+    el.setAttribute("aria-pressed", dsOn);
+    var db=document.querySelector("[data-libdeltoggle]");
+    if(db){
+      var dn=0; for(var dk3 in st.libDelSel) if(st.libDelSel[dk3]) dn++;
+      db.textContent = dn ? t(L().libDelConfirmN, dn) : L().libDelConfirm;
+    }
+    return;
   }
   /* ---- 自訂主題：命名、加經文、排序、移除 ---- */
   if(d.ctcreate!==undefined){
