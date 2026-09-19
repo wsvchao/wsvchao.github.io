@@ -330,6 +330,21 @@ body.hastab.hasfoot main{padding-bottom:174px}
 .chload{text-align:center;color:var(--muted);font-family:var(--f-mono);
   font-size:calc(12px * var(--fs));padding:40px 0;letter-spacing:.06em}
 
+/* ---------- meditation ---------- */
+.refchip.medchip{color:var(--sage);border-color:var(--sage-soft);background:var(--sage-soft)}
+.medgoal{font-family:var(--f-ui);font-size:calc(14px * var(--fs));line-height:1.7;color:var(--ink);
+  background:var(--surface-2);border-radius:12px;padding:14px 16px;margin:0 0 18px}
+.medq{margin:0 0 18px}
+.medqn{font-family:var(--f-mono);font-size:calc(11px * var(--fs));color:var(--brass-ink);
+  letter-spacing:.04em;margin-right:4px}
+.medqtext{font-family:var(--f-ui);font-size:calc(14.5px * var(--fs));line-height:1.65;
+  color:var(--ink);margin:0 0 8px}
+.medta{width:100%;padding:11px 13px;border-radius:11px;border:1px solid var(--rule);
+  background:var(--surface);color:var(--ink);font:inherit;font-size:calc(14px * var(--fs));
+  line-height:1.6;resize:vertical;min-height:calc(64px * var(--fs))}
+.medta::placeholder{color:var(--faint)}
+.medpr{border-top:1px solid var(--rule);padding-top:18px;margin-top:4px}
+
 
 /* ---------- verse ---------- */
 .vrow{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;padding:11px 0;
@@ -539,6 +554,18 @@ var S = {
    egErr:"讀不到這一段。懷氏著作的段落放在你自己的網站上，預覽版沒有這些檔案。",
    cmBtn:"SDA聖經注釋", cmChip:"SDA注釋", egChip:"懷著", cmNote:"摘自基督復臨安息日會官方《聖經注釋》（大部分書卷為英文原文，中文翻譯陸續補上；路加福音、帖撒羅尼迦後書已有完整中文注釋）。",
    cmErr:"讀不到這一段注釋。注釋檔案放在你自己的網站上，預覽版沒有這些檔案。",
+   medChip:"默想",
+   medGoal:"目標：藉由這節經文，我要思考和耶穌的關係，我要找著耶穌。",
+   medQ:["主耶穌，祢此刻就坐在我身邊，親口對我說這節經。祢要藉由這節經文告訴我什麼？",
+     "主耶穌，這節經文讓我看到了自己內心的什麼缺欠和軟弱？",
+     "主耶穌，在這節經文中，有哪一個詞或短語，是祢今天專門為我預備的『祝福』和『安慰』？",
+     "主耶穌，在我今天最焦慮和疲憊的那個角落裡，這節經文要如何成為我隨時的避難所？",
+     "主耶穌，這節經文邀請我將生命的哪一個角落交在祢的手中？",
+     "主耶穌，藉由這節經文，幫助我看見祢對天父那種完全信任與愛的關係。",
+     "主耶穌，若祢處於我現在的情況或處境中，祢會怎麼做？",
+     "主耶穌，這節經文給我什麼人生的功課？",
+     "主耶穌！我當如何做，可使祢得榮耀？"],
+   medPrayer:"我的禱告：",
    tabBible:"聖經", tabTopics:"主題", tabLib:"背誦庫", tabSet:"設定",
    bibleNote:"點書卷看各章；第一次讀某一卷需要連網，之後就存在手機裡，離線也讀得到。",
    bChapHint:"點一章直接讀整章經文。",
@@ -643,6 +670,18 @@ var S = {
    egErr:"读不到这一段。怀氏著作的段落放在你自己的网站上，预览版没有这些档案。",
    cmBtn:"SDA圣经注释", cmChip:"SDA注释", egChip:"怀着", cmNote:"摘自基督复临安息日会官方《圣经注释》（大部分书卷为英文原文，中文翻译陆续补上；路加福音、帖撒罗尼迦后书已有完整中文注释）。",
    cmErr:"读不到这一段注释。注释档案放在你自己的网站上，预览版没有这些档案。",
+   medChip:"默想",
+   medGoal:"目标：藉由这节经文，我要思考和耶稣的关系，我要找着耶稣。",
+   medQ:["主耶稣，祢此刻就坐在我身边，亲口对我说这节经。祢要藉由这节经文告诉我什么？",
+     "主耶稣，这节经文让我看到了自己内心的什么缺欠和软弱？",
+     "主耶稣，在这节经文中，有哪一个词或短语，是祢今天专门为我预备的『祝福』和『安慰』？",
+     "主耶稣，在我今天最焦虑和疲惫的那个角落里，这节经文要如何成为我随时的避难所？",
+     "主耶稣，这节经文邀请我将生命的哪一个角落交在祢的手中？",
+     "主耶稣，藉由这节经文，帮助我看见祢对天父那种完全信任与爱的关系。",
+     "主耶稣，若祢处于我现在的情况或处境中，祢会怎么做？",
+     "主耶稣，这节经文给我什么人生的功课？",
+     "主耶稣！我当如何做，可使祢得荣耀？"],
+   medPrayer:"我的祷告：",
    tabBible:"圣经", tabTopics:"主题", tabLib:"背诵库", tabSet:"设定",
    bibleNote:"点书卷看各章；第一次读某一卷需要连网，之后就存在手机里，离线也读得到。",
    bChapHint:"点一章直接读整章经文。",
@@ -747,6 +786,18 @@ var S = {
    egErr:"This passage could not be loaded. The Ellen White text lives on your own site; the preview does not carry those files.",
    cmBtn:"SDA Commentary", cmChip:"SDABC", egChip:"EGW", cmNote:"From the official Seventh-day Adventist Bible Commentary (most books are in the English original, with a Chinese translation added over time; Luke and 2 Thessalonians already have complete Chinese commentary).",
    cmErr:"This commentary could not be loaded. The commentary files live on your own site; the preview does not carry those files.",
+   medChip:"Meditate",
+   medGoal:"Goal: Through this verse, I want to reflect on my relationship with Jesus, and to seek Him.",
+   medQ:["Lord Jesus, You are sitting beside me right now, speaking this verse to me personally. What do You want to tell me through it?",
+     "Lord Jesus, what lack or weakness in my heart does this verse reveal to me?",
+     "Lord Jesus, is there a word or phrase in this verse that You have prepared especially for me today as a 'blessing' and a 'comfort'?",
+     "Lord Jesus, in the corner of my life where I feel most anxious and weary today, how can this verse become my refuge at any moment?",
+     "Lord Jesus, which corner of my life does this verse invite me to place in Your hands?",
+     "Lord Jesus, through this verse, help me see Your relationship of complete trust and love toward the Father.",
+     "Lord Jesus, if You were in my situation right now, what would You do?",
+     "Lord Jesus, what life lesson does this verse give me?",
+     "Lord Jesus, what should I do so that You may be glorified?"],
+   medPrayer:"My prayer:",
    tabBible:"Bible", tabTopics:"Topics", tabLib:"Memorize", tabSet:"Settings",
    bibleNote:"Tap a book for its chapters. A book is fetched the first time you open it, then kept on the device for offline use.",
    bChapHint:"Tap a chapter to read it.",
@@ -924,6 +975,9 @@ for(var _ck in P.cut){ if(!VT[_ck]) VT[_ck] = P.cut[_ck]; }
 
 /* 高光標記 */
 if(!(P.highlights instanceof Array)) P.highlights = [];
+
+/* 默想筆記：每節經文一份，含 9 題問答＋禱告欄，key 用 "書卷.章.節" */
+if(!P.med || typeof P.med !== "object") P.med = {};
 
 function vkeyStr(b,c,v){ return b+"."+c+"."+v; }
 /* 「創4:1」「創4:1-5」三種語言各一個寫法 */
@@ -1630,6 +1684,7 @@ function render(){
   else if(st.screen==="chapter")h=viewChapter(s);
   else if(st.screen==="egw")   h=viewEg(s);
   else if(st.screen==="cm")    h=viewCm(s);
+  else if(st.screen==="med")   h=viewMed(s);
   else if(st.screen==="lib")     h=viewLib(s);
   else if(st.screen==="libpick") h=viewLibPick(s);
   else if(st.screen==="fppick")  h=viewFpPick(s);
@@ -2004,6 +2059,35 @@ function viewCm(s){
     '<div class="en">' + esc(s.cmBtn) + "</div></div>" + body + "</div></main>";
 }
 
+/* ---- meditation: 9 個引導問題 + 禱告欄，逐節手動填寫，自動存檔 ---- */
+function openMed(k, from){
+  st.med = { k: k, from: from || "verses" };
+  st.screen = "med"; st.keepScroll = 0; render();
+}
+function medRec(k){
+  var r = P.med[k];
+  if(!r || typeof r !== "object") r = P.med[k] = { a: [], pr: "" };
+  if(!(r.a instanceof Array)) r.a = [];
+  return r;
+}
+function viewMed(s){
+  var g = st.med, vv = hydrate(g.k), rec = medRec(g.k);
+  var qs = (s.medQ || []).map(function(q, qi){
+    return '<div class="medq">' +
+      '<p class="medqtext"><span class="medqn">' + (qi + 1) + ".</span>" + esc(q) + "</p>" +
+      '<textarea class="medta" data-medq="' + qi + '" rows="3">' + esc(rec.a[qi] || "") + "</textarea>" +
+    "</div>";
+  }).join("");
+  return bar(backBtn(s) + '<span class="bar-title">' + esc(vv[s.vk]) + "</span>") +
+    '<main><div class="wrap"><div class="thead"><h1>' + esc(vv[s.vk]) + "</h1>" +
+    '<div class="en">' + esc(vv[s.key]) + "</div></div>" +
+    '<div class="medgoal">' + esc(s.medGoal) + "</div>" +
+    qs +
+    '<div class="medq medpr"><p class="medqtext">' + esc(s.medPrayer) + "</p>" +
+      '<textarea class="medta" data-medpr="1" rows="4">' + esc(rec.pr || "") + "</textarea></div>" +
+    "</div></main>";
+}
+
 /* ---- topic detail ---- */
 
 /* 速查表類的主題（名篇速查）原書按英文字母排，中文模式下看起來是亂的；
@@ -2029,7 +2113,7 @@ function orderedItems(tp, s){
 var ROOT = { bible:"bible", list:"topics", lib:"lib", settings:"settings" };
 /* 深層畫面也留著分頁列：用最近一次待過的根分頁來標示目前位置 */
 var TABOF = { list:"topics", topic:"topics", verses:"topics", chapter:"topics",
-              egw:"topics", cm:"lib",
+              egw:"topics", cm:"lib", med:"lib",
               bible:"bible", bchap:"bible", bvpick:"bible",
               lib:"lib", libpick:"lib", fppick:"lib", libtopic:"lib", seq:"lib", vpick:"lib", verse:"lib",
               settings:"settings" };
@@ -2620,7 +2704,8 @@ function viewVerses(s){
     var rr=it.vs.map(function(v,vi){
       var k=v.bi+"."+v.c+"."+v.v;
       var chips=(CMSET[k]?'<button class="refchip" data-cm="'+esc(k)+'">'+esc(s.cmChip)+"</button>":"")+
-                (vi===0?egChipHtml:"");
+                (vi===0?egChipHtml:"")+
+                '<button class="refchip medchip" data-med="'+esc(k)+'">'+esc(s.medChip)+"</button>";
       return '<div class="vrow refrow">'+
         '<span class="vleft">'+
           '<button class="vmain" data-opench="'+vi+'"><span class="vkey">'+esc(v[s.vk])+"</span></button>"+
@@ -2651,7 +2736,8 @@ function viewVerses(s){
   var rows=shown.map(function(x,idx){
     var k=x.v.bi+"."+x.v.c+"."+x.v.v;
     var chips=(CMSET[k]?'<button class="refchip" data-cm="'+esc(k)+'">'+esc(s.cmChip)+"</button>":"")+
-              (idx===0?egChipHtml:"");
+              (idx===0?egChipHtml:"")+
+              '<button class="refchip medchip" data-med="'+esc(k)+'">'+esc(s.medChip)+"</button>";
     return '<div class="vrow refrow">'+
       '<span class="vleft">'+
         '<button class="vmain" data-verse="'+x.vi+'"><i class="vstate '+x.st+'"></i>'+
@@ -2706,7 +2792,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-libdeltoggle],[data-libdelpick],[data-fpopen],[data-fppick],[data-fpall],[data-fpok],[data-fpmodeitem],[data-fpmodetopic],[data-fpmodecustom],[data-fpmodecustomok],[data-taddmp],[data-mpsrc],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-pmode],[data-pbook],[data-pchap],[data-pv],[data-padd],[data-ctcreate],[data-ctrenopen],[data-ctrenok],[data-ctrencancel],[data-ctup],[data-ctdown],[data-ctrm],[data-ctedit],[data-taddtoggle],[data-tbook],[data-tchap],[data-tv],[data-tadd],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-xref],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],[data-cm],.blk,.sblk");
+  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-libdeltoggle],[data-libdelpick],[data-fpopen],[data-fppick],[data-fpall],[data-fpok],[data-fpmodeitem],[data-fpmodetopic],[data-fpmodecustom],[data-fpmodecustomok],[data-taddmp],[data-mpsrc],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-pmode],[data-pbook],[data-pchap],[data-pv],[data-padd],[data-ctcreate],[data-ctrenopen],[data-ctrenok],[data-ctrencancel],[data-ctup],[data-ctdown],[data-ctrm],[data-ctedit],[data-taddtoggle],[data-tbook],[data-tchap],[data-tv],[data-tadd],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-xref],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],[data-cm],[data-med],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.fs){
@@ -2720,6 +2806,7 @@ document.addEventListener("click",function(e){
   if(d.back!==undefined){
     if(st.screen==="egw") st.screen=(st.eg&&st.eg.from)||"topic";
     else if(st.screen==="cm") st.screen=(st.cm&&st.cm.from)||"verse";
+    else if(st.screen==="med") st.screen=(st.med&&st.med.from)||"verses";
     else if(st.screen==="bchap") st.screen="bible";
     else if(st.screen==="bvpick"){ st.chFrom="bchap"; st.screen="chapter"; }
     else if(st.screen==="chapter") st.screen=st.chFrom||"verse";
@@ -3059,6 +3146,7 @@ document.addEventListener("click",function(e){
   }
   if(d.eg!==undefined){ return openEg(d.eg, st.screen==="verse" ? "verse" : (st.screen==="verses" ? "verses" : "topic")); }
   if(d.cm!==undefined){ return openCm(d.cm, st.screen==="verses" ? "verses" : "verse"); }
+  if(d.med!==undefined){ return openMed(d.med, "verses"); }
   if(d.ctx!==undefined){
     var tp=TOPICS[st.tid], it=tp.items[st.itemIdx], v=it.vs[st.vd.vi];
     if(v){ st.chFrom="verse"; openChapter(v.bi, v.c, v.v); }
@@ -3133,6 +3221,16 @@ function searchInput(el){
   if(!box) return;
   box.innerHTML=pickRows(L());
   }
+/* 默想筆記：每個按鍵都直接存檔，但不 render()，避免輸入到一半游標被重置 */
+document.addEventListener("input",function(e){
+  var el=e.target, ds=el.dataset||{};
+  if(ds.medq===undefined && ds.medpr===undefined) return;
+  if(!st.med || !st.med.k) return;
+  var rec=medRec(st.med.k);
+  if(ds.medq!==undefined) rec.a[+ds.medq]=el.value;
+  else rec.pr=el.value;
+  save();
+});
 render();
 
 })();
