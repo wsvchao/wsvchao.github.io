@@ -2747,8 +2747,13 @@ document.addEventListener("click",function(e){
     var cnEl=document.getElementById("ctname");
     var cname=(cnEl && cnEl.value || "").trim();
     if(!cname) return;
-    ctCreate(cname);
-    st.tid=TOPICS.length-1; st.pmode="topic"; st.pbk=null; st.tbk=null; st.bAdded="";
+    var newDef=ctCreate(cname);
+    /* 剛建立的自訂主題不一定是 TOPICS 最後一個（後面可能還有名篇速查／逐項挑選的項目），
+       要用它自己的 defId 去對，才不會找錯畫面 */
+    var newTid=-1;
+    TOPICS.forEach(function(t,i){ if(t.ct && t.defId===newDef.id) newTid=i; });
+    st.tid = newTid>=0 ? newTid : TOPICS.length-1;
+    st.pmode="topic"; st.pbk=null; st.tbk=null; st.bAdded="";
     st.armTopic=false; st.armDrop=false; st.vfilt="all";
     st.screen="libtopic"; st.keepScroll=0; return render();
   }
