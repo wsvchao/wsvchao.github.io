@@ -328,11 +328,11 @@ body.hastab.hasfoot main{padding-bottom:174px}
 
 
 /* ---------- verse ---------- */
-.vrow{display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;padding:11px 0;
+.vrow{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;padding:11px 0;
   border-bottom:1px solid var(--rule-soft)}
 /* 自訂主題底下的管理列：文字本身可點進去背，旁邊另外放排序／移除的小按鈕 */
 .ctmrow{align-items:center}
-.vmain{display:flex;align-items:baseline;gap:10px;flex:1 1 auto;min-width:0;text-align:left}
+.vmain{display:flex;align-items:flex-start;gap:10px;flex:1 1 auto;min-width:0;text-align:left}
 .ctbtns{display:flex;gap:4px;flex:0 0 auto}
 .ctmini{width:28px;height:28px;border-radius:8px;background:var(--surface-2);
   border:1px solid var(--rule-soft);color:var(--muted);font-size:14px;line-height:1;
@@ -351,7 +351,7 @@ body.hastab.hasfoot main{padding-bottom:174px}
   color:var(--muted);border:1px solid var(--rule-soft);background:var(--surface);
   border-radius:99px;padding:4px 12px;margin-top:8px}
 .vkey{font-family:var(--f-mono);font-size:calc(12px * var(--fs));color:var(--brass-ink);flex:0 0 auto;min-width:calc(62px * var(--fs));
-  font-variant-numeric:tabular-nums}
+  font-variant-numeric:tabular-nums;line-height:1.5;padding-top:1px}
 .vtext{font-family:var(--f-scr);font-size:calc(15px * var(--fs));line-height:1.6;flex:1 1 auto;min-width:0}
 .vbody{font-family:var(--f-scr);font-size:calc(20px * var(--fs));line-height:1.95;letter-spacing:.01em}
 .vbody.en{line-height:1.7;letter-spacing:0}
@@ -1156,16 +1156,19 @@ function libAdd(keys){
 function libDrop(k){
   var i=P.lib.indexOf(k); if(i>=0){ P.lib.splice(i,1); save(); }
 }
-/* 一次移出背誦庫裡所有主題；跟單筆的「移出背誦庫」一樣，
-   自訂經文／自訂主題／逐項挑選的項目連底下資料一起清掉，不留孤兒資料 */
+/* 一次移出背誦庫裡所有主題。原本是照 libTopics() 列出來的每一筆分別呼叫
+   fpDrop／cuDrop／ctDelete 去逐一比對 key 移除，但如果背誦庫清單裡混雜到舊版資料格式
+   （比方說更新前就存在的逐項挑選項目），key 對不起來就會漏刪：使用者清空後，
+   該筆從清單消失了，但底層 P.fp 裡的資料還在，之後在挑選畫面就一直卡在「已在庫中」
+   的暗色狀態、卻怎麼也選不到、也不在背誦庫裡——所以改成直接把底層資料整個歸零，
+   不管目前 TOPICS 重建出來的 key 對不對得上，保證清空一定是真的清空 */
 function libClearAll(){
-  libTopics().slice().forEach(function(tp){
-    var dk = tp.cid || tp.en;
-    libDrop(dk);
-    if(tp.fp) fpDrop({tp:tp.fpTp, n:tp.fpName});
-    if(tp.cu) cuDrop(dk);
-    else if(tp.ct) ctDelete(tp.defId);
-  });
+  P.lib = [];
+  P.fp = [];
+  P.cu = [];
+  P.ct = [];
+  P.cut = {};
+  save(); buildCustom();
 }
 function verseCount(tp){
   var n=0; tp.items.forEach(function(it){ if(it.k==="e"&&it.vs) n+=it.vs.length; });
@@ -1424,6 +1427,14 @@ document.addEventListener("click",function(e){
 /* ---------------- helpers ---------------- */
 function esc(s){ return String(s).replace(/[&<>"]/g,function(c){
   return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+/* 有些條目橫跨不連續的經文範圍，出處會是好幾段用「；」（中文）或「; 」（英文）連起來的字串，
+   例如「創1:1-31；創2:1-3」。這種長字串若擠在同一行，旁邊留給標題的空間會被壓縮到幾乎沒有，
+   標題只好一個字一個字往下折——所以拆開來，每一段各自一行橫式呈現 */
+function refKeyHtml(refStr){
+  var parts=String(refStr||"").split(/；|;\s*/).map(function(p){ return p.trim(); }).filter(Boolean);
+  if(!parts.length) return "";
+  return parts.map(esc).join("<br>");
+}
 function hash(s){ var h=2166136261; for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
 function rng(seed){ var a=seed>>>0; return function(){ a+=0x6D2B79F5; var x=a; x=Math.imul(x^(x>>>15),x|1); x^=x+Math.imul(x^(x>>>7),x|61); return ((x^(x>>>14))>>>0)/4294967296; }; }
 var PUNC = /[\s，。、；：？！「」『』（）〔〕《》…—·,.;:?!"'()\[\]\-–—]/;
@@ -2282,7 +2293,7 @@ function ctRows(s, tp){
     if(it.k!=="e"||!it.vs||!it.vs.length) return "";
     return '<div class="vrow ctmrow">'+
       '<button class="vmain" data-item="'+ii+'">'+
-        '<span class="vkey">'+esc(it[s.rk])+"</span>"+
+        '<span class="vkey">'+refKeyHtml(it[s.rk])+"</span>"+
         '<span class="vtext" style="font-family:var(--f-ui);font-size:14px">'+esc(it[s.key])+
         '<br><span style="color:var(--faint);font-size:11.5px;font-family:var(--f-mono)">'+
         esc(t(s.verseOf,it.vs.length))+"</span></span></button>"+
@@ -2362,7 +2373,7 @@ function viewLibTopic(s){
   var rows=tp.items.map(function(it,ii){
     if(it.k!=="e"||!it.vs||!it.vs.length) return "";
     return '<button class="vrow" data-item="'+ii+'">'+
-      '<span class="vkey">'+esc(it[s.rk])+"</span>"+
+      '<span class="vkey">'+refKeyHtml(it[s.rk])+"</span>"+
       '<span class="vtext" style="font-family:var(--f-ui);font-size:14px">'+esc(it[s.key])+
       '<br><span style="color:var(--faint);font-size:11.5px;font-family:var(--f-mono)">'+
       esc(t(s.verseOf,it.vs.length))+"</span></span></button>";
@@ -2556,7 +2567,7 @@ function viewVpick(s){
   var rows=tp.items.map(function(it,ii){
     if(it.k!=="e"||!it.vs||!it.vs.length) return "";
     return '<button class="vrow" data-item="'+ii+'">'+
-      '<span class="vkey">'+esc(it[s.rk])+"</span>"+
+      '<span class="vkey">'+refKeyHtml(it[s.rk])+"</span>"+
       '<span class="vtext" style="font-family:var(--f-ui);font-size:14px">'+esc(it[s.key])+
       '<br><span style="color:var(--faint);font-size:11.5px;font-family:var(--f-mono)">'+
       esc(t(s.verseOf,it.vs.length))+"</span></span></button>";
