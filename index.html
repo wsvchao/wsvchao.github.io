@@ -209,15 +209,18 @@ main{padding:18px 0 calc(104px * var(--fs))}
 
 /* ---------- 前後文（整章） ---------- */
 /* ---- bottom tabs ---- */
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;gap:6px;
   background:var(--surface);border-top:1px solid var(--rule);
-  padding-bottom:env(safe-area-inset-bottom)}
-.tabbar button{flex:1;padding:13px 4px;font-size:calc(13.5px * var(--fs));
-  color:var(--muted);font-weight:500;letter-spacing:.02em}
-.tabbar button[aria-current="true"]{color:var(--brass);font-weight:600}
-body.hastab main{padding-bottom:96px}
-body.hastab .footbar{bottom:calc(48px + env(safe-area-inset-bottom))}
-body.hastab.hasfoot main{padding-bottom:168px}
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+.tabbar button{flex:1;padding:9px 4px;font-size:calc(13.5px * var(--fs));
+  color:var(--muted);font-weight:500;letter-spacing:.02em;
+  border:1px solid var(--brass-line);border-radius:10px;background:transparent;
+  transition:background .15s,border-color .15s,color .15s}
+.tabbar button[aria-current="true"]{color:var(--brass-ink);font-weight:600;
+  background:var(--brass-soft);border-color:var(--brass)}
+body.hastab main{padding-bottom:102px}
+body.hastab .footbar{bottom:calc(54px + env(safe-area-inset-bottom))}
+body.hastab.hasfoot main{padding-bottom:174px}
 .fab{position:fixed;right:20px;z-index:41;width:54px;height:54px;border-radius:50%;
   bottom:calc(74px + env(safe-area-inset-bottom));
   background:var(--brass);color:var(--ground);font-size:26px;line-height:1;font-weight:400;
@@ -336,6 +339,14 @@ body.hastab.hasfoot main{padding-bottom:168px}
   display:flex;align-items:center;justify-content:center}
 .ctmini.ph{visibility:hidden}
 .ctmini.ctdel{color:var(--clay);font-size:17px}
+/* 經文列表：左欄放章節號＋參考資料小標籤（直排），右欄放經文，經文才有全寬可以橫排 */
+.vrow.refrow{align-items:flex-start}
+.refrow .vleft{display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
+.refrow .vleft .vmain{flex:0 0 auto;display:flex;align-items:baseline;gap:8px;padding:0}
+.refrow .vtextbtn{flex:1 1 auto;min-width:0;text-align:left;padding:0}
+.refchip{font-family:var(--f-ui);font-size:calc(11px * var(--fs));font-weight:500;
+  padding:5px 10px;border-radius:99px;border:1px solid var(--brass-line);
+  background:var(--brass-soft);color:var(--brass-ink);white-space:nowrap;line-height:1.3}
 .ctrename{font-family:var(--f-mono);font-size:calc(11px * var(--fs));letter-spacing:.05em;
   color:var(--muted);border:1px solid var(--rule-soft);background:var(--surface);
   border-radius:99px;padding:4px 12px;margin-top:8px}
@@ -518,7 +529,7 @@ var S = {
    egNote:"底色標出的是引註那幾頁的段落，前後各兩段是上下文。中文譯文陸續補上。",
    egOnce:"第一次看某一本書需要連網，之後就存在手機裡。",
    egErr:"讀不到這一段。懷氏著作的段落放在你自己的網站上，預覽版沒有這些檔案。",
-   cmBtn:"SDA聖經注釋", cmNote:"摘自基督復臨安息日會官方《聖經注釋》（大部分書卷為英文原文，中文翻譯陸續補上；路加福音、帖撒羅尼迦後書已有完整中文注釋）。",
+   cmBtn:"SDA聖經注釋", cmChip:"SDA注釋", egChip:"懷著", cmNote:"摘自基督復臨安息日會官方《聖經注釋》（大部分書卷為英文原文，中文翻譯陸續補上；路加福音、帖撒羅尼迦後書已有完整中文注釋）。",
    cmErr:"讀不到這一段注釋。注釋檔案放在你自己的網站上，預覽版沒有這些檔案。",
    tabBible:"聖經", tabTopics:"主題", tabLib:"背誦庫", tabSet:"設定",
    bibleNote:"點書卷看各章；第一次讀某一卷需要連網，之後就存在手機裡，離線也讀得到。",
@@ -614,7 +625,7 @@ var S = {
    egNote:"底色标出的是引注那几页的段落，前后各两段是上下文。中文译文陆续补上。",
    egOnce:"第一次看某一本书需要连网，之后就存在手机里。",
    egErr:"读不到这一段。怀氏著作的段落放在你自己的网站上，预览版没有这些档案。",
-   cmBtn:"SDA圣经注释", cmNote:"摘自基督复临安息日会官方《圣经注释》（大部分书卷为英文原文，中文翻译陆续补上；路加福音、帖撒罗尼迦后书已有完整中文注释）。",
+   cmBtn:"SDA圣经注释", cmChip:"SDA注释", egChip:"怀着", cmNote:"摘自基督复临安息日会官方《圣经注释》（大部分书卷为英文原文，中文翻译陆续补上；路加福音、帖撒罗尼迦后书已有完整中文注释）。",
    cmErr:"读不到这一段注释。注释档案放在你自己的网站上，预览版没有这些档案。",
    tabBible:"圣经", tabTopics:"主题", tabLib:"背诵库", tabSet:"设定",
    bibleNote:"点书卷看各章；第一次读某一卷需要连网，之后就存在手机里，离线也读得到。",
@@ -710,7 +721,7 @@ var S = {
    egNote:"Shaded paragraphs are the pages cited; two paragraphs on either side give the context.",
    egOnce:"A book is fetched the first time you open it, then kept on the device.",
    egErr:"This passage could not be loaded. The Ellen White text lives on your own site; the preview does not carry those files.",
-   cmBtn:"SDA Commentary", cmNote:"From the official Seventh-day Adventist Bible Commentary (most books are in the English original, with a Chinese translation added over time; Luke and 2 Thessalonians already have complete Chinese commentary).",
+   cmBtn:"SDA Commentary", cmChip:"SDABC", egChip:"EGW", cmNote:"From the official Seventh-day Adventist Bible Commentary (most books are in the English original, with a Chinese translation added over time; Luke and 2 Thessalonians already have complete Chinese commentary).",
    cmErr:"This commentary could not be loaded. The commentary files live on your own site; the preview does not carry those files.",
    tabBible:"Bible", tabTopics:"Topics", tabLib:"Memorize", tabSet:"Settings",
    bibleNote:"Tap a book for its chapters. A book is fetched the first time you open it, then kept on the device for offline use.",
@@ -870,7 +881,9 @@ function rollStats(){
    P.cut 是這兩種共用的經文內文快取，加入時一併存起來，離線也背得動。
    內文格式和內建的經文表 VT 一樣（繁、簡、英），開機時併回 VT，
    hydrate() 就能照舊把任何一節組出來，背誦進度完全不用改。 */
-if(!(P.fp instanceof Array)) P.fp = [];   /* 名篇速查裡單獨挑出來背的篇章 */
+if(!(P.fp instanceof Array)) P.fp = [];   /* 逐項挑出來背的小標題 */
+/* 舊版只能從「名篇速查」逐篇挑，存的是純篇名文字；轉成新格式 {tp,n} 才不會弄丟 */
+P.fp = P.fp.map(function(x){ return (typeof x === "string") ? {tp:"FAMOUS PASSAGES", n:x} : x; });
 if(!(P.cu instanceof Array)) P.cu = [];
 if(!(P.ct instanceof Array)) P.ct = [];
 if(typeof P.ctSeq !== "number") P.ctSeq = 0;
@@ -928,44 +941,54 @@ function ctTopic(def, id){
            zh:def.name, hans:def.name, en:def.name,
            items:items, _hasv:items.some(function(it){ return it.vs && it.vs.length; }) };
 }
-/* ---- 名篇速查：底下 51 篇各自獨立，可以只挑幾篇進背誦庫 ----
-   有 12 篇是跨不連續經文的（例如「羅16:17,18；林前1:10」橫跨兩卷），
+/* ---- 逐項挑選：任何主題底下若有一個以上可背的小標題，都能只挑幾則進背誦庫 ----
+   （原本只有「名篇速查」能這樣挑，現在推廣到所有多小標題的主題）
+   有些條目是跨不連續經文的（例如「羅16:17,18；林前1:10」橫跨兩卷），
    自訂經文那種「一段連續範圍」存不下，所以這裡直接沿用原本那一條目，
-   只是外面包一層，讓它在背誦庫裡看起來就是一個獨立項目。 */
-var FP_EN = "FAMOUS PASSAGES";
-function isFP(tp){ return !!tp && tp.en===FP_EN && !tp.fp; }
-function fpSrc(){
-  var f=null;
-  TOPICS.forEach(function(t){ if(isFP(t)) f=t; });
-  return f;
-}
-function fpItems(){
-  var f=fpSrc(); if(!f) return [];
-  /* 沒有經文的那一條（「祭壇——為罪流血」）是段落標題，不能背 */
-  return f.items.filter(function(it){ return it.k==="e" && it.vs && it.vs.length; });
-}
-function fpKey(name){ return "fp:"+name; }
-function fpFind(name){
+   只是外面包一層，讓它在背誦庫裡看起來就是一個獨立項目。
+   P.fp 存 {tp:來源主題英文名, n:小標題英文名}；tp 用主題英文名而不是陣列位置，
+   自訂主題增刪、主題清單改版都不會對錯人。舊版資料是純文字（只有名篇速查能挑時
+   存的小標題名稱），一併轉成新格式，不會弄丟已挑的項目。 */
+function fpTopicByEn(tpEn){
   var found=null;
-  fpItems().forEach(function(it){ if(it.en===name) found=it; });
+  TOPICS.forEach(function(t){ if(!t.cu && !t.ct && !t.fp && t.en===tpEn) found=t; });
   return found;
 }
-function fpTopic(name, id){
-  var src=fpFind(name); if(!src) return null;
+function fpEntries(tp){
+  if(!tp || !tp.items) return [];
+  /* 沒有經文的那一條（像段落標題）是不能背的 */
+  return tp.items.filter(function(it){ return it.k==="e" && it.vs && it.vs.length; });
+}
+function isMultiPick(tp){
+  return !!tp && !tp.cu && !tp.ct && !tp.fp && fpEntries(tp).length > 1;
+}
+function fpKey(tpEn, name){ return "fp:"+JSON.stringify([tpEn,name]); }
+function fpFind(entry){
+  var src=fpTopicByEn(entry.tp); if(!src) return null;
+  var found=null;
+  fpEntries(src).forEach(function(it){ if(it.en===entry.n) found=it; });
+  return found;
+}
+function fpTopic(entry, id){
+  var src=fpFind(entry); if(!src) return null;
   var it={ k:"e", fp:1, _ix:0,
            rz:src.rz, rh:src.rh, re:src.re,
            zh:src.zh, hans:src.hans, en:src.en, vs:src.vs };
-  return { id:id, fp:1, fpName:name, cid:fpKey(name),
+  return { id:id, fp:1, fpTp:entry.tp, fpName:entry.n, cid:fpKey(entry.tp,entry.n),
            zh:src.zh, hans:src.hans, en:src.en,
            items:[it], _hasv:true };
 }
-function fpAdd(names){
-  names.forEach(function(n){ if(P.fp.indexOf(n)<0 && fpFind(n)) P.fp.push(n); });
+function fpAdd(entries){
+  entries.forEach(function(e){
+    var got=P.fp.some(function(x){ return x.tp===e.tp && x.n===e.n; });
+    if(!got && fpFind(e)) P.fp.push(e);
+  });
   save(); buildCustom();
-  libAdd(names.map(fpKey));
+  libAdd(entries.map(function(e){ return fpKey(e.tp,e.n); }));
 }
-function fpDrop(name){
-  var i=P.fp.indexOf(name);
+function fpDrop(entry){
+  var i=-1;
+  P.fp.forEach(function(x,n){ if(x.tp===entry.tp && x.n===entry.n) i=n; });
   if(i>=0){ P.fp.splice(i,1); save(); buildCustom(); }
 }
 /* TOPICS 後面掛著自訂經文；P.cu／P.ct／P.fp 一有增刪就整段重建 */
@@ -974,8 +997,8 @@ function buildCustom(){
                           || TOPICS[TOPICS.length-1].fp)) TOPICS.pop();
   P.cu.forEach(function(r){ TOPICS.push(cuTopic(r, TOPICS.length)); });
   P.ct.forEach(function(def){ TOPICS.push(ctTopic(def, TOPICS.length)); });
-  P.fp.forEach(function(n){
-    var t=fpTopic(n, TOPICS.length);
+  P.fp.forEach(function(e){
+    var t=fpTopic(e, TOPICS.length);
     if(t) TOPICS.push(t);
   });
 }
@@ -1983,10 +2006,11 @@ function pickRows(s){
     if(!q) return true;
     return (tp.zh+tp.hans+tp.en).toLowerCase().indexOf(q) >= 0;
   }).map(function(tp){
-    /* 名篇速查底下每一篇都能單獨背，所以不整個勾，改成點進去逐篇挑 */
-    if(isFP(tp)){
-      var tot=fpItems().length, got=P.fp.length;
-      return '<button class="prow" data-fpopen="1">'+
+    /* 底下不只一則能單獨背的小標題，就不整個勾，改成點進去逐項挑 */
+    if(isMultiPick(tp)){
+      var tot=fpEntries(tp).length;
+      var got=P.fp.filter(function(x){ return x.tp===tp.en; }).length;
+      return '<button class="prow" data-fpopen="'+esc(tp.en)+'">'+
         '<span class="ck ckopen">&rsaquo;</span><span class="pt"><span class="ltitle">'+
         esc(tp[s.key==="en"?"en":s.key])+"</span>"+
         '<span class="pn">'+esc(t(s.fpRow, tot))+
@@ -2004,12 +2028,14 @@ function pickRows(s){
       '<span class="pn">'+verseCount(tp)+" "+esc(s.entries)+"</span></span></button>";
   }).join("") || '<div class="note">'+esc(s.libNone)+"</div>";
 }
-/* ---- 名篇速查：逐篇挑選 ---- */
+/* ---- 逐項挑選 ---- */
 function fpPickRows(s){
   var sel = st.fpsel || (st.fpsel = {});
-  return fpItems().map(function(it){
+  var tp = fpTopicByEn(st.fpTid);
+  return fpEntries(tp).map(function(it){
     var sub = esc(it[s.rk])+" · "+esc(t(s.verseOf, it.vs.length));
-    if(P.fp.indexOf(it.en) >= 0){
+    var got = P.fp.some(function(x){ return x.tp===st.fpTid && x.n===it.en; });
+    if(got){
       return '<div class="prow dim"><span class="ck"></span>'+
         '<span class="pt"><span class="ltitle">'+esc(it[s.key])+"</span>"+
         '<span class="pn">'+sub+" · "+esc(s.libIn)+"</span></span></div>";
@@ -2026,7 +2052,7 @@ function fpPickCount(){
   return n;
 }
 function viewFpPick(s){
-  var f=fpSrc(), n=fpPickCount();
+  var f=fpTopicByEn(st.fpTid), n=fpPickCount();
   return bar(backBtn(s)+'<span class="bar-title">'+
       esc(f ? f[s.key==="en"?"en":s.key] : "")+"</span>")+
     '<main><div class="wrap">'+
@@ -2408,11 +2434,21 @@ function viewVerses(s){
       '<div class="en">'+esc(it[s.rk])+"</div></div>"+
       '<div class="note">'+esc(s.noVerse)+"</div></div></main>";
   }
+  /* 懷氏參閱是整段共用同一段引文，不逐節不同：只放在第一節下面，跟SDA注釋同一欄對齊 */
+  var egChipHtml = (it.eg && EG[it.eg[0]]) ?
+    '<button class="refchip" data-eg="'+esc(it.eg[0])+'">'+esc(s.egChip)+"</button>" : "";
   if(st.mode==="read"){
     var rr=it.vs.map(function(v,vi){
-      return '<button class="vrow" data-opench="'+vi+'">'+
-        '<span class="vkey">'+esc(v[s.vk])+"</span>"+
-        '<span class="vtext">'+esc(v[s.key])+"</span></button>";
+      var k=v.bi+"."+v.c+"."+v.v;
+      var chips=(CMSET[k]?'<button class="refchip" data-cm="'+esc(k)+'">'+esc(s.cmChip)+"</button>":"")+
+                (vi===0?egChipHtml:"");
+      return '<div class="vrow refrow">'+
+        '<span class="vleft">'+
+          '<button class="vmain" data-opench="'+vi+'"><span class="vkey">'+esc(v[s.vk])+"</span></button>"+
+          chips+
+        "</span>"+
+        '<button class="vtextbtn" data-opench="'+vi+'"><span class="vtext">'+esc(v[s.key])+"</span></button>"+
+      "</div>";
     }).join("");
     return head+'<main><div class="wrap"><div class="thead">'+
       "<h1>"+esc(it[s.key])+"</h1>"+
@@ -2433,11 +2469,18 @@ function viewVerses(s){
       '<span><i class="vstate solid"></i>'+esc(s.stSolid)+"</span>"+
       '<span><i class="vstate weak"></i>'+esc(s.stWeak)+"</span>"+
       '<span><i class="vstate new"></i>'+esc(s.stNew)+"</span></div>";
-  var rows=shown.map(function(x){
-    return '<button class="vrow" data-verse="'+x.vi+'">'+
-      '<i class="vstate '+x.st+'"></i>'+
-      '<span class="vkey">'+esc(x.v[s.vk])+"</span>"+
-      '<span class="vtext">'+esc(x.v[s.key])+"</span></button>";
+  var rows=shown.map(function(x,idx){
+    var k=x.v.bi+"."+x.v.c+"."+x.v.v;
+    var chips=(CMSET[k]?'<button class="refchip" data-cm="'+esc(k)+'">'+esc(s.cmChip)+"</button>":"")+
+              (idx===0?egChipHtml:"");
+    return '<div class="vrow refrow">'+
+      '<span class="vleft">'+
+        '<button class="vmain" data-verse="'+x.vi+'"><i class="vstate '+x.st+'"></i>'+
+          '<span class="vkey">'+esc(x.v[s.vk])+"</span></button>"+
+        chips+
+      "</span>"+
+      '<button class="vtextbtn" data-verse="'+x.vi+'"><span class="vtext">'+esc(x.v[s.key])+"</span></button>"+
+    "</div>";
   }).join("") || '<div class="note">'+esc(s.allSolid)+"</div>";
   return head+'<main><div class="wrap"><div class="thead">'+
     "<h1>"+esc(it[s.key])+"</h1>"+
@@ -2473,8 +2516,6 @@ function viewVerse(s){
       (allOn ? "" : '<button class="btn btn-p btn-wide" data-vreveal="1">'+esc(s.showAll)+"</button>")+
       '<button class="btn btn-wide" data-reshuffle="1">'+esc(s.reshuffle)+"</button>"+
       '<button class="btn btn-wide" data-ctx="1">'+esc(s.ctx)+"</button>"+
-      (it.eg && EG[it.eg[0]] ? '<button class="btn btn-wide" data-eg="'+esc(it.eg[0])+'">'+esc(s.egBtn)+"</button>" : "")+
-      (CMSET[v.bi+"."+v.c+"."+v.v] ? '<button class="btn btn-wide" data-cm="'+esc(v.bi+"."+v.c+"."+v.v)+'">'+esc(s.cmBtn)+"</button>" : "")+
       (st.vd.vi+1<it.vs.length?'<button class="btn btn-wide" data-nextv="1">'+esc(s.nextv)+"</button>":"")+
     "</div></div></main>"+
     /* 不管有沒有先按「顯示全文」，記得／忘記都在，讓使用者可以自己判斷後直接標記 */
@@ -2657,9 +2698,9 @@ document.addEventListener("click",function(e){
     if(ok){ ok.disabled=!n2; ok.textContent = n2 ? t(L().libConfirmN,n2) : L().libConfirm; }
     return;
   }
-  /* ---- 名篇速查：逐篇挑選 ---- */
+  /* ---- 逐項挑選 ---- */
   if(d.fpopen!==undefined){
-    st.fpsel={}; st.screen="fppick"; st.keepScroll=0; return render();
+    st.fpTid=d.fpopen; st.fpsel={}; st.screen="fppick"; st.keepScroll=0; return render();
   }
   if(d.fppick!==undefined){
     st.fpsel=st.fpsel||{};
@@ -2670,8 +2711,10 @@ document.addEventListener("click",function(e){
   if(d.fpall!==undefined){
     st.fpsel={};
     if(d.fpall==="1"){
-      fpItems().forEach(function(it){
-        if(P.fp.indexOf(it.en)<0) st.fpsel[it.en]=true;
+      var tpAll=fpTopicByEn(st.fpTid);
+      fpEntries(tpAll).forEach(function(it){
+        var got=P.fp.some(function(x){ return x.tp===st.fpTid && x.n===it.en; });
+        if(!got) st.fpsel[it.en]=true;
       });
     }
     var fbox=document.getElementById("fpbox");
@@ -2679,7 +2722,7 @@ document.addEventListener("click",function(e){
     return fpSyncBtn();
   }
   if(d.fpok!==undefined){
-    var fks=[]; for(var fk in st.fpsel) if(st.fpsel[fk]) fks.push(fk);
+    var fks=[]; for(var fk in st.fpsel) if(st.fpsel[fk]) fks.push({tp:st.fpTid, n:fk});
     fpAdd(fks); st.fpsel={}; st.screen="lib"; st.keepScroll=0; return render();
   }
   if(d.pickok!==undefined){
@@ -2694,7 +2737,7 @@ document.addEventListener("click",function(e){
     if(!st.armDrop){ st.armDrop=true; st.keepScroll=window.scrollY; return render(); }
     var dtp=TOPICS[st.tid], dk=tkey(st.tid);
     libDrop(dk);
-    if(dtp && dtp.fp) fpDrop(dtp.fpName);      /* 名篇速查挑出來的，移出後回到可挑清單 */
+    if(dtp && dtp.fp) fpDrop({tp:dtp.fpTp, n:dtp.fpName}); /* 逐項挑出來的，移出後回到可挑清單 */
     if(dtp && dtp.cu) cuDrop(dk);              /* 單節快速加入的，移出後整段刪掉 */
     else if(dtp && dtp.ct) ctDelete(dtp.defId); /* 自訂主題，移出後連同底下的經文一起刪掉 */
     st.armDrop=false; st.screen="lib"; st.keepScroll=0; return render();
@@ -2756,8 +2799,8 @@ document.addEventListener("click",function(e){
     if(v0){ st.chFrom="verses"; openChapter(v0.bi, v0.c, v0.v); }
     return;
   }
-  if(d.eg!==undefined){ return openEg(d.eg, st.screen==="verse" ? "verse" : "topic"); }
-  if(d.cm!==undefined){ return openCm(d.cm, "verse"); }
+  if(d.eg!==undefined){ return openEg(d.eg, st.screen==="verse" ? "verse" : (st.screen==="verses" ? "verses" : "topic")); }
+  if(d.cm!==undefined){ return openCm(d.cm, st.screen==="verses" ? "verses" : "verse"); }
   if(d.ctx!==undefined){
     var tp=TOPICS[st.tid], it=tp.items[st.itemIdx], v=it.vs[st.vd.vi];
     if(v){ st.chFrom="verse"; openChapter(v.bi, v.c, v.v); }
