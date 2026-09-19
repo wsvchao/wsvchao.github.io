@@ -350,9 +350,13 @@ body.hastab.hasfoot main{padding-bottom:174px}
 .ctrename{font-family:var(--f-mono);font-size:calc(11px * var(--fs));letter-spacing:.05em;
   color:var(--muted);border:1px solid var(--rule-soft);background:var(--surface);
   border-radius:99px;padding:4px 12px;margin-top:8px}
-.vkey{font-family:var(--f-mono);font-size:calc(12px * var(--fs));color:var(--brass-ink);flex:0 0 auto;min-width:calc(62px * var(--fs));
+.vkey{font-family:var(--f-mono);font-size:calc(13.5px * var(--fs));color:var(--brass-ink);flex:0 0 auto;min-width:calc(66px * var(--fs));
   font-variant-numeric:tabular-nums;line-height:1.5;padding-top:1px}
 .vtext{font-family:var(--f-scr);font-size:calc(15px * var(--fs));line-height:1.6;flex:1 1 auto;min-width:0}
+/* 主題明細列表的標題／節數：原本用行內 style 寫死 px，不會跟著系統字體大小（AA）調整，
+   改成共用的 class，套用 --fs 縮放 */
+.vtitle{font-family:var(--f-ui);font-size:calc(14px * var(--fs))}
+.vsub{color:var(--faint);font-size:calc(11.5px * var(--fs));font-family:var(--f-mono)}
 .vbody{font-family:var(--f-scr);font-size:calc(20px * var(--fs));line-height:1.95;letter-spacing:.01em}
 .vbody.en{line-height:1.7;letter-spacing:0}
 
@@ -547,7 +551,7 @@ var S = {
    ctNamePh:"主題名稱，例如：講道十處經文", ctCreate:"建立主題",
    ctRenameBtn:"重新命名", ctRenameOk:"確定", ctRenameCancel:"取消",
    ctAddVerse:"＋ 新增經文", ctEmpty:"還沒有加入經文，點下面「＋ 新增經文」開始。",
-   ctAddMp:"＋ 新增小標題",
+   ctAddMp:"＋ 新增小標題", ctEditOpen:"編輯經文", ctEditDone:"完成編輯",
    fpModeTitle:"怎麼加入？", fpModeHint:"已勾選 %1 則，選一種加入方式：",
    fpModeItem:"按小標題加入", fpModeItemHint:"各自成為背誦庫裡獨立的一筆，用原本的標題",
    fpModeTopic:"按大主題加入：%1",
@@ -557,7 +561,7 @@ var S = {
    ctUp:"上移", ctDown:"下移", ctRemove:"移除",
    libConfirm:"加入背誦庫", libConfirmN:"加入 %1 個主題", libNone:"沒有可加入的主題了。",
    fpHint:"勾選要加入背誦庫的篇章，每一篇會各自成為一個項目。",
-   fpRow:"共 %1 篇，可逐篇挑選", fpGot:"已加入 %1 篇",
+   fpRow:"共 %1 篇", fpGot:"已加入 %1 篇",
    fpAll:"全選", fpNone:"全部取消", fpConfirmN:"加入 %1 篇", fpConfirm:"加入背誦庫",
    libIn:"已在庫中", libDrop:"移出背誦庫", libDropAsk:"再按一次移出",
    libCount:"%1 個主題　%2 節經文", libCount2:"%1 個主題・%2 段自訂經文　%3 節經文", topicRead:"這一頁只供閱讀查考；要背誦請到「背誦庫」。",
@@ -651,7 +655,7 @@ var S = {
    ctNamePh:"主题名称，例如：讲道十处经文", ctCreate:"建立主题",
    ctRenameBtn:"重新命名", ctRenameOk:"确定", ctRenameCancel:"取消",
    ctAddVerse:"＋ 新增经文", ctEmpty:"还没有加入经文，点下面「＋ 新增经文」开始。",
-   ctAddMp:"＋ 新增小标题",
+   ctAddMp:"＋ 新增小标题", ctEditOpen:"编辑经文", ctEditDone:"完成编辑",
    fpModeTitle:"怎么加入？", fpModeHint:"已勾选 %1 则，选一种加入方式：",
    fpModeItem:"按小标题加入", fpModeItemHint:"各自成为背诵库里独立的一笔，用原本的标题",
    fpModeTopic:"按大主题加入：%1",
@@ -661,7 +665,7 @@ var S = {
    ctUp:"上移", ctDown:"下移", ctRemove:"移除",
    libConfirm:"加入背诵库", libConfirmN:"加入 %1 个主题", libNone:"没有可加入的主题了。",
    fpHint:"勾选要加入背诵库的篇章，每一篇会各自成为一个项目。",
-   fpRow:"共 %1 篇，可逐篇挑选", fpGot:"已加入 %1 篇",
+   fpRow:"共 %1 篇", fpGot:"已加入 %1 篇",
    fpAll:"全选", fpNone:"全部取消", fpConfirmN:"加入 %1 篇", fpConfirm:"加入背诵库",
    libIn:"已在库中", libDrop:"移出背诵库", libDropAsk:"再按一次移出",
    libCount:"%1 个主题　%2 节经文", libCount2:"%1 个主题・%2 段自订经文　%3 节经文", topicRead:"这一页只供阅读查考；要背诵请到「背诵库」。",
@@ -755,7 +759,7 @@ var S = {
    ctNamePh:"Topic name, e.g. Sermon references", ctCreate:"Create topic",
    ctRenameBtn:"Rename", ctRenameOk:"Save", ctRenameCancel:"Cancel",
    ctAddVerse:"+ Add a verse", ctEmpty:"No verses yet — tap “+ Add a verse” below.",
-   ctAddMp:"+ Add from a topic",
+   ctAddMp:"+ Add from a topic", ctEditOpen:"Edit verses", ctEditDone:"Done editing",
    fpModeTitle:"How do you want to add these?", fpModeHint:"%1 selected — choose how to add them:",
    fpModeItem:"Add as separate items", fpModeItemHint:"Each becomes its own item on your list, keeping its own title",
    fpModeTopic:"Add as one topic: %1",
@@ -765,7 +769,7 @@ var S = {
    ctUp:"Move up", ctDown:"Move down", ctRemove:"Remove",
    libConfirm:"Add to list", libConfirmN:"Add %1 topics", libNone:"Every topic is already on your list.",
    fpHint:"Tick the passages to add. Each one becomes its own item on your list.",
-   fpRow:"%1 passages — pick individually", fpGot:"%1 added",
+   fpRow:"%1 passages", fpGot:"%1 added",
    fpAll:"Select all", fpNone:"Clear all", fpConfirmN:"Add %1 passages", fpConfirm:"Add to list",
    libIn:"On your list", libDrop:"Remove", libDropAsk:"Tap again to remove",
    libCount:"%1 topics · %2 verses", libCount2:"%1 topics · %2 custom passages · %3 verses", topicRead:"This page is for reading. Drills live under Memorize.",
@@ -2286,17 +2290,20 @@ function viewLibPick(s){
       esc(n ? t(s.libConfirmN, n) : s.libConfirm)+"</button></div></div>";
 }
 
-/* 自訂主題底下每一段的管理列：可以重新排序、可以移除，點文字本身照舊進去逐節背誦 */
-function ctRows(s, tp){
+/* 自訂主題底下每一段的管理列：點文字本身照舊進去逐節背誦。
+   平常（edit=false）收合成簡潔的一行，把排序／移除的小按鈕讓出來的空間，
+   讓經文出處跟標題可以放大一點、看得更清楚；按「編輯經文」（edit=true）才展開這些按鈕 */
+function ctRows(s, tp, edit){
   var n=tp.items.length;
   return tp.items.map(function(it,ii){
     if(it.k!=="e"||!it.vs||!it.vs.length) return "";
-    return '<div class="vrow ctmrow">'+
-      '<button class="vmain" data-item="'+ii+'">'+
+    var main='<button class="vmain" data-item="'+ii+'">'+
         '<span class="vkey">'+refKeyHtml(it[s.rk])+"</span>"+
-        '<span class="vtext" style="font-family:var(--f-ui);font-size:14px">'+esc(it[s.key])+
-        '<br><span style="color:var(--faint);font-size:11.5px;font-family:var(--f-mono)">'+
-        esc(t(s.verseOf,it.vs.length))+"</span></span></button>"+
+        '<span class="vtext vtitle">'+esc(it[s.key])+
+        '<br><span class="vsub">'+
+        esc(t(s.verseOf,it.vs.length))+"</span></span></button>";
+    if(!edit) return '<div class="vrow ctmrow">'+main+"</div>";
+    return '<div class="vrow ctmrow">'+main+
       '<span class="ctbtns">'+
         (ii>0 ? '<button class="ctmini" data-ctup="'+ii+'" aria-label="'+esc(s.ctUp)+'">&uarr;</button>'
               : '<span class="ctmini ph"></span>')+
@@ -2339,7 +2346,7 @@ function viewLibTopic(s){
   var tp=TOPICS[st.tid];
   if(tp.ct){
     var def=ctFind(tp.defId);
-    var body=ctRows(s,tp);
+    var body=ctRows(s,tp,st.ctEdit);
     return bar(backBtn(s)+'<span class="bar-title">'+esc(s.tabLib)+"</span>")+
       '<main><div class="wrap"><div class="thead">'+
       (st.ctRen
@@ -2356,7 +2363,9 @@ function viewLibTopic(s){
         '<button class="btn btn-brass btn-wide" data-vscroll="1"'+(body?"":" disabled")+">"+esc(s.verseDrill)+"</button>"+
       "</div>"+
       (body
-        ? '<p class="hint" id="vpick">'+esc(s.vpick)+"</p>"+body
+        ? '<p class="hint" id="vpick">'+esc(s.vpick)+"</p>"+body+
+          '<button class="ctrename" style="margin-top:10px" data-ctedit="1">'+
+            esc(st.ctEdit?s.ctEditDone:s.ctEditOpen)+"</button>"
         : '<div class="note">'+esc(s.ctEmpty)+"</div>")+
       (st.tbk
         ? '<div class="scard" style="margin-top:16px">'+ctPickBox(s,def)+"</div>"
@@ -2374,8 +2383,8 @@ function viewLibTopic(s){
     if(it.k!=="e"||!it.vs||!it.vs.length) return "";
     return '<button class="vrow" data-item="'+ii+'">'+
       '<span class="vkey">'+refKeyHtml(it[s.rk])+"</span>"+
-      '<span class="vtext" style="font-family:var(--f-ui);font-size:14px">'+esc(it[s.key])+
-      '<br><span style="color:var(--faint);font-size:11.5px;font-family:var(--f-mono)">'+
+      '<span class="vtext vtitle">'+esc(it[s.key])+
+      '<br><span class="vsub">'+
       esc(t(s.verseOf,it.vs.length))+"</span></span></button>";
   }).join("");
   return bar(backBtn(s)+'<span class="bar-title">'+esc(s.tabLib)+"</span>")+
@@ -2568,8 +2577,8 @@ function viewVpick(s){
     if(it.k!=="e"||!it.vs||!it.vs.length) return "";
     return '<button class="vrow" data-item="'+ii+'">'+
       '<span class="vkey">'+refKeyHtml(it[s.rk])+"</span>"+
-      '<span class="vtext" style="font-family:var(--f-ui);font-size:14px">'+esc(it[s.key])+
-      '<br><span style="color:var(--faint);font-size:11.5px;font-family:var(--f-mono)">'+
+      '<span class="vtext vtitle">'+esc(it[s.key])+
+      '<br><span class="vsub">'+
       esc(t(s.verseOf,it.vs.length))+"</span></span></button>";
   }).join("");
   return bar(backBtn(s)+'<span class="bar-title">'+esc(s.verseDrill)+"</span>")+
@@ -2681,7 +2690,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-libclearall],[data-fpopen],[data-fppick],[data-fpall],[data-fpok],[data-fpmodeitem],[data-fpmodetopic],[data-fpmodecustom],[data-fpmodecustomok],[data-taddmp],[data-mpsrc],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-pmode],[data-pbook],[data-pchap],[data-pv],[data-padd],[data-ctcreate],[data-ctrenopen],[data-ctrenok],[data-ctrencancel],[data-ctup],[data-ctdown],[data-ctrm],[data-taddtoggle],[data-tbook],[data-tchap],[data-tv],[data-tadd],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-xref],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],[data-cm],.blk,.sblk");
+  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-libclearall],[data-fpopen],[data-fppick],[data-fpall],[data-fpok],[data-fpmodeitem],[data-fpmodetopic],[data-fpmodecustom],[data-fpmodecustomok],[data-taddmp],[data-mpsrc],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-pmode],[data-pbook],[data-pchap],[data-pv],[data-padd],[data-ctcreate],[data-ctrenopen],[data-ctrenok],[data-ctrencancel],[data-ctup],[data-ctdown],[data-ctrm],[data-ctedit],[data-taddtoggle],[data-tbook],[data-tchap],[data-tv],[data-tadd],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-xref],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],[data-cm],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.fs){
@@ -2905,7 +2914,7 @@ document.addEventListener("click",function(e){
     TOPICS.forEach(function(t,i){ if(t.ct && t.defId===newDef0.id) newTid0=i; });
     st.tid = newTid0>=0 ? newTid0 : TOPICS.length-1;
     st.pmode="topic"; st.pbk=null; st.tbk=null; st.bAdded="";
-    st.armTopic=false; st.armDrop=false; st.vfilt="all";
+    st.armTopic=false; st.armDrop=false; st.vfilt="all"; st.ctEdit=false;
     st.fpsel={}; st.fpModeCustom=false;
     st.screen="libtopic"; st.keepScroll=0; return render();
   }
@@ -2919,7 +2928,7 @@ document.addEventListener("click",function(e){
     TOPICS.forEach(function(t,i){ if(t.ct && t.defId===newDef1.id) newTid1=i; });
     st.tid = newTid1>=0 ? newTid1 : TOPICS.length-1;
     st.pmode="topic"; st.pbk=null; st.tbk=null; st.bAdded="";
-    st.armTopic=false; st.armDrop=false; st.vfilt="all";
+    st.armTopic=false; st.armDrop=false; st.vfilt="all"; st.ctEdit=false;
     st.fpsel={}; st.fpModeCustom=false;
     st.screen="libtopic"; st.keepScroll=0; return render();
   }
@@ -2936,7 +2945,7 @@ document.addEventListener("click",function(e){
   }
   if(d.libopen!==undefined){
     st.tid=+d.libopen; st.screen="libtopic"; st.armTopic=false; st.armDrop=false; st.armLibClear=false;
-    st.vfilt="all"; st.tbk=null; st.ctRen=false; st.bAdded=""; st.keepScroll=0;
+    st.vfilt="all"; st.tbk=null; st.ctRen=false; st.ctEdit=false; st.bAdded=""; st.keepScroll=0;
     st.fpInto=null; st.fpModeCustom=false; st.mpq="";
     return render();
   }
@@ -2965,7 +2974,7 @@ document.addEventListener("click",function(e){
     TOPICS.forEach(function(t,i){ if(t.ct && t.defId===newDef.id) newTid=i; });
     st.tid = newTid>=0 ? newTid : TOPICS.length-1;
     st.pmode="topic"; st.pbk=null; st.tbk=null; st.bAdded="";
-    st.armTopic=false; st.armDrop=false; st.vfilt="all";
+    st.armTopic=false; st.armDrop=false; st.vfilt="all"; st.ctEdit=false;
     st.screen="libtopic"; st.keepScroll=0; return render();
   }
   if(d.ctrenopen!==undefined){ st.ctRen=true; st.keepScroll=0; return render(); }
@@ -2979,6 +2988,7 @@ document.addEventListener("click",function(e){
   if(d.ctup!==undefined){ ctMove(ctFind(TOPICS[st.tid].defId), +d.ctup, -1); st.keepScroll=0; return render(); }
   if(d.ctdown!==undefined){ ctMove(ctFind(TOPICS[st.tid].defId), +d.ctdown, 1); st.keepScroll=0; return render(); }
   if(d.ctrm!==undefined){ ctRemoveRange(ctFind(TOPICS[st.tid].defId), +d.ctrm); st.keepScroll=0; return render(); }
+  if(d.ctedit!==undefined){ st.ctEdit=!st.ctEdit; st.keepScroll=0; return render(); }
   if(d.taddtoggle!==undefined){
     st.tbk={ bi:null, c:null, a:0, z:0 }; st.bAdded=""; st.keepScroll=0; return render();
   }
