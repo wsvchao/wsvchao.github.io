@@ -88,6 +88,8 @@ main{padding:18px 0 calc(104px * var(--fs))}
 .search{width:100%;padding:11px 14px;border-radius:11px;border:1px solid var(--rule);
   background:var(--surface);color:var(--ink);font:inherit;font-size:calc(15px * var(--fs));margin-bottom:6px}
 .search::placeholder{color:var(--faint)}
+/* 聖經全文搜尋：命中的字詞套一下底色，跟其他強調用色（brass）同一套 */
+.bqhit{background:var(--brass-soft);color:var(--brass-ink);border-radius:3px;padding:0 1px}
 .hint{color:var(--muted);font-size:calc(12.5px * var(--fs));line-height:1.55;margin:10px 2px 16px}
 .tlist{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--rule-soft);
   border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
@@ -316,6 +318,10 @@ body.hastab.hasfoot main{padding-bottom:174px}
 .egen.alt{font-size:calc(13px * var(--fs));line-height:1.55;margin-top:9px;color:var(--faint)}
 .egpara.core{background:var(--surface-2);box-shadow:inset 2px 0 0 var(--brass);color:var(--ink)}
 .egpara.core .egen.alt{color:var(--muted)}
+/* 注釋逐段顯示，段落間空一行；引文那一段用粗體跟後面的逐詞解釋分開 */
+.cmquote,.cmp{font-size:calc(15px * var(--fs));line-height:1.7;margin:0 0 16px}
+.cmquote:last-child,.cmp:last-child{margin-bottom:0}
+.cmquote{font-weight:600}
 .egnote{font-family:var(--f-mono);font-size:calc(10.5px * var(--fs));line-height:1.7;
   color:var(--faint);margin:16px 0 0;padding-top:12px;border-top:1px solid var(--rule)}
 .chline{display:flex;gap:10px;align-items:baseline;padding:7px 8px;border-radius:8px}
@@ -554,6 +560,7 @@ var S = {
    egErr:"讀不到這一段。懷氏著作的段落放在你自己的網站上，預覽版沒有這些檔案。",
    cmBtn:"SDA聖經注釋", cmChip:"SDA注釋", egChip:"懷著", cmNote:"摘自基督復臨安息日會官方《聖經注釋》（大部分書卷為英文原文，中文翻譯陸續補上；路加福音、帖撒羅尼迦後書已有完整中文注釋）。",
    cmErr:"讀不到這一段注釋。注釋檔案放在你自己的網站上，預覽版沒有這些檔案。",
+   cmFallback:"這一節還沒有中文譯文，以下顯示英文原文。",
    medChip:"默想",
    medGoal:"目標：藉由這節經文，我要思考和耶穌的關係，我要找著耶穌。",
    medQ:["主耶穌，祢此刻就坐在我身邊，親口對我說這節經文。祢要藉由這節經文告訴我什麼？",
@@ -567,6 +574,9 @@ var S = {
      "主耶穌！我當如何做，可使祢得榮耀？"],
    medPrayer:"我的禱告：",
    tabBible:"聖經", tabTopics:"主題", tabLib:"背誦庫", tabSet:"設定",
+   bibleSearchPh:"搜尋經文文字…", bibleSearchLoading:"第一次搜尋需要先載入整本聖經（只需一次，之後就存在手機裡）…",
+   bibleSearchCount:"共 %1 節", bibleSearchMore:"僅顯示前 200 節，請輸入更精確的字詞。",
+   bibleSearchEmpty:"沒有找到符合的經文。",
    bibleNote:"點書卷看各章；第一次讀某一卷需要連網，之後就存在手機裡，離線也讀得到。",
    bChapHint:"點一章直接讀整章經文。",
    bPickBtn:"挑選經文加入背誦庫", bPickTitle:"挑選經文",
@@ -670,6 +680,7 @@ var S = {
    egErr:"读不到这一段。怀氏著作的段落放在你自己的网站上，预览版没有这些档案。",
    cmBtn:"SDA圣经注释", cmChip:"SDA注释", egChip:"怀着", cmNote:"摘自基督复临安息日会官方《圣经注释》（大部分书卷为英文原文，中文翻译陆续补上；路加福音、帖撒罗尼迦后书已有完整中文注释）。",
    cmErr:"读不到这一段注释。注释档案放在你自己的网站上，预览版没有这些档案。",
+   cmFallback:"这一节还没有中文译文，以下显示英文原文。",
    medChip:"默想",
    medGoal:"目标：藉由这节经文，我要思考和耶稣的关系，我要找着耶稣。",
    medQ:["主耶稣，祢此刻就坐在我身边，亲口对我说这节经文。祢要藉由这节经文告诉我什么？",
@@ -683,6 +694,9 @@ var S = {
      "主耶稣！我当如何做，可使祢得荣耀？"],
    medPrayer:"我的祷告：",
    tabBible:"圣经", tabTopics:"主题", tabLib:"背诵库", tabSet:"设定",
+   bibleSearchPh:"搜索经文文字…", bibleSearchLoading:"第一次搜索需要先载入整本圣经（只需一次，之后就存在手机里）…",
+   bibleSearchCount:"共 %1 节", bibleSearchMore:"仅显示前 200 节，请输入更精确的字词。",
+   bibleSearchEmpty:"没有找到符合的经文。",
    bibleNote:"点书卷看各章；第一次读某一卷需要连网，之后就存在手机里，离线也读得到。",
    bChapHint:"点一章直接读整章经文。",
    bPickBtn:"挑选经文加入背诵库", bPickTitle:"挑选经文",
@@ -786,6 +800,7 @@ var S = {
    egErr:"This passage could not be loaded. The Ellen White text lives on your own site; the preview does not carry those files.",
    cmBtn:"SDA Commentary", cmChip:"SDABC", egChip:"EGW", cmNote:"From the official Seventh-day Adventist Bible Commentary (most books are in the English original, with a Chinese translation added over time; Luke and 2 Thessalonians already have complete Chinese commentary).",
    cmErr:"This commentary could not be loaded. The commentary files live on your own site; the preview does not carry those files.",
+   cmFallback:"No Chinese translation yet for this verse; showing the English original below.",
    medChip:"Meditate",
    medGoal:"Goal: Through this verse, I want to reflect on my relationship with Jesus, and to seek Him.",
    medQ:["Lord Jesus, You are sitting beside me right now, speaking this verse to me personally. What do You want to tell me through it?",
@@ -799,6 +814,9 @@ var S = {
      "Lord Jesus, what should I do so that You may be glorified?"],
    medPrayer:"My prayer:",
    tabBible:"Bible", tabTopics:"Topics", tabLib:"Memorize", tabSet:"Settings",
+   bibleSearchPh:"Search Bible text…", bibleSearchLoading:"Loading the whole Bible for search (only once, then kept on the device)…",
+   bibleSearchCount:"%1 verses", bibleSearchMore:"Showing the first 200 verses only -- try a more specific word or phrase.",
+   bibleSearchEmpty:"No matching verses found.",
    bibleNote:"Tap a book for its chapters. A book is fetched the first time you open it, then kept on the device for offline use.",
    bChapHint:"Tap a chapter to read it.",
    bPickBtn:"Pick verses to memorize", bPickTitle:"Pick verses",
@@ -1034,10 +1052,23 @@ function ctRefItem(r, ix){
   }
   var it=cuItem(r); it._ix=ix; return it;
 }
+/* 自訂主題本來只有使用者自己打的一個名字，三種語言都顯示同一串字，不會跟著介面
+   語言切換翻譯。但如果使用者剛好打的名字跟某個內建主題的名字一字不差（例如打「浸禮」，
+   剛好就是內建「BAPTISM」主題的中文名），那就直接借用那個內建主題三種語言的名字來顯示，
+   使用者不必自己再手動輸入英文名字，介面切到英文時也能正確顯示「Baptism」。 */
+function ctBaseMatch(raw){
+  var found=null;
+  TOPICS.forEach(function(t){
+    if(t.cu || t.ct || t.fp) return;
+    if(t.zh===raw || t.hans===raw || t.en===raw) found=t;
+  });
+  return found;
+}
 function ctTopic(def, id){
   var items=def.refs.map(function(r,ix){ return ctRefItem(r, ix); });
+  var base=ctBaseMatch(def.name);
   return { id:id, ct:1, cid:ctKey(def.id), defId:def.id,
-           zh:def.name, hans:def.name, en:def.name,
+           zh:base?base.zh:def.name, hans:base?base.hans:def.name, en:base?base.en:def.name,
            items:items, _hasv:items.some(function(it){ return it.vs && it.vs.length; }) };
 }
 /* ---- 逐項挑選：任何主題底下若有一個以上可背的小標題，都能只挑幾則進背誦庫 ----
@@ -1634,7 +1665,7 @@ var FS = [0.90, 1.00, 1.13, 1.28, 1.45];
 document.documentElement.setAttribute("data-theme","dark");
 try{ document.documentElement.style.colorScheme="dark"; }catch(e){}
 
-var st = { lang: P.lang||"zh", screen:"list", tid:null, q:"",
+var st = { lang: P.lang||"zh", screen:"list", tid:null, q:"", bq:"",
            seq:null, itemIdx:null, vd:null,
            sort: (P.sort==="za"||P.sort==="az") ? P.sort : "orig",
            /* default to the harder setting: hide the book name too */
@@ -1843,8 +1874,12 @@ function rangeAdd(o){
   return rr;
 }
 function viewBible(s){
+  var q=(st.bq||"").trim();
   return bar('<span class="bar-title">'+esc(s.tabBible)+"</span>")+
-    '<main><div class="wrap"><div class="bgrid">'+bookGridCells(s,"bbook")+"</div>"+
+    '<main><div class="wrap">'+
+    '<input class="search" id="bq" placeholder="'+esc(s.bibleSearchPh)+'" value="'+esc(st.bq||"")+'">'+
+    '<div id="biblesearchbox">'+bibleSearchBody(s)+"</div>"+
+    '<div id="biblegridbox" class="bgrid"'+(q?' style="display:none"':"")+'>'+bookGridCells(s,"bbook")+"</div>"+
     '<p class="foot" style="text-align:left">'+esc(s.bibleNote)+"</p></div></main>";
 }
 function viewBChap(s){
@@ -1887,6 +1922,82 @@ function loadBook(bi, cb){
     .then(function(r){ if(!r.ok) throw new Error("http"); return r.json(); })
     .then(function(j){ BIB[bi] = j; cb(null, j); })
     .catch(function(){ cb(1); });
+}
+/* ---- 聖經全文搜尋：「聖經」分頁書卷格子上方那個搜尋框 ----
+   平常每卷書都是點了才抓（離線省流量），但要搜整本聖經就得先把 66 卷全部
+   抓齊。第一次搜尋才觸發（不是一進「聖經」分頁就抓），抓過一次之後留在
+   BIB 記憶體裡，同一次使用期間（甚至下次開網頁，因為 bible/ 那層本來就有
+   長期快取）都不用再抓。 */
+function ensureBibleSearchReady(cb){
+  if(st.bibleAllLoaded) return cb();
+  if(st.bibleLoading){ (st.bibleLoadCbs = st.bibleLoadCbs || []).push(cb); return; }
+  st.bibleLoading = true; st.bibleLoadCbs = [cb];
+  var need = [];
+  for(var bi = 0; bi < BOOKS.length; bi++){ if(!BIB[bi]) need.push(bi); }
+  var left = need.length;
+  function finish(){
+    st.bibleAllLoaded = true; st.bibleLoading = false;
+    var cbs = st.bibleLoadCbs || []; st.bibleLoadCbs = [];
+    cbs.forEach(function(f){ f(); });
+  }
+  if(!left) return finish();
+  need.forEach(function(bi){ loadBook(bi, function(){ if(--left <= 0) finish(); }); });
+}
+/* 純文字比對（不分詞、不做同音／簡繁轉換），只在目前介面語言那一欄找；
+   物件的鍵（章、節）是純數字字串，JS 保證這種「陣列索引」鍵一定照數字大小
+   列舉，所以掃出來的結果本來就是書卷／章／節的正確順序，不必再另外排序。 */
+function bibleSearchHits(q, s){
+  var col = (s.key === "en") ? 2 : (s.key === "hans" ? 1 : 0);
+  var hits = [];
+  for(var bi = 0; bi < BOOKS.length; bi++){
+    var book = BIB[bi]; if(!book) continue;
+    for(var c in book){
+      var verses = book[c];
+      for(var v in verses){
+        var row = verses[v], txt = row && row[col];
+        if(txt && txt.indexOf(q) >= 0) hits.push({ bi: bi, c: +c, v: +v, text: txt });
+      }
+    }
+  }
+  return hits;
+}
+function hlQuery(text, q){
+  if(!q) return esc(text);
+  return String(text).split(q).map(function(p){ return esc(p); }).join('<span class="bqhit">' + esc(q) + "</span>");
+}
+function bibleSearchBody(s){
+  var q = (st.bq || "").trim();
+  if(!q) return "";
+  if(!st.bibleAllLoaded) return '<div class="chload">' + esc(s.bibleSearchLoading) + "</div>";
+  var hits = bibleSearchHits(q, s);
+  if(!hits.length) return '<p class="hint">' + esc(s.bibleSearchEmpty) + "</p>";
+  var CAP = 200, capped = hits.length > CAP, shown = hits.slice(0, CAP);
+  var rows = shown.map(function(h){
+    var ref = bookName(h.bi, s) + " " + h.c + ":" + h.v;
+    return '<button class="vrow" data-hit="' + h.bi + "." + h.c + "." + h.v + '">' +
+      '<span class="vkey">' + esc(ref) + "</span>" +
+      '<span class="vtext">' + hlQuery(h.text, q) + "</span></button>";
+  }).join("");
+  return '<div class="src" style="margin:0 0 6px">' + esc(t(s.bibleSearchCount, shown.length)) +
+    (capped ? " " + esc(s.bibleSearchMore) : "") + "</div>" + rows;
+}
+/* 跟 refreshList() 一樣的道理：只重畫結果那一小塊，輸入框本身不重建，
+   注音／拼音選字才不會被打斷。第一次真的打字搜尋才觸發載入整本聖經。 */
+function refreshBibleSearch(){
+  var box = document.getElementById("biblesearchbox");
+  if(!box) return;
+  var q = (st.bq || "").trim();
+  var grid = document.getElementById("biblegridbox");
+  if(grid) grid.style.display = q ? "none" : "";
+  if(q && !st.bibleAllLoaded){
+    box.innerHTML = bibleSearchBody(L());
+    ensureBibleSearchReady(function(){
+      var b2 = document.getElementById("biblesearchbox");
+      if(b2) b2.innerHTML = bibleSearchBody(L());
+    });
+    return;
+  }
+  box.innerHTML = bibleSearchBody(L());
 }
 function openChapter(bi, c, v){
   st.ch = { bi: bi, c: c, v: v || 0, loading: !BIB[bi], err: 0 };
@@ -2014,10 +2125,52 @@ function viewEg(s){
 }
 
 /* ---- SDA Bible Commentary: one file per book (same index as BOOKS), fetched on demand.
-   DATA.cm is the flat list of "b.c.v" keys that have commentary text -- built once into a
-   lookup object so viewVerse can decide whether to show the button at all. */
+   DATA.cm is {en:[...], zh:[...]}, each a flat list of "b.c.v" keys that have commentary
+   text IN THAT LANGUAGE -- built once into a lookup object (CMSET[k] = {en:1} / {zh:1} /
+   {en:1,zh:1}) so viewVerse can decide, per the CURRENT UI language, whether to show the
+   button at all.
+
+   The two directions are NOT symmetric. An English-mode reader must never be shown Chinese
+   commentary (that was the reported bug) -- English UI only shows a button, and only shows
+   text, when an English original exists. But a Chinese/繁簡-mode reader can generally still
+   read English, and historically the app already showed the (mostly-untranslated) English
+   original under the Chinese UI for the vast majority of the Bible -- only Matthew, Luke and
+   2 Thessalonians have Chinese translation so far (see cmNote). So Chinese UI prefers the
+   Chinese text when available but FALLS BACK to showing the English original (with a small
+   note, cmFallback) rather than hiding the button entirely -- otherwise switching to strict
+   per-language gating would have quietly hidden commentary from almost the whole Bible for
+   Chinese-reading users, which is a regression, not a fix. */
 var CMSET = {};
-(DATA.cm || []).forEach(function(k){ CMSET[k] = 1; });
+(function(){
+  var cm = DATA.cm || {};
+  (cm.en || []).forEach(function(k){ (CMSET[k] = CMSET[k] || {}).en = 1; });
+  (cm.zh || []).forEach(function(k){ (CMSET[k] = CMSET[k] || {}).zh = 1; });
+})();
+function cmAvail(k, s){
+  var got = CMSET[k]; if(!got) return false;
+  return s.key === "en" ? !!got.en : !!(got.zh || got.en);
+}
+/* 大部分書卷的注釋 JSON 每節存純文字字串（原文只有一種語言，沒必要包成物件）；
+   只有馬太福音（bi 39）逐節存 {en,zh} 物件，因為同一節可能只翻好中文、只留得住
+   英文、或兩者都有。純文字字串屬於哪種語言，要看書卷：路加（41）、帖後（52）
+   目前只找得到已翻譯的中文全文（英文原文已佚失，見程式庫說明），純文字就當中文；
+   其餘書卷純文字一律當英文原文。 */
+var CM_ZH_ONLY = { 41: 1, 52: 1 };
+/* 回傳 {text, fb}：fb=true 代表「中文介面，但這節還沒有中文譯文，改顯示英文原文」，
+   畫面上要另外提示一下，使用者才不會覺得莫名其妙冒出一段英文。英文介面找不到英文
+   原文就回傳 null（連按鈕都不會出現，cmAvail 已經先擋掉了，這裡是保險）。 */
+function cmResolve(raw, bi, s){
+  if(raw == null) return null;
+  var wantZh = s.key !== "en";
+  if(typeof raw === "object"){
+    if(!wantZh) return raw.en ? { text: raw.en, fb: false } : null;
+    if(raw.zh) return { text: raw.zh, fb: false };
+    return raw.en ? { text: raw.en, fb: true } : null;
+  }
+  var rawIsZh = !!CM_ZH_ONLY[bi];
+  if(!wantZh) return rawIsZh ? null : { text: raw, fb: false };
+  return { text: raw, fb: !rawIsZh };
+}
 var CMT = {}, CMV = 1;
 function cmUrl(bi){ return "commentary/" + (bi < 10 ? "0" + bi : bi) + ".json?v=" + CMV; }
 function loadCmBook(bi, cb){
@@ -2029,7 +2182,7 @@ function loadCmBook(bi, cb){
     .catch(function(){ cb(1); });
 }
 function openCm(k, from){
-  if(!CMSET[k]) return;
+  if(!cmAvail(k, L())) return;
   var p = k.split("."), bi = +p[0];
   st.cm = { k: k, bi: bi, c: p[1], v: p[2], from: from || "verse", loading: !CMT[bi], err: 0 };
   st.screen = "cm"; st.keepScroll = 0; render();
@@ -2038,6 +2191,18 @@ function openCm(k, from){
     if(!st.cm || st.screen !== "cm") return;
     st.cm.loading = 0; st.cm.err = err ? 1 : 0; render();
   });
+}
+/* 注釋內文：**詞語** 標記的是原文裏本來就用黑體標出的關鍵詞（逐條解釋的那個詞），
+   轉成 <b>；段落之間（包含引文和第一段之間）用空行隔開，每段各自成一個 <p>，
+   閱讀起來才不會擠成一大塊。esc() 先跑過，**標記本身不是 HTML 特殊字元，跑完再替換也安全。 */
+function cmBoldify(t){ return esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>"); }
+function cmBody(txt){
+  var qi = txt.indexOf("\n\n");
+  var quote = "", rest = txt;
+  if(qi >= 0){ quote = txt.slice(0, qi); rest = txt.slice(qi + 2); }
+  var paras = rest.split("\n").filter(function(p){ return p.length; });
+  return (quote ? '<p class="cmquote">' + cmBoldify(quote) + "</p>" : "") +
+    paras.map(function(p){ return '<p class="cmp">' + cmBoldify(p) + "</p>"; }).join("");
 }
 function viewCm(s){
   var g = st.cm, vv = hydrate(g.k);
@@ -2048,9 +2213,10 @@ function viewCm(s){
     body = '<div class="note">' + esc(s.cmErr) + "</div>";
   } else {
     var m = CMT[g.bi][g.c] || {};
-    var txt = m[g.v];
-    body = txt
-      ? '<div class="egpara core"><p class="egen">' + esc(txt) + "</p></div>" +
+    var r = cmResolve(m[g.v], g.bi, s);
+    body = r
+      ? (r.fb ? '<div class="egnote" style="margin-bottom:10px">' + esc(s.cmFallback) + "</div>" : "") +
+        '<div class="egpara core">' + cmBody(r.text) + "</div>" +
         '<div class="egnote">' + esc(s.cmNote) + "</div>"
       : '<div class="note">' + esc(s.cmErr) + "</div>";
   }
@@ -2450,12 +2616,12 @@ function viewLibTopic(s){
     return bar(backBtn(s)+'<span class="bar-title">'+esc(s.tabLib)+"</span>")+
       '<main><div class="wrap"><div class="thead">'+
       (st.ctRen
-        ? '<input class="search" id="ctrenname" maxlength="40" value="'+esc(tp.en)+'">'+
+        ? '<input class="search" id="ctrenname" maxlength="40" value="'+esc(tp[s.key==="en"?"en":s.key])+'">'+
           '<div class="actions" style="margin-top:8px">'+
             '<button class="btn btn-p btn-wide" data-ctrenok="1">'+esc(s.ctRenameOk)+"</button>"+
             '<button class="btn btn-wide" data-ctrencancel="1">'+esc(s.ctRenameCancel)+"</button>"+
           "</div>"
-        : '<h1>'+esc(tp.en)+"</h1>"+
+        : '<h1>'+esc(tp[s.key==="en"?"en":s.key])+"</h1>"+
           '<button class="ctrename" data-ctrenopen="1">'+esc(s.ctRenameBtn)+"</button>")+
       "</div>"+
       '<div class="actions">'+
@@ -2703,7 +2869,7 @@ function viewVerses(s){
   if(st.mode==="read"){
     var rr=it.vs.map(function(v,vi){
       var k=v.bi+"."+v.c+"."+v.v;
-      var chips=(CMSET[k]?'<button class="refchip" data-cm="'+esc(k)+'">'+esc(s.cmChip)+"</button>":"")+
+      var chips=(cmAvail(k,s)?'<button class="refchip" data-cm="'+esc(k)+'">'+esc(s.cmChip)+"</button>":"")+
                 (vi===0?egChipHtml:"")+
                 '<button class="refchip medchip" data-med="'+esc(k)+'">'+esc(s.medChip)+"</button>";
       return '<div class="vrow refrow">'+
@@ -2735,7 +2901,7 @@ function viewVerses(s){
       '<span><i class="vstate new"></i>'+esc(s.stNew)+"</span></div>";
   var rows=shown.map(function(x,idx){
     var k=x.v.bi+"."+x.v.c+"."+x.v.v;
-    var chips=(CMSET[k]?'<button class="refchip" data-cm="'+esc(k)+'">'+esc(s.cmChip)+"</button>":"")+
+    var chips=(cmAvail(k,s)?'<button class="refchip" data-cm="'+esc(k)+'">'+esc(s.cmChip)+"</button>":"")+
               (idx===0?egChipHtml:"")+
               '<button class="refchip medchip" data-med="'+esc(k)+'">'+esc(s.medChip)+"</button>";
     return '<div class="vrow refrow">'+
@@ -2792,7 +2958,7 @@ function viewVerse(s){
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",function(e){
-  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-libdeltoggle],[data-libdelpick],[data-fpopen],[data-fppick],[data-fpall],[data-fpok],[data-fpmodeitem],[data-fpmodetopic],[data-fpmodecustom],[data-fpmodecustomok],[data-taddmp],[data-mpsrc],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-pmode],[data-pbook],[data-pchap],[data-pv],[data-padd],[data-ctcreate],[data-ctrenopen],[data-ctrenok],[data-ctrencancel],[data-ctup],[data-ctdown],[data-ctrm],[data-ctedit],[data-taddtoggle],[data-tbook],[data-tchap],[data-tv],[data-tadd],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-xref],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],[data-cm],[data-med],.blk,.sblk");
+  var el=e.target.closest("[data-smark],[data-sall],[data-tab],[data-libpick],[data-pick],[data-pickok],[data-libopen],[data-libdrop],[data-libdeltoggle],[data-libdelpick],[data-fpopen],[data-fppick],[data-fpall],[data-fpok],[data-fpmodeitem],[data-fpmodetopic],[data-fpmodecustom],[data-fpmodecustomok],[data-taddmp],[data-mpsrc],[data-days],[data-daysok],[data-opench],[data-vscroll],[data-eg],[data-ctx],[data-chgo],[data-bbook],[data-bchap],[data-bv],[data-badd],[data-bpick],[data-hit],[data-pmode],[data-pbook],[data-pchap],[data-pv],[data-padd],[data-ctcreate],[data-ctrenopen],[data-ctrenok],[data-ctrencancel],[data-ctup],[data-ctdown],[data-ctrm],[data-ctedit],[data-taddtoggle],[data-tbook],[data-tchap],[data-tv],[data-tadd],[data-sort],[data-retry],[data-prev],[data-rseg],[data-refmask],[data-filt],[data-vfilt],[data-clear],[data-fs],[data-lang],[data-topic],[data-xref],[data-vpick],[data-back],[data-seq],[data-lv],[data-reveal],[data-mark],[data-restart],[data-item],[data-openv],[data-verse],[data-vlv],[data-vreveal],[data-vmark],[data-reshuffle],[data-nextv],[data-cm],[data-med],.blk,.sblk");
   if(!el) return;
   var d=el.dataset;
   if(d.fs){
@@ -2918,6 +3084,11 @@ document.addEventListener("click",function(e){
   }
   if(d.bchap!==undefined){
     st.chFrom="bchap"; return openChapter(st.bi, +d.bchap, 0);
+  }
+  /* 搜尋結果：跳到那一節所在的整章，直接定位並亮起那一行 */
+  if(d.hit!==undefined){
+    var hp=d.hit.split("."), hbi=+hp[0], hc=+hp[1], hv=+hp[2];
+    st.bi=hbi; st.chFrom="bchap"; return openChapter(hbi, hc, hv);
   }
   if(d.bpick!==undefined){
     st.bp={ bi:st.ch.bi, c:st.ch.c, a:0, z:0 };
@@ -3191,7 +3362,7 @@ document.addEventListener("click",function(e){
   }
 });
 var composing=false;
-function isSearch(el){ return el && (el.id==="q" || el.id==="pq" || el.id==="mpq"); }
+function isSearch(el){ return el && (el.id==="q" || el.id==="pq" || el.id==="mpq" || el.id==="bq"); }
 document.addEventListener("compositionstart",function(e){
   if(isSearch(e.target)) composing=true;
 });
@@ -3203,12 +3374,14 @@ document.addEventListener("input",function(e){
   if(!isSearch(e.target)) return;
   if(e.target.id==="q") st.q=e.target.value;
   else if(e.target.id==="mpq") st.mpq=e.target.value;
+  else if(e.target.id==="bq") st.bq=e.target.value;
   else st.pq=e.target.value;
   if(composing || e.isComposing) return;   /* 組字中，等選完字再篩選 */
   searchInput(e.target);
 });
 function searchInput(el){
   if(el.id==="q"){ st.q=el.value; return refreshList(); }
+  if(el.id==="bq"){ st.bq=el.value; return refreshBibleSearch(); }
   if(el.id==="mpq"){
     st.mpq=el.value;
     var mbox=document.getElementById("pickbox");

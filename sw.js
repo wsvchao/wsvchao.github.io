@@ -1,6 +1,6 @@
 /* Textionary 背誦本 — offline cache.
    改過 index.html 之後，把下面的版本號 +1，手機才會抓到新版。 */
-const VERSION = "textionary-v94";
+const VERSION = "textionary-v100";
 const FILES = [
   "./", "./index.html", "./manifest.webmanifest",
   "./icon-180.png", "./icon-192.png", "./icon-512.png"
@@ -11,11 +11,14 @@ self.addEventListener("install", (e) => {
 });
 
 /* 聖經全文（bible/xx.json）、懷氏著作（egw/xx.json）與SDA聖經注釋（commentary/xx.json）
-   另放長期快取，App改版時不清掉；內容更新時用「先給舊的、背景抓新的」策略自動換新，
-   使用者不必手動清除、也不必整批重新下載。 */
+   另放長期快取，App改版時不清掉；同一個檔名底下新增內容時用「先給舊的、背景抓新的」
+   策略自動換新，使用者不必手動清除、也不必整批重新下載。
+   但如果是把某個檔案「原本的內容整批換掉／改寫」（例如某一卷的注釋整篇重新翻譯），
+   舊的那份還是會先被吃進快取，「背景更新」也只會換到「下一次」才生效——這種情況
+   一定要把下面對應那個常數的版號 +1，才會逼瀏覽器把整批舊快取砍掉、乾乾淨淨重抓。 */
 const BIBLE = "textionary-bible-v1";
 const EGW = "textionary-egw-v1";
-const COMMENTARY = "textionary-commentary-v1";
+const COMMENTARY = "textionary-commentary-v3";
 
 self.addEventListener("activate", (e) => {
   e.waitUntil(
